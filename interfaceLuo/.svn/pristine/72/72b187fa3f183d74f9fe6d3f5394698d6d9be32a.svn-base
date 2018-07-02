@@ -1,0 +1,117 @@
+package com.jite.struts.bean;
+
+import java.util.Date;
+
+public class UserProfileBasicInfo {
+	private Long id;
+	private Long accountId;
+	private Float height;
+	private Float weight;
+	private String curLocation;
+	private String nation;
+	private String huKou;
+	private String idCard;
+	private String nationalOutlook;
+	private String personalHomepage;
+	private String zipAddress;
+	private String zipCode;
+	private String description;
+	private Date createDate;
+	private Date updateDate;
+	
+	public Long getAccountId() {
+		return accountId;
+	}
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+	public Float getHeight() {
+		return height;
+	}
+
+	public void setHeight(Float height) {
+		this.height = height;
+	}
+	public Float getWeight() {
+		return weight;
+	}
+	public void setWeight(Float weight) {
+		this.weight = weight;
+	}
+	public String getCurLocation() {
+		return curLocation;
+	}
+	public void setCurLocation(String curLocation) {
+		this.curLocation = curLocation;
+	}
+	public String getNation() {
+		return nation;
+	}
+	public void setNation(String nation) {
+		this.nation = nation;
+	}
+	public String getHuKou() {
+		return huKou;
+	}
+	public void setHuKou(String huKou) {
+		this.huKou = huKou;
+	}
+	public String getIdCard() {
+		return idCard;
+	}
+	public void setIdCard(String idCard) {
+		this.idCard = idCard;
+	}
+	public String getNationalOutlook() {
+		return nationalOutlook;
+	}
+	public void setNationalOutlook(String nationalOutlook) {
+		this.nationalOutlook = nationalOutlook;
+	}
+	public String getPersonalHomepage() {
+		return personalHomepage;
+	}
+	public void setPersonalHomepage(String personalHomepage) {
+		this.personalHomepage = personalHomepage;
+	}
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+	public String getZipAddress() {
+		return zipAddress;
+	}
+	public void setZipAddress(String zipAddress) {
+		this.zipAddress = zipAddress;
+	}
+	public String getZipCode() {
+		return zipCode;
+	}
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	
+	
+	
+}

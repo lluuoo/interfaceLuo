@@ -1,0 +1,124 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+import javax.naming.InitialContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TShowUser.
+ * @see com.jite.hibgen.dao.TShowUser
+ * @author Hibernate Tools
+ */
+public class TShowUserDao {
+
+	private static final Log log = LogFactory.getLog(TShowUserDao.class);
+
+	private final SessionFactory sessionFactory = getSessionFactory();
+
+	protected SessionFactory getSessionFactory() {
+		try {
+			return (SessionFactory) new InitialContext()
+					.lookup("SessionFactory");
+		} catch (Exception e) {
+			log.error("Could not locate SessionFactory in JNDI", e);
+			throw new IllegalStateException(
+					"Could not locate SessionFactory in JNDI");
+		}
+	}
+
+	public void persist(TShowUser transientInstance) {
+		log.debug("persisting TShowUser instance");
+		try {
+			sessionFactory.getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TShowUser instance) {
+		log.debug("attaching dirty TShowUser instance");
+		try {
+			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TShowUser instance) {
+		log.debug("attaching clean TShowUser instance");
+		try {
+			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TShowUser persistentInstance) {
+		log.debug("deleting TShowUser instance");
+		try {
+			sessionFactory.getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TShowUser merge(TShowUser detachedInstance) {
+		log.debug("merging TShowUser instance");
+		try {
+			TShowUser result = (TShowUser) sessionFactory.getCurrentSession()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TShowUser findById(java.lang.Long id) {
+		log.debug("getting TShowUser instance with id: " + id);
+		try {
+			TShowUser instance = (TShowUser) sessionFactory.getCurrentSession()
+					.get("com.jite.hibgen.dao.TShowUser", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TShowUser> findByExample(TShowUser instance) {
+		log.debug("finding TShowUser instance by example");
+		try {
+			List<TShowUser> results = (List<TShowUser>) sessionFactory
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.dao.TShowUser")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}

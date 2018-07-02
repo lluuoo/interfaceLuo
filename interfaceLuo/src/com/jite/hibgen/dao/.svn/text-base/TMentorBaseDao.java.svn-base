@@ -1,0 +1,148 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TMentorBase.
+ * @see com.jite.hibgen.dao.TMentorBase
+ * @author Hibernate Tools
+ */
+public class TMentorBaseDao extends BaseDao<TMentorBase>{
+
+	private static final Log log = LogFactory.getLog(TMentorBaseDao.class);
+
+	public void persist(TMentorBase transientInstance) {
+		log.debug("persisting TMentorBase instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TMentorBase instance) {
+		log.debug("attaching dirty TMentorBase instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TMentorBase instance) {
+		log.debug("attaching clean TMentorBase instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TMentorBase persistentInstance) {
+		log.debug("deleting TMentorBase instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TMentorBase merge(TMentorBase detachedInstance) {
+		log.debug("merging TMentorBase instance");
+		try {
+			TMentorBase result = (TMentorBase) getHibernateTemplate()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TMentorBase findById(java.lang.Long id) {
+		log.debug("getting TMentorBase instance with id: " + id);
+		try {
+			TMentorBase instance = (TMentorBase) getHibernateTemplate()
+					.get("com.jite.hibgen.model.TMentorBase",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TMentorBase> findByExample(TMentorBase instance) {
+		log.debug("finding TMentorBase instance by example");
+		try {
+			List<TMentorBase> results = (List<TMentorBase>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TMentorBase")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TMentorBase> searchByCriteria(int pageNo, int pageSize,TMentorBase search){
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TMentorBase.class);
+			
+			//setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<TMentorBase>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+	public int searchByCriteriaTotal(TMentorBase search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TMentorBase.class);
+		
+		//setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+}

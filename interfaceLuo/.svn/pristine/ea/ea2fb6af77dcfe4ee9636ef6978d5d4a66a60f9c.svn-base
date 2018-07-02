@@ -1,0 +1,160 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TShowSchoolDao;
+import com.jite.hibgen.dao.TUserMajorDao;
+import com.jite.hibgen.dao.TUserSchoolDao;
+import com.jite.hibgen.model.TShowSchool;
+import com.jite.hibgen.model.TUserMajor;
+import com.jite.hibgen.model.TUserSchool;
+import com.jite.struts.bean.CommonItem;
+import com.jite.struts.bean.MentorBaseInfo;
+import com.jite.struts.bean.ShowSchoolInfo;
+import com.jite.struts.bean.UserSchoolInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.SystemPropties;
+
+public class SchoolService {
+	@Resource
+	private TUserSchoolDao schoolDao;
+	private TUserMajorDao majorDao;
+	private TShowSchoolDao showSchoolDao;
+	public TUserSchoolDao getSchoolDao() {
+		return schoolDao;
+	}
+
+	public void setSchoolDao(TUserSchoolDao schoolDao) {
+		this.schoolDao = schoolDao;
+	}
+	public List<ShowSchoolInfo> querySchoolInfo(int pageNumber,int pageSize) {
+		List<ShowSchoolInfo> returnList=new ArrayList<ShowSchoolInfo>();
+		TShowSchool showSchool=new TShowSchool();
+		if(pageNumber==0){
+			pageNumber=1;
+		}
+		if(pageSize==0){
+			pageSize=Integer.parseInt(SystemPropties.getProperties("cfg.common_page_size"));
+		}
+		List<TShowSchool> allt=showSchoolDao.searchByCriteria(pageNumber,pageSize,showSchool);
+		for(TShowSchool tus:allt){
+			ShowSchoolInfo theRankSchool=new ShowSchoolInfo();
+			theRankSchool.setUserschool(BeanTrans.getFromUserSchool(schoolDao.findById(tus.getSchoolId())));
+			theRankSchool.setRank(tus.getRank().toString());
+			returnList.add(theRankSchool);
+		}
+		return returnList;
+	}
+
+	public int querySchoolInfoTotal() {
+		return showSchoolDao.findByExample(new TShowSchool()).size();
+	}
+	
+	public UserSchoolInfo viewById(String schoolId){
+		UserSchoolInfo result=BeanTrans.getFromUserSchool(schoolDao.findById(Long.valueOf(schoolId)));
+		return result;
+	}
+	
+	public List<CommonItem> queryAllProSchools() {
+		List<CommonItem> result=new ArrayList<CommonItem>();
+		
+		for(Object onePro:schoolDao.queryAllProvince()){
+			CommonItem proItem=new CommonItem();
+			proItem.setName(onePro.toString());
+			
+			TUserSchool search=new TUserSchool();
+			search.setProvince(onePro.toString());
+			List<TUserSchool> schList=schoolDao.findByExample(search);
+			List<CommonItem> schItems=new ArrayList<CommonItem>();
+			for(TUserSchool oneSch:schList){
+				CommonItem schItem=new CommonItem();
+				schItem.setId(oneSch.getId().toString());
+				schItem.setName(oneSch.getName());
+				schItems.add(schItem);
+			}			
+			proItem.setSubItems(schItems);
+			result.add(proItem);
+		}
+		
+		return result;
+	}
+	
+	public List<CommonItem> queryProvinceItems() {
+		List<CommonItem> result=new ArrayList<CommonItem>();
+		
+		for(Object onePro:schoolDao.queryAllProvince()){
+			CommonItem proItem=new CommonItem();
+			proItem.setName(onePro.toString());
+			result.add(proItem);
+		}
+		
+		return result;
+	}
+
+	public List<CommonItem> queryProvinceSchoolItems(String province) {
+		
+		TUserSchool search=new TUserSchool();
+		search.setProvince(province);
+		List<TUserSchool> schList=schoolDao.findByExample(search);
+		List<CommonItem> schItems=new ArrayList<CommonItem>();
+		for(TUserSchool oneSch:schList){
+			CommonItem schItem=new CommonItem();
+			schItem.setId(oneSch.getId().toString());
+			schItem.setName(oneSch.getName());
+			schItems.add(schItem);
+		}
+		return schItems;
+	}
+
+	public List<CommonItem> queryAllMajors() {
+		List<CommonItem> result=new ArrayList<CommonItem>();
+		
+		for(Object oneRoot:majorDao.queryAllRoot()){
+			CommonItem rootItem=new CommonItem();
+			rootItem.setName(oneRoot.toString());
+			
+
+			
+			List<CommonItem> subItems=new ArrayList<CommonItem>();
+			for(Object oneSub:majorDao.querySubname(oneRoot.toString())){
+				CommonItem subItem=new CommonItem();
+				subItem.setName(oneSub.toString());
+				
+				List<CommonItem> thirdItems=new ArrayList<CommonItem>();
+				for(Object oneThird:majorDao.queryThirdName(oneRoot.toString(), oneSub.toString())){
+					CommonItem thirdItem=new CommonItem();
+					thirdItem.setName(oneThird.toString());
+					thirdItems.add(thirdItem);
+				}
+				
+				subItems.add(subItem);
+				
+				subItem.setSubItems(thirdItems);
+			}
+			
+			rootItem.setSubItems(subItems);
+			result.add(rootItem);
+		}
+		
+		return result;
+	}
+	public TUserMajorDao getMajorDao() {
+		return majorDao;
+	}
+
+	public void setMajorDao(TUserMajorDao majorDao) {
+		this.majorDao = majorDao;
+	}
+
+	public TShowSchoolDao getShowSchoolDao() {
+		return showSchoolDao;
+	}
+
+	public void setShowSchoolDao(TShowSchoolDao showSchoolDao) {
+		this.showSchoolDao = showSchoolDao;
+	}
+
+}

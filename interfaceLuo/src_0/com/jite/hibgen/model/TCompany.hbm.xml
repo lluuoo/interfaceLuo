@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TCompany" table="t_company" catalog="qch" optimistic-lock="version">
+        <id name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+            <generator class="identity" />
+        </id>
+        <property name="companyName" type="string">
+            <column name="company_name" length="50" />
+        </property>
+        <property name="companyCode" type="string">
+            <column name="company_code" length="20" />
+        </property>
+        <property name="legalRepresentative" type="string">
+            <column name="legal_Representative" length="50" />
+        </property>
+        <property name="address" type="string">
+            <column name="address" length="200" />
+        </property>
+        <property name="businessScope" type="string">
+            <column name="business_Scope" length="200" />
+        </property>
+        <property name="registrationNumber" type="string">
+            <column name="registration_Number" length="20" />
+        </property>
+        <property name="establishmentDate" type="timestamp">
+            <column name="establishmentDate" length="19" />
+        </property>
+        <property name="businessContract" type="string">
+            <column name="business_contract" length="200" />
+        </property>
+        <property name="businessPhone" type="string">
+            <column name="business_phone" length="50" />
+        </property>
+        <property name="businessEmail" type="string">
+            <column name="business_email" length="50" />
+        </property>
+        <property name="systemManageContract" type="string">
+            <column name="system_manage_contract" length="200" />
+        </property>
+        <property name="systemManagePhone" type="string">
+            <column name="system_manage_phone" length="50" />
+        </property>
+        <property name="systemManageEmail" type="string">
+            <column name="system_manage_email" length="50" />
+        </property>
+        <property name="webPath" type="string">
+            <column name="web_path" length="100" />
+        </property>
+        <property name="createdTime" type="timestamp">
+            <column name="created_time" length="19" />
+        </property>
+        <property name="state" type="string">
+            <column name="state" length="50" />
+        </property>
+        <property name="companyPhone" type="string">
+            <column name="company_phone" length="50" />
+        </property>
+        <property name="companyFax" type="string">
+            <column name="company_fax" length="50" />
+        </property>
+        <property name="companyContact" type="string">
+            <column name="company_contact" length="200" />
+        </property>
+        <property name="testFlag" type="string">
+            <column name="test_flag" length="50" />
+        </property>
+        <property name="testStartDate" type="timestamp">
+            <column name="test_start_date" length="19" />
+        </property>
+        <property name="testEndDate" type="timestamp">
+            <column name="test_end_date" length="19" />
+        </property>
+        <property name="createdId" type="java.lang.Long">
+            <column name="created_id" />
+        </property>
+        <property name="updatedId" type="java.lang.Long">
+            <column name="updated_id" />
+        </property>
+        <property name="updatedTime" type="timestamp">
+            <column name="updated_time" length="19" />
+        </property>
+        <property name="companyShorterName" type="string">
+            <column name="company_shorter_name" length="50" />
+        </property>
+        <property name="companyIndustry" type="string">
+            <column name="company_industry" length="50" />
+        </property>
+        <property name="companyProperty" type="string">
+            <column name="company_property" length="50" />
+        </property>
+        <property name="employeeNum" type="java.lang.Long">
+            <column name="employee_num" />
+        </property>
+        <property name="logoImage" type="string">
+            <column name="logo_image" length="50" />
+        </property>
+        <property name="activeState" type="string">
+            <column name="active_state" length="50" />
+        </property>
+        <property name="paidState" type="string">
+            <column name="paid_state" length="50" />
+        </property>
+    </class>
+</hibernate-mapping>

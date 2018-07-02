@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-7-12 11:28:27 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserMessages" table="t_user_messages" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="toAccountId" type="java.lang.Long">
+            <column name="to_account_id" />
+        </property>
+        <property name="fromAccountId" type="java.lang.Long">
+            <column name="from_account_id" />
+        </property>
+        <property name="jobId" type="java.lang.Long">
+            <column name="job_id" />
+        </property>
+        <property name="type" type="java.lang.Integer">
+            <column name="type">
+                <comment>0 &#207;&#181;&#205;&#179; 1 &#198;&#243;&#210;&#181; 2 &#187;&#238;&#182;&#175; 3&#181;&#188;&#202;&#166;</comment>
+            </column>
+        </property>
+        <property name="readFlag" type="java.lang.Integer">
+            <column name="read_flag" />
+        </property>
+        <property name="content" type="string">
+            <column name="content" length="1000" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+        <property name="hrId" type="java.lang.Long">
+            <column name="hr_id" />
+        </property>
+        <property name="replyId" type="java.lang.Long">
+            <column name="reply_id" />
+        </property>
+        <property name="openFlag" type="java.lang.Integer">
+            <column name="open_flag" />
+        </property>
+        <property name="openOrder" type="java.lang.Integer">
+            <column name="open_order" />
+        </property>
+    </class>
+</hibernate-mapping>

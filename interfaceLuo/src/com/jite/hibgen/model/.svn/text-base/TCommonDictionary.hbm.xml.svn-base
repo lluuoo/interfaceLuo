@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-5-19 22:38:52 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TCommonDictionary" table="t_common_dictionary" catalog="qch">
+        <id name="dictId" type="java.lang.Long">
+            <column name="dict_id" />
+            <generator class="identity" />
+        </id>
+        <property name="dictType" type="string">
+            <column name="dict_type" length="20" />
+        </property>
+        <property name="dictName" type="string">
+            <column name="dict_name" length="50" />
+        </property>
+        <property name="valueCode" type="string">
+            <column name="value_code" length="120" />
+        </property>
+        <property name="valueName" type="string">
+            <column name="value_name" length="50" />
+        </property>
+        <property name="isEdit" type="string">
+            <column name="is_edit" length="10" />
+        </property>
+        <property name="parentId" type="java.lang.Long">
+            <column name="parent_id" />
+        </property>
+    </class>
+</hibernate-mapping>

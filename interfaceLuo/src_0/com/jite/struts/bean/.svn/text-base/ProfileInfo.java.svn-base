@@ -1,0 +1,81 @@
+package com.jite.struts.bean;
+
+import java.util.List;
+
+public class ProfileInfo {
+	private UserInfo user;
+	private BizInfo bizInfo;
+	private UserProfileBasicInfo base;
+	private List<UserProfileEducationInfo> eduList;
+	private List<UserProfileExperience> expList;
+	private List<UserProfileAwardInfo> awardList;
+	private List<UserProfileLanguagesInfo> LanList;
+	private List<UserProfileCertificateInfo> cerList;
+	private List<UserProfileSkillInfo> skillList;
+	//TODO 完成Word文档里的内容
+
+	public BizInfo getBizInfo() {
+		return bizInfo;
+	}
+	public void setBizInfo(BizInfo bizInfo) {
+		this.bizInfo = bizInfo;
+	}
+	public UserProfileBasicInfo getBase() {
+		return base;
+	}
+	public void setBase(UserProfileBasicInfo base) {
+		this.base = base;
+	}
+	public List<UserProfileEducationInfo> getEduList() {
+		return eduList;
+	}
+	public void setEduList(List<UserProfileEducationInfo> eduList) {
+		this.eduList = eduList;
+	}
+	public List<UserProfileExperience> getExpList() {
+		return expList;
+	}
+	public void setExpList(List<UserProfileExperience> expList) {
+		this.expList = expList;
+	}
+	
+	public List<UserProfileAwardInfo> getAwardList() {
+		return awardList;
+	}
+	public void setAwardList(List<UserProfileAwardInfo> awardList) {
+		this.awardList = awardList;
+	}
+	
+	
+	
+	public List<UserProfileLanguagesInfo> getLanList() {
+		return LanList;
+	}
+	public void setLanList(List<UserProfileLanguagesInfo> lanList) {
+		LanList = lanList;
+	}
+	public List<UserProfileCertificateInfo> getCerList() {
+		return cerList;
+	}
+	public void setCerList(List<UserProfileCertificateInfo> cerList) {
+		this.cerList = cerList;
+	}
+	
+	
+	
+	public List<UserProfileSkillInfo> getSkillList() {
+		return skillList;
+	}
+	public void setSkillList(List<UserProfileSkillInfo> skillList) {
+		this.skillList = skillList;
+	}
+	public UserInfo getUser() {
+		return user;
+	}
+	public void setUser(UserInfo user) {
+		this.user = user;
+	}
+	
+
+	
+}

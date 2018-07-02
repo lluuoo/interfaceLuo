@@ -1,0 +1,161 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TShowHomeareas.
+ * @see com.jite.hibgen.dao.TShowHomeareas
+ * @author Hibernate Tools
+ */
+public class TShowHomeareasDao extends BaseDao<TShowHomeareas>{
+
+	private static final Log log = LogFactory.getLog(TShowHomeareasDao.class);
+
+
+	public void persist(TShowHomeareas transientInstance) {
+		log.debug("persisting TShowHomeareas instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TShowHomeareas instance) {
+		log.debug("attaching dirty TShowHomeareas instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TShowHomeareas instance) {
+		log.debug("attaching clean TShowHomeareas instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TShowHomeareas persistentInstance) {
+		log.debug("deleting TShowHomeareas instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TShowHomeareas merge(TShowHomeareas detachedInstance) {
+		log.debug("merging TShowHomeareas instance");
+		try {
+			TShowHomeareas result = (TShowHomeareas) getHibernateTemplate()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TShowHomeareas findById(java.lang.Long id) {
+		log.debug("getting TShowHomeareas instance with id: " + id);
+		try {
+			TShowHomeareas instance = (TShowHomeareas) getHibernateTemplate()
+					.get("com.jite.hibgen.model.TShowHomeareas",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TShowHomeareas> findByExample(TShowHomeareas instance) {
+		log.debug("finding TShowHomeareas instance by example");
+		try {
+			List<TShowHomeareas> results = (List<TShowHomeareas>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TShowHomeareas")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public List<TShowHomeareas> searchByRank(int pageNo, int pageSize,TShowHomeareas search){
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TShowHomeareas.class);
+			if(search.getFather()!=null){
+				criteria.add(Restrictions.eq("father", search.getFather()));
+			}
+			if(search.getType()!=null){
+				criteria.add(Restrictions.eq("type", search.getType()));
+			}
+			criteria.add(Restrictions.eq("status", 0));
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.asc("rank"));
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<TShowHomeareas>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+
+	public int searchByRankTotal(TShowHomeareas search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TShowHomeareas.class);
+		
+		if(search.getFather()!=null){
+			criteria.add(Restrictions.eq("father", search.getFather()));
+		}
+		if(search.getType()!=null){
+			criteria.add(Restrictions.eq("type", search.getType()));
+		}
+		criteria.add(Restrictions.eq("status", 0));
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+}

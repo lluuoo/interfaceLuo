@@ -1,0 +1,205 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate4.HibernateCallback;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TProvCityAreaStreet.
+ * @see com.jite.hibgen.dao.TProvCityAreaStreet
+ * @author Hibernate Tools
+ */
+public class TProCityDao extends BaseDao<TProvCityAreaStreet>{
+
+	private static final Log log = LogFactory.getLog(TProCityDao.class);
+
+	public TProCityDao(){
+	    super(TProvCityAreaStreet.class);
+	}
+	public TProCityDao(TProvCityAreaStreet poClass){
+	    super(poClass.getClass());
+	}
+
+	public void persist(TProvCityAreaStreet transientInstance) {
+		log.debug("persisting TProvCityAreaStreet instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TProvCityAreaStreet instance) {
+		log.debug("attaching dirty TProvCityAreaStreet instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TProvCityAreaStreet instance) {
+		log.debug("attaching clean TProvCityAreaStreet instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TProvCityAreaStreet persistentInstance) {
+		log.debug("deleting TProvCityAreaStreet instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TProvCityAreaStreet merge(TProvCityAreaStreet detachedInstance) {
+		log.debug("merging TProvCityAreaStreet instance");
+		try {
+			TProvCityAreaStreet result = (TProvCityAreaStreet) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TProvCityAreaStreet findById(java.lang.Long id) {
+		log.debug("getting TProvCityAreaStreet instance with id: " + id);
+		try {
+			TProvCityAreaStreet instance = (TProvCityAreaStreet) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.TProvCityAreaStreet", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TProvCityAreaStreet> findByExample(TProvCityAreaStreet instance) {
+		log.debug("finding TProvCityAreaStreet instance by example");
+		try {
+			List<TProvCityAreaStreet> results = (List<TProvCityAreaStreet>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TProvCityAreaStreet")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TProvCityAreaStreet> searchByCriteria(int pageNo, int pageSize,TProvCityAreaStreet search){
+		log.debug("search THrJobBase instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TProvCityAreaStreet.class);
+			
+			setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<TProvCityAreaStreet>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+	
+	public int searchByCriteriaTotal(TProvCityAreaStreet search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TProvCityAreaStreet.class);
+		
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+	
+	private void setCritieaByAdvanceSearch(Criteria criteria, TProvCityAreaStreet search) {
+		criteria.add(Restrictions.eq("status", 0));//TODO,查询未删除的数据			
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List queryAllProvince(){
+		final String hqlString="select distinct tus.province from TProvCityAreaStreet tus ";
+		
+		Query query=getHibernateTemplate().getSessionFactory()
+		.getCurrentSession().createQuery(hqlString);
+
+		return  query.list();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List queryAllRoot(){
+		final String hqlString="select distinct tus.code, tus.name from TProvCityAreaStreet tus where tus.parentId=0 and tus.level=1  order by tus.code";
+		
+		Query query=getHibernateTemplate().getSessionFactory()
+		.getCurrentSession().createQuery(hqlString);
+
+		return  query.list();
+	}
+	
+	public List querySubname(String parentId){
+		final String hqlString="select distinct tus.code, tus.name from TProvCityAreaStreet tus where tus.parentId=:rootname order by tus.code ";
+		
+		Query query=getHibernateTemplate().getSessionFactory()
+		.getCurrentSession().createQuery(hqlString);
+		query.setString("rootname",parentId); 
+		
+		return  query.list();
+	}
+	
+	public List queryThirdName(String rootName,String subName){
+		final String hqlString="select distinct tus.code, tus.name from TProvCityAreaStreet tus where tus.root=:rootname and tus.subname=:thesubname order by tus.code";
+		
+		Query query=getHibernateTemplate().getSessionFactory()
+		.getCurrentSession().createQuery(hqlString);
+		query.setString("rootname",rootName); 
+		query.setString("thesubname",subName); 
+		return  query.list();
+	}	
+}

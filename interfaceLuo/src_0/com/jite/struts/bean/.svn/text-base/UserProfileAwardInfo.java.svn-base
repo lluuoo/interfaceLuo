@@ -1,0 +1,38 @@
+package com.jite.struts.bean;
+
+import java.util.Date;
+
+public class UserProfileAwardInfo {
+	
+	private String userId;
+	private Date time;
+	private String awardProportion1;
+	private String awardProportion2;
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public Date getTime() {
+		return time;
+	}
+	public void setTime(Date time) {
+		this.time = time;
+	}
+	public String getAwardProportion1() {
+		return awardProportion1;
+	}
+	public void setAwardProportion1(String awardProportion1) {
+		this.awardProportion1 = awardProportion1;
+	}
+	public String getAwardProportion2() {
+		return awardProportion2;
+	}
+	public void setAwardProportion2(String awardProportion2) {
+		this.awardProportion2 = awardProportion2;
+	}
+	
+	
+
+}

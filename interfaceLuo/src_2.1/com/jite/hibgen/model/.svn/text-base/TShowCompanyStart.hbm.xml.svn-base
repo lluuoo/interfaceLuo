@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-6-9 10:16:25 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TShowCompanyStart" table="t_show_company_start" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+        <property name="rank" type="java.lang.Integer">
+            <column name="rank" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,56 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TVersionDao;
+import com.jite.hibgen.model.TVersion;
+
+public class VersionService {
+
+	@Resource
+	//显示合作单位的DAO
+	private TVersionDao versionDao;
+	
+	public TVersionDao getVersionDao() {
+		return versionDao;
+	}
+
+	public void setVersionDao(TVersionDao versionDao) {
+		this.versionDao = versionDao;
+	}
+
+	//显示合作单位
+	public TVersion update(int type,String curVCode){
+		TVersion search = new TVersion();
+		search.setType(type);
+		search.setVersionCode(curVCode);
+		List<TVersion> vList = versionDao.findAbove(search);
+		if(vList!=null&&vList.size()>0){
+			if(!vList.get(0).getVersionName().equals(curVCode)){
+				search=vList.get(0);
+			}
+		}
+		return search;
+	}
+	
+    public List getList(int type, String curVCode){
+        List resultList = new ArrayList();
+        TVersion search = new TVersion();
+        search.setType(Integer.valueOf(type));
+        search.setVersionCode(curVCode);
+        List vList = versionDao.findAbove(search);
+        TVersion theV;
+        for(Iterator iterator = vList.iterator(); iterator.hasNext(); resultList.add(theV))
+        {
+            theV = (TVersion)iterator.next();
+            if(theV.equals(curVCode))
+                break;
+        }
+
+        return vList;
+    }	
+}

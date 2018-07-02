@@ -1,0 +1,452 @@
+package com.jite.struts.action;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.UserJobService;
+import com.jite.struts.bean.CommonItem;
+import com.jite.struts.bean.JobInfo;
+import com.jite.struts.bean.UserJobInfo;
+import com.jite.utils.SystemPropties;
+
+public class UserJobAction extends BaseAction{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4768083376835578317L;
+
+	@Resource
+	@Autowired
+	UserJobService userJobService;
+
+	public UserJobService getUserJobService() {
+		return userJobService;
+	}
+
+	public void setUserJobService(UserJobService userJobService) {
+		this.userJobService = userJobService;
+	}
+	
+	public void applyJob() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		UserJobInfo userJobInfo=userJobService.applyJob(userId,jobId,companyId);
+		if(null!=userJobInfo && null!=userJobInfo.getId()){
+			if("-100".equals(userJobInfo.getId())){
+				returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+				returnJson.put("info", SystemPropties.getProperties("txt.already_exists"));
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.apply_job")+SystemPropties.getProperties("txt.success"));
+				returnJson.put("userJobStatus",userJobInfo);
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.apply_job")+SystemPropties.getProperties("txt.fail"));			
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void addFavoriteJob() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		UserJobInfo userJobInfo=userJobService.addFavorite(userId,jobId,companyId);
+		if(null!=userJobInfo && null!=userJobInfo.getId()){
+			if("-100".equals(userJobInfo.getId())){
+				returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+				returnJson.put("info", SystemPropties.getProperties("txt.already_exists"));
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.favorite_job")+SystemPropties.getProperties("txt.success"));				
+				returnJson.put("userJobStatus",userJobInfo);
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.favorite_job")+SystemPropties.getProperties("txt.fail"));			
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void query() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		List<UserJobInfo> resumeList=userJobService.queryCompanyResumes(companyId,jobId,status,hrStatus,pageNumber,pageSize);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("resumeList", resumeList);
+		returnJson.put("totalCount", userJobService.queryCompanyResumesTotal(companyId,jobId,status,hrStatus));
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void getRecommendJob(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		List<JobInfo> jobInfoList=userJobService.queryRecommendJob(userId,pageNumber,pageSize);
+		int totalCount=userJobService.queryRecommendJobTotalCount(userId,pageNumber,pageSize);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("jobInfoList", jobInfoList);
+		returnJson.put("totalCount",totalCount);
+
+		returnJsonStr(returnJson.toString());		
+	}
+	
+	public void getAppliedJob(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		List<UserJobInfo> resumeList=userJobService.queryAppliedJob(userId,pageNumber,pageSize);
+		int totalCount=userJobService.queryAppliedTotalCount(userId,pageNumber,pageSize);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("resumeList", resumeList);
+		returnJson.put("totalCount",totalCount);
+
+		returnJsonStr(returnJson.toString());			
+	}
+	
+	public void getAppliedJobById(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		UserJobInfo userJobStatus=userJobService.queryAppliedJobId(userId,jobId);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("userJobStatus",userJobStatus);
+
+		returnJsonStr(returnJson.toString());			
+	}
+
+	public void getFavoriteJobById(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		UserJobInfo userJobStatus=userJobService.queryFavoriteJobId(userId,jobId);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("userJobStatus",userJobStatus);
+
+		returnJsonStr(returnJson.toString());			
+	}
+
+	public void deleteFavoriteJobById(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		UserJobInfo userJobStatus=userJobService.deleteFavoriteJobById(userId,jobId);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("userJobStatus",userJobStatus);
+
+		returnJsonStr(returnJson.toString());			
+	}	
+	
+	public void getFavoriteJob(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		List<UserJobInfo> favoriteList=userJobService.queryFavoriteJob(userId,pageNumber,pageSize);
+		int totalCount=userJobService.querFavoriteJobTotalCount(userId,pageNumber,pageSize);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("favoriteList", favoriteList);
+		returnJson.put("totalCount",totalCount);
+
+		returnJsonStr(returnJson.toString());			
+	}
+
+	public void saveHrStatus(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		UserJobInfo userJobInfo=userJobService.saveHrStatus(id,userId,companyId,jobId,hrId,status,hrStatus,sendMessage,emailAddress,emailTitle,emailContent,messageType);
+		if(null!=userJobInfo && null!=userJobInfo.getId()){
+			if(userJobInfo.getId().equals("-400")){
+				returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.user_mail_can_not_found_address"));				
+			}else if(userJobInfo.getId().equals("-410")){
+				returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.user_mail_send_fail"));				
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.fail"));						
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void setUserJob(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		UserJobInfo userJobInfo=userJobService.setUserJob(id,jobId);
+		if(null!=userJobInfo && null!=userJobInfo.getId()){
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.fail"));						
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	public void getHrStatusResume(){
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		List<UserJobInfo> hrStatusList=userJobService.getHrStatusResume(hrId,companyId,hrStatus,pageNumber,pageSize);
+		int totalCount=userJobService.getHrStatusResumeTotalCount(hrId,companyId,hrStatus);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("resumeList", hrStatusList);
+		returnJson.put("totalCount",totalCount);
+
+		returnJsonStr(returnJson.toString());		
+	}
+
+	public void getJobItems() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		List<CommonItem> jobItems=userJobService.queryCompanyJobItems(companyId,status,hrStatus);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("jobItems", jobItems);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryIntendTotal() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("totalCount", userJobService.queryCompanyResumesTotal(companyId,jobId,"999","210"));
+		returnJson.put("totalCountUndo", userJobService.queryCompanyResumesTotal(companyId,jobId,"210","210"));
+
+		returnJsonStr(returnJson.toString());
+	}	
+	
+	public void queryMeetTotal() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("totalCount", userJobService.queryCompanyResumesTotal(companyId,jobId,"999","999"));
+		returnJsonStr(returnJson.toString());
+	}
+	
+	//面试未通知
+	public void queryNotMeetTotal() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("totalCount", userJobService.queryCompanyResumesTotal(companyId));
+		returnJsonStr(returnJson.toString());
+	}
+	
+	
+	
+	private String id;
+	private String userId;
+	private String jobId;
+	private String companyId;
+	private String status;
+	private int pageNumber;
+	private int pageSize;
+	
+	private String hrId;
+	private String hrStatus;
+	private String sendMessage;
+	private String emailAddress;
+	private String emailTitle;
+	private String emailContent;
+	private int messageType;
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public String getHrId() {
+		return hrId;
+	}
+
+	public void setHrId(String hrId) {
+		this.hrId = hrId;
+	}
+
+	public String getHrStatus() {
+		return hrStatus;
+	}
+
+	public void setHrStatus(String hrStatus) {
+		this.hrStatus = hrStatus;
+	}
+
+	public String getSendMessage() {
+		return sendMessage;
+	}
+
+	public void setSendMessage(String sendMessage) {
+		this.sendMessage = sendMessage;
+	}
+
+	public int getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(int messageType) {
+		this.messageType = messageType;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress;
+	}
+
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
+	}
+
+	public String getEmailTitle() {
+		return emailTitle;
+	}
+
+	public void setEmailTitle(String emailTitle) {
+		this.emailTitle = emailTitle;
+	}
+
+	public String getEmailContent() {
+		return emailContent;
+	}
+
+	public void setEmailContent(String emailContent) {
+		this.emailContent = emailContent;
+	}
+
+}

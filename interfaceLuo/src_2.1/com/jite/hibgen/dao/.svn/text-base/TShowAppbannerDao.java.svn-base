@@ -1,0 +1,150 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TShowAppbanner.
+ * @see com.jite.hibgen.dao.TShowAppbanner
+ * @author Hibernate Tools
+ */
+public class TShowAppbannerDao extends BaseDao<TShowAppbanner>{
+
+	private static final Log log = LogFactory.getLog(TShowAppbannerDao.class);
+
+
+	public void persist(TShowAppbanner transientInstance) {
+		log.debug("persisting TShowAppbanner instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TShowAppbanner instance) {
+		log.debug("attaching dirty TShowAppbanner instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TShowAppbanner instance) {
+		log.debug("attaching clean TShowAppbanner instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TShowAppbanner persistentInstance) {
+		log.debug("deleting TShowAppbanner instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TShowAppbanner merge(TShowAppbanner detachedInstance) {
+		log.debug("merging TShowAppbanner instance");
+		try {
+			TShowAppbanner result = (TShowAppbanner) getHibernateTemplate()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TShowAppbanner findById(java.lang.Long id) {
+		log.debug("getting TShowAppbanner instance with id: " + id);
+		try {
+			TShowAppbanner instance = (TShowAppbanner) getHibernateTemplate()
+					.get("com.jite.hibgen.model.TShowAppbanner",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TShowAppbanner> findByExample(TShowAppbanner instance) {
+		log.debug("finding TShowAppbanner instance by example");
+		try {
+			List<TShowAppbanner> results = (List<TShowAppbanner>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TShowAppbanner")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public List<TShowAppbanner> searchByRank(int pageNo, int pageSize,TShowAppbanner search){
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TShowAppbanner.class);
+			
+			criteria.add(Restrictions.eq("status", 0));
+			criteria.add(Restrictions.eq("type", search.getType()));
+			criteria.setProjection(null);
+			criteria.addOrder(Order.asc("rank"));
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<TShowAppbanner>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+
+	public int searchByCriteriaTotal(TShowAppbanner search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TShowAppbanner.class);
+		
+		//setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+}

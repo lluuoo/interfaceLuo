@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="http://localhost:8080/interface/Job-query.do"
+		method="POST">
+	<br>
+	<br> company_id
+	<br>
+		<input type="text" name="companyId" />
+	<br>
+	<br> <input type="Submit" value="infrom"> <br><!-- 既有添加又有修改 的功能-->
+</form>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TBqjyEdu" table="t_bqjy_edu" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+        <property name="time" type="string">
+            <column name="time" length="100" />
+        </property>
+        <property name="degree" type="string">
+            <column name="degree" />
+        </property>
+        <property name="school" type="string">
+            <column name="school" length="10" />
+        </property>
+        <property name="major" type="string">
+            <column name="major" length="200" />
+        </property>
+        <property name="studentCardPhoto" type="string">
+            <column name="student_card_photo" length="200" />
+        </property>
+        <property name="classRank" type="java.lang.Integer">
+            <column name="class_rank" />
+        </property>
+        <property name="transcriptionPhoto" type="string">
+            <column name="transcription_photo" length="200" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

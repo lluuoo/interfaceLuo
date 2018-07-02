@@ -1,0 +1,69 @@
+package com.jite.struts.bean;
+
+public class CompanySearch extends PageInfo {
+	private String searchKey;
+	private String searchAreaRoot;
+	private String searchAreaSub;
+	private String searchArea;
+	private String searchLocationRoot;
+	private String searchLocationSub;
+	private String searchLocation;
+	private String searchStart;
+	public String getSearchKey() {
+		return searchKey;
+	}
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
+	}
+	public String getSearchAreaRoot() {
+		return searchAreaRoot;
+	}
+	public void setSearchAreaRoot(String searchAreaRoot) {
+		this.searchAreaRoot = searchAreaRoot;
+	}
+	public String getSearchAreaSub() {
+		return searchAreaSub;
+	}
+	public void setSearchAreaSub(String searchAreaSub) {
+		this.searchAreaSub = searchAreaSub;
+	}
+	public String getSearchArea() {
+		return searchArea;
+	}
+	public void setSearchArea(String searchArea) {
+		this.searchArea = searchArea;
+	}
+	public String getSearchLocationRoot() {
+		return searchLocationRoot;
+	}
+	public void setSearchLocationRoot(String searchLocationRoot) {
+		this.searchLocationRoot = searchLocationRoot;
+	}
+	public String getSearchLocationSub() {
+		return searchLocationSub;
+	}
+	public void setSearchLocationSub(String searchLocationSub) {
+		this.searchLocationSub = searchLocationSub;
+	}
+	public String getSearchLocation() {
+		return searchLocation;
+	}
+	public void setSearchLocation(String searchLocation) {
+		this.searchLocation = searchLocation;
+	}
+	public String getSearchStart() {
+		return searchStart;
+	}
+	public void setSearchStart(String searchStart) {
+		this.searchStart = searchStart;
+	}
+	@Override
+	public String toString() {
+		return "CompanySearch [searchKey=" + searchKey + ", searchAreaRoot="
+				+ searchAreaRoot + ", searchAreaSub=" + searchAreaSub
+				+ ", searchArea=" + searchArea + ", searchLocationRoot="
+				+ searchLocationRoot + ", searchLocationSub="
+				+ searchLocationSub + ", searchLocation=" + searchLocation
+				+ ", searchStart=" + searchStart + "]";
+	}
+}

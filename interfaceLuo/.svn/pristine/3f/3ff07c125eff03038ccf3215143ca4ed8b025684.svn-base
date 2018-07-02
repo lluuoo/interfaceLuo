@@ -1,0 +1,206 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TOrgActiveDao;
+import com.jite.hibgen.dao.TOrgActiveUserDao;
+import com.jite.hibgen.dao.TUserBizcardDao;
+import com.jite.hibgen.dao.TUserMessagesDao;
+import com.jite.hibgen.model.TOrgActive;
+import com.jite.hibgen.model.TOrgActiveUser;
+import com.jite.hibgen.model.TUserBizcard;
+import com.jite.hibgen.model.TUserMessages;
+import com.jite.struts.bean.ActivityInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.Constants;
+import com.jite.utils.SystemPropties;
+
+public class ActivityService {
+	@Resource
+	private TOrgActiveDao activityDao;
+	private TOrgActiveUserDao activeUserDao;
+	private TUserBizcardDao userBizcardDao;
+	private TUserMessagesDao messageDao;
+	
+	public TOrgActiveDao getActivityDao() {
+		return activityDao;
+	}
+
+
+	public void setActivityDao(TOrgActiveDao activityDao) {
+		this.activityDao = activityDao;
+	}
+
+
+	public TOrgActiveUserDao getActiveUserDao() {
+		return activeUserDao;
+	}
+
+
+	public void setActiveUserDao(TOrgActiveUserDao activeUserDao) {
+		this.activeUserDao = activeUserDao;
+	}
+
+
+	public TUserBizcardDao getUserBizcardDao() {
+		return userBizcardDao;
+	}
+
+
+	public void setUserBizcardDao(TUserBizcardDao userBizcardDao) {
+		this.userBizcardDao = userBizcardDao;
+	}
+
+
+	public TUserMessagesDao getMessageDao() {
+		return messageDao;
+	}
+
+
+	public void setMessageDao(TUserMessagesDao messageDao) {
+		this.messageDao = messageDao;
+	}
+
+
+	public List<ActivityInfo> queryPublishedActivities(int pageNumber,int pageSize) {
+		List<ActivityInfo> returnList=new ArrayList<ActivityInfo>();
+		TOrgActive actSea=new TOrgActive();
+		if(pageNumber==0){
+			pageNumber=1;
+		}
+		if(pageSize==0){
+			pageSize=Integer.parseInt(SystemPropties.getProperties("cfg.common_page_size"));
+		}
+		List<TOrgActive> allt=activityDao.searchByCriteria(pageNumber,pageSize,actSea);
+		for(TOrgActive toa:allt){
+			returnList.add(BeanTrans.getFromTOrgActive(toa));
+		}
+		return returnList;
+	}
+
+
+	public ActivityInfo queryById(String activeId,String userId) {
+		ActivityInfo result=BeanTrans.getFromTOrgActive(activityDao.findById(Long.valueOf(activeId)));
+
+			TOrgActiveUser search=new TOrgActiveUser();
+			search.setActiveId(Long.valueOf(activeId));
+			List<TOrgActiveUser> searchList=activeUserDao.findByExample(search);
+			List<UserInfo> theJionUser=new ArrayList<UserInfo>();
+			for(TOrgActiveUser toau:searchList){
+				UserInfo user=new UserInfo();
+				user.setUserId(toau.getAccountId().toString());
+				theJionUser.add(user);
+			}
+			result.setJoinList(theJionUser);
+
+
+		return result;
+	}
+
+
+	public ActivityInfo greatById(String activeId) {
+		TOrgActive toa=activityDao.findById(Long.valueOf(activeId));
+		toa.setGreatSum((toa.getGreatSum()==null?0:toa.getGreatSum())+1);
+		activityDao.updateObject(toa);
+		return BeanTrans.getFromTOrgActive(toa);
+	}
+
+
+	public ActivityInfo join(String activeId, String userId) {
+		ActivityInfo result=new ActivityInfo();
+
+		TUserBizcard tuser=userBizcardDao.findByAccountId(Long.valueOf(userId));
+		if(null==tuser.getPhoneNumber()||"".equals(tuser.getPhoneNumber().trim())){
+			result.setId(-300L);//无法报名
+		}else{
+			TOrgActiveUser ausearch=new TOrgActiveUser();
+			ausearch.setActiveId(Long.valueOf(activeId));
+			ausearch.setAccountId(Long.valueOf(userId));
+			int theJionCount=activeUserDao.findByExample(ausearch).size();
+			
+			if(theJionCount>0){
+				result.setId(-100L);//已报名
+			}else{
+				
+				TOrgActive toa=activityDao.findById(Long.valueOf(activeId));
+				
+				TOrgActiveUser search=new TOrgActiveUser();
+				search.setActiveId(Long.valueOf(activeId));
+				int alreadyJionCount=activeUserDao.findByExample(search).size();
+				
+				if(alreadyJionCount>=toa.getMaxJoin()){
+					result.setId(-200L);//报名人数已满
+				}else{
+					TOrgActiveUser joinT=new TOrgActiveUser();
+					joinT.setAccountId(Long.valueOf(userId));
+					joinT.setActiveId(Long.valueOf(activeId));
+					joinT.setCreateDate(new Date());
+					joinT.setUpdateDate(new Date());
+					joinT.setStatus(0);
+					activeUserDao.persist(joinT);
+					result.setId(joinT.getId());
+					
+					String sendMessage=null;
+					if(tuser.getRealName()!=null){
+						sendMessage="尊敬的"+tuser.getRealName()+"，恭喜你成功报名"+toa.getName()+"活动，请随时关注活动信息，感谢你对我们的支持与信任。";
+					}else{
+						sendMessage="尊敬的用户，恭喜你成功报名"+toa.getName()+"活动，请随时关注活动信息，感谢你对我们的支持与信任。";
+					}
+					
+					TUserMessages message=new TUserMessages();
+					message.setToAccountId(Long.valueOf(userId));
+					message.setFromAccountId(0L);
+					message.setContent(sendMessage);
+					message.setCreateDate(new Date());
+					message.setUpdateDate(new Date());
+					message.setReadFlag(0);
+					message.setType(Constants.MESSAGE_TYPE_ACTIVE);//活动
+					message.setJobId(Long.valueOf(toa.getId()));
+					messageDao.persist(message);
+					
+				}
+			}
+			
+		}
+		
+		return result;
+	}
+
+
+	public List<ActivityInfo> queryPublishedActivitiesWithJionList(int pageNumber,int pageSize) {
+		List<ActivityInfo> returnList=new ArrayList<ActivityInfo>();
+		
+		TOrgActive actSea=new TOrgActive();
+		List<TOrgActive> allt=activityDao.searchByCriteria(pageNumber,pageSize,actSea);
+		TOrgActiveUser search=new TOrgActiveUser();
+
+		for(TOrgActive toa:allt){
+			ActivityInfo theAct=BeanTrans.getFromTOrgActive(toa);
+
+			search.setActiveId(toa.getId());
+			List<TOrgActiveUser> searchList=activeUserDao.findByExample(search);
+
+			List<UserInfo> theJionUser=new ArrayList<UserInfo>();
+			for(TOrgActiveUser toau:searchList){
+				UserInfo user=new UserInfo();
+				user.setUserId(toau.getAccountId().toString());
+				theJionUser.add(user);
+			}
+			theAct.setJoinList(theJionUser);
+
+			returnList.add(theAct);
+		}
+		return returnList;
+	}
+	
+	public int queryPublishedActivitiesTotal(){
+		TOrgActive search=new TOrgActive();
+		return activityDao.searchByCriteriaTotal(search);
+	}
+
+}

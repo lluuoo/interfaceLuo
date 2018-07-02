@@ -1,0 +1,231 @@
+package com.jite.hibgen.dao;
+
+import static org.hibernate.criterion.Example.create;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import com.jite.hibgen.model.THrResumes;
+import com.jite.hibgen.model.THrViewuserlog;
+
+/**
+ * Home object for domain model class THrResumes.
+ * @see com.jite.hibgen.dao.THrResumes
+ * @author Hibernate Tools
+ */
+public class THrResumesDao extends BaseDao<THrResumes>{
+
+	private static final Log log = LogFactory.getLog(THrResumesDao.class);
+
+
+	public void persist(THrResumes transientInstance) {
+		log.debug("persisting THrResumes instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(THrResumes instance) {
+		log.debug("attaching dirty THrResumes instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(THrResumes instance) {
+		log.debug("attaching clean THrResumes instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(THrResumes persistentInstance) {
+		log.debug("deleting THrResumes instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public THrResumes merge(THrResumes detachedInstance) {
+		log.debug("merging THrResumes instance");
+		try {
+			THrResumes result = (THrResumes) getHibernateTemplate().getSessionFactory().getCurrentSession()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public THrResumes findById(java.lang.Long id) {
+		log.debug("getting THrResumes instance with id: " + id);
+		try {
+			THrResumes instance = (THrResumes) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get("com.jite.hibgen.model.THrResumes",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<THrResumes> findByExample(THrResumes instance) {
+		log.debug("finding THrResumes instance by example");
+		try {
+			List<THrResumes> results = (List<THrResumes>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.THrResumes")
+					.add(create(instance)).addOrder(Order.desc("updateDate")).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public List<THrResumes> searchByCriteria(int pageNo, int pageSize,
+			THrResumes search) {
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(THrResumes.class);
+		criteria.setProjection(null);
+		criteria.addOrder(Order.desc("updateDate"));
+		criteria.setFirstResult((pageNo - 1) * pageSize);  
+        criteria.setMaxResults(pageSize);  
+        
+		setCritieaByAdvanceSearch(criteria,search);
+        
+		return (List<THrResumes>)criteria.list();
+	}	
+	public int searchByCriteriaTotal(THrResumes search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(THrResumes.class);
+
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+		
+	}
+
+	private void setCritieaByAdvanceSearch(Criteria criteria, THrResumes search) {
+		criteria.add(Restrictions.eq("companyId", search.getCompanyId()));			
+		if(search.getStatus()!=999){
+			criteria.add(Restrictions.eq("status", search.getStatus()));			
+		}else if(search.getStatus()==999&&search.getHrStatus()==110){
+			criteria.add(Restrictions.le("status", 300));			
+		}else if(search.getStatus()==999&&search.getHrStatus()==210){
+			criteria.add(Restrictions.le("status", 300));			
+		}else if(search.getStatus()==999&&search.getHrStatus()==999){
+			Disjunction dis=Restrictions.disjunction(); 
+			Conjunction con1=Restrictions.conjunction();
+			con1.add(Restrictions.eq("status", 110));
+			con1.add(Restrictions.eq("hrStatus", 310));
+			Conjunction con2=Restrictions.conjunction();
+			con2.add(Restrictions.eq("status", 320));
+			con2.add(Restrictions.eq("hrStatus", 210));
+			dis.add(con1);
+			dis.add(con2);
+			criteria.add(dis);
+		}
+		
+		if(search.getHrStatus()!=999){
+			criteria.add(Restrictions.eq("hrStatus", search.getHrStatus()));			
+		}else if(search.getHrStatus()==999&&search.getStatus()==110){
+			criteria.add(Restrictions.le("hrStatus", 300));			
+		}
+		
+		if(search.getJobId()!=null&&search.getJobId()!=0L){
+			criteria.add(Restrictions.eq("jobId", search.getJobId()));			
+		}
+	}
+	
+	public int searchByCriteriaNotTotal(Long companyId){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(THrResumes.class);
+
+		setCritieaByAdvanceSearch2(criteria,companyId);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+		
+	}
+
+	private void setCritieaByAdvanceSearch2(Criteria criteria, Long companyId) {
+		criteria.add(Restrictions.eq("companyId", companyId));			
+			Disjunction dis=Restrictions.disjunction(); 
+			Conjunction con1=Restrictions.conjunction();
+			con1.add(Restrictions.eq("status", 110));
+			con1.add(Restrictions.eq("hrStatus", 140));
+			Conjunction con2=Restrictions.conjunction();
+			con2.add(Restrictions.eq("status", 240));
+			con2.add(Restrictions.eq("hrStatus", 210));
+			dis.add(con1);
+			dis.add(con2);
+			criteria.add(dis);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List searchBeVisitUser(Long companyId) {
+		final String hqlString="select distinct tus.accountId from THrResumes tus where companyId=:theCompanyId order by createDate ";
+		
+		Query query=getHibernateTemplate().getSessionFactory()
+		.getCurrentSession().createQuery(hqlString);
+		query.setLong("theCompanyId",companyId); 
+
+		return  query.list();
+	}
+
+	public List<Long> searchJobsByCriteria(
+			THrResumes search) {
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(THrResumes.class);
+		ProjectionList   proList   =   Projections.projectionList();//设置投影集合   
+		proList.add(Projections.groupProperty("jobId"));   
+		criteria.setProjection(proList);   
+		criteria.addOrder(Order.desc("updateDate"));
+          
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY); 
+		
+		return (List<Long>)criteria.list();
+	}
+}

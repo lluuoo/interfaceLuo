@@ -1,0 +1,18 @@
+package com.jite.utils;
+
+public enum EnumForApproveType {
+	shortName(1001),
+	fullName(1000),
+	certFile(2000);
+	private int type;
+
+	private EnumForApproveType(int type) {
+		this.type = type;
+	}
+	public int type() {
+		return this.type;
+	}
+	public String toString() {
+		return super.toString()+"("+this.type+")";
+	}	
+}

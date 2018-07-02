@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-12-25 11:45:27 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TOrgInfo" table="t_org_info" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="fromSource" type="string">
+            <column name="from_source" length="100" />
+        </property>
+        <property name="fromUrl" type="string">
+            <column name="from_url" length="300" />
+        </property>
+        <property name="title" type="string">
+            <column name="title" length="100" />
+        </property>
+        <property name="icon" type="string">
+            <column name="icon" length="100" />
+        </property>
+        <property name="images" type="string">
+            <column name="images" length="300" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="65535" />
+        </property>
+        <property name="visitSum" type="java.lang.Integer">
+            <column name="visit_sum" />
+        </property>
+        <property name="type" type="string">
+            <column name="type" length="20" />
+        </property>
+        <property name="areaTags" type="string">
+            <column name="area_tags" length="300" />
+        </property>
+        <property name="workTags" type="string">
+            <column name="work_tags" length="300" />
+        </property>
+        <property name="rank" type="java.lang.Integer">
+            <column name="rank" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

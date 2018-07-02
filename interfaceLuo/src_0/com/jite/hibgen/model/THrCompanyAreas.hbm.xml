@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.THrCompanyAreas" table="t_hr_company_areas" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+        <property name="areaName" type="string">
+            <column name="area_name" length="50" />
+        </property>
+        <property name="areaNameRoot" type="string">
+            <column name="area_name_root" length="50" />
+        </property>
+        <property name="areaNameSub" type="string">
+            <column name="area_name_sub" length="50" />
+        </property>
+        <property name="rankRoot" type="java.lang.Integer">
+            <column name="rank_root" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

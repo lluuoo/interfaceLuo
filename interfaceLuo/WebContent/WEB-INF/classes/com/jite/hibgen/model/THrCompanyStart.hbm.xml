@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-6-9 23:02:57 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.THrCompanyStart" table="t_hr_company_start" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+        <property name="leader" type="string">
+            <column name="leader" length="50" />
+        </property>
+        <property name="leaderPic" type="string">
+            <column name="leader_pic" length="50" />
+        </property>
+        <property name="leaderPosition" type="string">
+            <column name="leader_position" length="50" />
+        </property>
+        <property name="leaderDesc" type="string">
+            <column name="leader_desc" length="500" />
+        </property>
+        <property name="scope" type="string">
+            <column name="scope" length="100">
+                <comment>&#198;&#243;&#210;&#181;&#193;&#236;&#211;&#242;</comment>
+            </column>
+        </property>
+        <property name="moneyFrom" type="string">
+            <column name="money_from" length="100" />
+        </property>
+        <property name="moneyFromDesc" type="string">
+            <column name="money_from_desc" length="500" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

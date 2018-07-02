@@ -1,0 +1,173 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserProfileEducation.
+ * @see com.jite.hibgen.dao.TUserProfileEducation
+ * @author Hibernate Tools
+ */
+public class TShowCooperativeUnitDao extends BaseDao<TShowCooperativeUnit>{
+
+	private static final Log log = LogFactory.getLog(TShowCooperativeUnitDao.class);
+
+	public TShowCooperativeUnitDao(){
+		super(TShowCooperativeUnit.class);
+	}
+	public TShowCooperativeUnitDao(TShowCooperativeUnit po){
+		super(po.getClass());
+	}
+	
+
+	public void persist(TShowCooperativeUnit transientInstance) {
+		log.debug("persisting TShowCooperativeUnit instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TShowCooperativeUnit instance) {
+		log.debug("attaching dirty TShowCooperativeUnit instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TShowCooperativeUnit instance) {
+		log.debug("attaching clean TShowCooperativeUnit instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TShowCooperativeUnit persistentInstance) {
+		log.debug("deleting TShowCooperativeUnit instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TShowCooperativeUnit merge(TShowCooperativeUnit detachedInstance) {
+		log.debug("merging TShowCooperativeUnit instance");
+		try {
+			TShowCooperativeUnit result = (TShowCooperativeUnit) getHibernateTemplate().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TShowCooperativeUnit findById(java.lang.Long id) {
+		log.debug("getting TShowCooperativeUnit instance with id: " + id);
+		try {
+			TShowCooperativeUnit instance = (TShowCooperativeUnit) getHibernateTemplate().get(
+							"com.jite.hibgen.model.TShowCooperativeUnit", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TShowCooperativeUnit> findByExample(
+			TShowCooperativeUnit instance) {
+		log.debug("finding TShowCooperativeUnit instance by example");
+		try {
+			List<TShowCooperativeUnit> results = (List<TShowCooperativeUnit>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TShowCooperativeUnit")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+/*	public void deleteByAccountId(Long accountId) {
+		log.debug("delte TShowCooperativeUnit by userId");
+		try {
+			String hql = "delete TShowCooperativeUnit as tupi where tupi.accountId=?";
+			Query query = getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().createQuery(hql);
+			query.setLong(0, accountId);
+			query.executeUpdate();
+		} catch (Exception re) {
+			log.error("Delete failed", re);
+		}
+	}*/
+	public List<TShowCooperativeUnit> searchByCriteria(TShowCooperativeUnit search){
+		log.debug("search TShowCooperativeUnit instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TShowCooperativeUnit.class);
+			
+			setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.asc("rank"));
+	        
+			return (List<TShowCooperativeUnit>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+	
+	public int searchByCriteriaTotal(TShowCooperativeUnit search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TShowCooperativeUnit.class);
+		
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+	private void setCritieaByAdvanceSearch(Criteria criteria, TShowCooperativeUnit search) {
+		criteria.add(Restrictions.gt("rank", 0));//TODO,查询未删除的数据			
+	}
+}
+
+

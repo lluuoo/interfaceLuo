@@ -1,0 +1,37 @@
+package com.jite.struts.bean;
+
+import java.util.Date;
+
+public class UserProfileSkillInfo {
+
+	private String userId;
+	private String skillName;
+	private String skillTime;
+	private String proficiency;
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getSkillName() {
+		return skillName;
+	}
+	public void setSkillName(String skillName) {
+		this.skillName = skillName;
+	}
+	public String getSkillTime() {
+		return skillTime;
+	}
+	public void setSkillTime(String skillTime) {
+		this.skillTime = skillTime;
+	}
+	public String getProficiency() {
+		return proficiency;
+	}
+	public void setProficiency(String proficiency) {
+		this.proficiency = proficiency;
+	}
+	
+	
+}

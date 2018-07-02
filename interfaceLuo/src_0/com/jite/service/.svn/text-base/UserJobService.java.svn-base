@@ -1,0 +1,977 @@
+package com.jite.service;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
+import com.jite.hibgen.dao.TAgentAccountUserDao;
+import com.jite.hibgen.dao.THrAccountDao;
+import com.jite.hibgen.dao.THrCompanyDao;
+import com.jite.hibgen.dao.THrJobBaseDao;
+import com.jite.hibgen.dao.THrJobRequireDao;
+import com.jite.hibgen.dao.THrResumesDao;
+import com.jite.hibgen.dao.TMentorBaseDao;
+import com.jite.hibgen.dao.TOrgActiveDao;
+import com.jite.hibgen.dao.TUserAccountDao;
+import com.jite.hibgen.dao.TUserBizcardDao;
+import com.jite.hibgen.dao.TUserFavoriteJobDao;
+import com.jite.hibgen.dao.TUserMessageTemplateDao;
+import com.jite.hibgen.dao.TUserMessagesDao;
+import com.jite.hibgen.dao.TUserProfileIntendsDao;
+import com.jite.hibgen.model.TAgentAccountUser;
+import com.jite.hibgen.model.THrAccount;
+import com.jite.hibgen.model.THrCompany;
+import com.jite.hibgen.model.THrJobBase;
+import com.jite.hibgen.model.THrResumes;
+import com.jite.hibgen.model.TMentorBase;
+import com.jite.hibgen.model.TOrgActive;
+import com.jite.hibgen.model.TUserAccount;
+import com.jite.hibgen.model.TUserBizcard;
+import com.jite.hibgen.model.TUserFavoriteJob;
+import com.jite.hibgen.model.TUserMessageTemplate;
+import com.jite.hibgen.model.TUserMessages;
+import com.jite.hibgen.model.TUserProfileIntends;
+import com.jite.struts.bean.CommonItem;
+import com.jite.struts.bean.JobInfo;
+import com.jite.struts.bean.JobSearch;
+import com.jite.struts.bean.MailInfo;
+import com.jite.struts.bean.MessageInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.struts.bean.UserJobInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.Constants;
+import com.jite.utils.MailSenderFactory;
+import com.jite.utils.MailSimpleSender;
+import com.jite.utils.SystemPropties;
+import com.jite.utils.ValidateTool;
+
+public class UserJobService {
+
+	@Resource
+	THrResumesDao hrResumesDao;
+	THrJobBaseDao jobBaseDao;
+	THrJobRequireDao jobReqDao;
+	TUserBizcardDao userBizcardDao;
+	TUserMessagesDao messageDao;
+	TUserFavoriteJobDao favoriteDao;
+	THrAccountDao hrDao;
+	TUserAccountDao userAccountDao;
+	TUserProfileIntendsDao intentDao;
+	THrCompanyDao hrCompanyDao;
+	TUserMessageTemplateDao templateDao;
+	TMentorBaseDao mentorBaseDao;
+	TOrgActiveDao activityDao;
+	TAgentAccountUserDao agentAccountUserDao;
+	
+	public TUserMessagesDao getMessageDao() {
+		return messageDao;
+	}
+
+	public void setMessageDao(TUserMessagesDao messageDao) {
+		this.messageDao = messageDao;
+	}
+
+	public THrResumesDao getHrResumesDao() {
+		return hrResumesDao;
+	}
+
+	public void setHrResumesDao(THrResumesDao hrResumesDao) {
+		this.hrResumesDao = hrResumesDao;
+	}
+	
+
+	public THrJobBaseDao getJobBaseDao() {
+		return jobBaseDao;
+	}
+
+	public void setJobBaseDao(THrJobBaseDao jobBaseDao) {
+		this.jobBaseDao = jobBaseDao;
+	}
+
+	public THrJobRequireDao getJobReqDao() {
+		return jobReqDao;
+	}
+
+	public void setJobReqDao(THrJobRequireDao jobReqDao) {
+		this.jobReqDao = jobReqDao;
+	}
+
+	public TUserBizcardDao getUserBizcardDao() {
+		return userBizcardDao;
+	}
+
+	public void setUserBizcardDao(TUserBizcardDao userBizcardDao) {
+		this.userBizcardDao = userBizcardDao;
+	}
+
+	
+	public TUserFavoriteJobDao getFavoriteDao() {
+		return favoriteDao;
+	}
+
+	public void setFavoriteDao(TUserFavoriteJobDao favoriteDao) {
+		this.favoriteDao = favoriteDao;
+	}
+
+	public THrAccountDao getHrDao() {
+		return hrDao;
+	}
+
+	public void setHrDao(THrAccountDao hrDao) {
+		this.hrDao = hrDao;
+	}
+
+	public TUserAccountDao getUserAccountDao() {
+		return userAccountDao;
+	}
+
+	public void setUserAccountDao(TUserAccountDao userAccountDao) {
+		this.userAccountDao = userAccountDao;
+	}
+
+	public TUserProfileIntendsDao getIntentDao() {
+		return intentDao;
+	}
+
+	public void setIntentDao(TUserProfileIntendsDao intentDao) {
+		this.intentDao = intentDao;
+	}
+
+	public THrCompanyDao getHrCompanyDao() {
+		return hrCompanyDao;
+	}
+
+	public void setHrCompanyDao(THrCompanyDao hrCompanyDao) {
+		this.hrCompanyDao = hrCompanyDao;
+	}
+
+	public TUserMessageTemplateDao getTemplateDao() {
+		return templateDao;
+	}
+
+	public void setTemplateDao(TUserMessageTemplateDao templateDao) {
+		this.templateDao = templateDao;
+	}
+	
+	public TMentorBaseDao getMentorBaseDao() {
+		return mentorBaseDao;
+	}
+
+	public void setMentorBaseDao(TMentorBaseDao mentorBaseDao) {
+		this.mentorBaseDao = mentorBaseDao;
+	}
+	
+	public TOrgActiveDao getActivityDao() {
+		return activityDao;
+	}
+
+	public void setActivityDao(TOrgActiveDao activityDao) {
+		this.activityDao = activityDao;
+	}
+
+	public TAgentAccountUserDao getAgentAccountUserDao() {
+		return agentAccountUserDao;
+	}
+
+	public void setAgentAccountUserDao(TAgentAccountUserDao agentAccountUserDao) {
+		this.agentAccountUserDao = agentAccountUserDao;
+	}
+
+	public UserJobInfo applyJob(String userId, String jobId, String companyId) {
+		UserJobInfo returnResult=new UserJobInfo();
+		THrResumes search=new THrResumes();
+		search.setAccountId(Long.valueOf(userId));
+		search.setCompanyId(Long.valueOf(companyId));
+		search.setJobId(Long.valueOf(jobId));
+		List<THrResumes> searchResult=hrResumesDao.findByExample(search);
+		if(searchResult!=null&&searchResult.size()>0){
+			THrResumes theHr=searchResult.get(0);
+			if(theHr.getStatus()!=null&&theHr.getStatus().toString().equals(SystemPropties.getProperties("cfg.user_job_status_applied"))){
+				returnResult.setId("-100");
+			}else{
+				theHr.setStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_status_applied")));
+				hrResumesDao.saveObject(theHr);
+			}
+		}else{
+			search.setStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_status_applied")));
+			search.setCreateDate(new Date());
+			search.setUpdateDate(new Date());
+			search.setHrStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_hr_not_handle")));
+			hrResumesDao.persist(search);
+			returnResult.setId(String.valueOf(search.getId()));
+			returnResult.setStatus(SystemPropties.getProperties("cfg.user_job_status_applied"));
+
+			TAgentAccountUser taau=new TAgentAccountUser();
+			taau.setRegUserId(Long.valueOf(userId));
+			List<TAgentAccountUser> theList=agentAccountUserDao.findByExample(taau);
+			if(theList!=null&&theList.size()>0){
+				taau=theList.get(0);
+			}
+
+			if(taau.getRedPkg3()==null||taau.getRedPkg3()<1){
+				if(taau.getCreateDate()==null){
+					taau.setCreateDate(new Date());
+				}
+				taau.setUpdateDate(new Date());
+				
+				if(Boolean.valueOf(SystemPropties.getProperties("cfg.red_pkg_three_enable"))){
+					taau.setRedPkg3(1);//获得红包
+					taau.setPkg3Date(new Date());
+				}else{
+					taau.setRedPkg3(0);//具备获得红包的条件，但如果系统关闭该红包，将无法获得红包
+				}
+				agentAccountUserDao.persist(taau);
+			}
+			
+			TUserMessageTemplate temSear=new TUserMessageTemplate();
+			temSear.setName("简历投递成功");
+			temSear.setStatus(0);
+			List<TUserMessageTemplate> temResult=templateDao.findByExample(temSear);
+			if(temResult!=null&&temResult.size()>0){
+				String sendMessage=temResult.get(0).getContent();
+				THrCompany theCom=hrCompanyDao.findById(Long.valueOf(companyId));
+				THrJobBase theJob=jobBaseDao.findById(Long.valueOf(jobId));
+				sendMessage=sendMessage.replace("{company_name}", theCom.getName());
+				sendMessage=sendMessage.replace("{job_name}", theJob.getName());
+				sendMessage=sendMessage.replace("{system_server_time}", ValidateTool.format(new Date(), "yyyy-MM-dd"));
+				TUserMessages message=new TUserMessages();
+				message.setToAccountId(Long.valueOf(userId));
+				message.setFromAccountId(0L);
+				message.setContent(sendMessage);
+				message.setCreateDate(new Date());
+				message.setUpdateDate(new Date());
+				message.setReadFlag(0);
+				message.setType(Constants.MESSAGE_TYPE_SYSTEM);
+				message.setJobId(Long.valueOf(jobId));
+				messageDao.persist(message);
+				
+				if(theJob.getMailtoAddress()!=null&&!"".equals(theJob.getMailtoAddress().trim())){
+					TUserBizcard theUser=userBizcardDao.findByAccountId(Long.valueOf(userId)); 
+					String emailTitle="您好，接收到新投递的简历，请尽快处理";
+					String emailContent="";
+					if(theUser!=null&&theUser.getRealName()!=null&&!"".equals(theUser.getRealName())){
+						emailContent=theUser.getRealName()+"于"+ ValidateTool.format(new Date(), "yyyy-MM-dd")+"在易工作平台投递了职位 "+theJob.getName()+",请赶快登录查看吧";
+						
+					}else{
+						emailContent="有人于"+ ValidateTool.format(new Date(), "yyyy-MM-dd")+"在易工作平台投递了职位 "+theJob.getName()+",请赶快登录查看吧";
+					}
+					String[] sendMails=SystemPropties.getProperties("cfg.admin_mail_address").split(",");
+					MailSimpleSender sms = MailSenderFactory.getSender(
+							sendMails[new Random().nextInt(sendMails.length)], SystemPropties.getProperties("cfg.admin_mail_pwd"));
+					MailInfo theMail=new MailInfo();
+					List<String> mailToList=new ArrayList<String>();
+					if(theJob.getMailtoAddress().indexOf(Constants.ITEM_STR_SEPERATER_SPACE)>0){
+						for(String oneMail:theJob.getMailtoAddress().split(Constants.ITEM_STR_SEPERATER_SPACE)){
+							if(oneMail!=null&&!"".equals(oneMail.trim())){
+								mailToList.add(oneMail);
+							}
+						}
+					}else if(theJob.getMailtoAddress().indexOf(Constants.ITEM_STR_SEPERATER)>0){
+						for(String oneMail:theJob.getMailtoAddress().split(Constants.ITEM_STR_SEPERATER)){
+							if(oneMail!=null&&!"".equals(oneMail.trim())){
+								mailToList.add(oneMail);
+							}
+						}						
+					}else{
+						mailToList.add(theJob.getMailtoAddress().trim());
+					}
+					
+					theMail.setSubject(emailTitle);
+	
+					theMail.setContent(ValidateTool.formatToHtml(emailContent));
+	
+					try {
+						if(mailToList.size()>0){
+							sms.send(mailToList, theMail);
+						}
+					} catch (AddressException e) {
+						e.printStackTrace();
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}					
+				}
+			}
+		}
+		return returnResult;
+	}
+
+	public List<UserJobInfo> queryCompanyResumes(String companyId, String jobId,String status,String hrStatus, int pageNo, int pageSize) {
+		List<UserJobInfo> returnList=new ArrayList<UserJobInfo>();
+
+		THrResumes search=new THrResumes();
+		setCompanyResumeSearch(search,companyId,jobId,status,hrStatus);
+		List<THrResumes> searchResult=hrResumesDao.searchByCriteria(pageNo, pageSize,search);
+		for(THrResumes r:searchResult){
+				UserJobInfo one=new UserJobInfo();
+				one.setId(r.getId().toString());
+				one.setCreateDate(r.getCreateDate());
+				one.setStatus(r.getStatus().toString());
+				one.setHrStatus(r.getHrStatus().toString());
+				JobInfo job=new JobInfo();
+				if(r.getJobId()!=null&&r.getJobId()!=0){
+					job.setBase(BeanTrans.getJobInfoFromT(jobBaseDao.findById(r.getJobId())));
+				}
+				UserInfo user=new UserInfo();
+				
+				user.setBizInfo(BeanTrans.getUserBizInfoFromT(userBizcardDao.findByAccountId(r.getAccountId())));
+				user.setUserId(String.valueOf(r.getAccountId()));
+				
+				one.setJob(job);
+				one.setUser(user);
+				
+				returnList.add(one);
+		}
+		
+		return returnList;
+	}
+	
+	public List<CommonItem> queryCompanyJobItems(String companyId, String status,String hrStatus) {
+		List<CommonItem> returnList=new ArrayList<CommonItem>();
+
+		THrResumes search=new THrResumes();
+		search.setCompanyId(Long.valueOf(companyId));
+		search.setStatus(Integer.valueOf(status));
+		if(hrStatus==null||"".equals(hrStatus)){
+			search.setHrStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_hr_not_handle")));
+		}else{
+			search.setHrStatus(Integer.valueOf(hrStatus));
+		}
+		List<Long> searchResult=hrResumesDao.searchJobsByCriteria(search);
+		for(Long jobid:searchResult){
+			if(jobid!=null){
+				THrJobBase thjb=jobBaseDao.findById(jobid);
+				CommonItem one=new CommonItem();
+				one.setId(jobid.toString());
+				one.setName(thjb.getName());
+				returnList.add(one);
+			}
+		}
+		
+		return returnList;
+	}
+
+	//根据求职者的意向推荐工作
+	public List<JobInfo> queryRecommendJob(String userId,int pageNumber,int pageSize) {
+
+		List<JobInfo> returnList=new ArrayList<JobInfo>();
+		
+
+		
+		JobSearch search=new JobSearch();
+		getUserRecommendSearch(userId,search);
+		search.setPageNumber(pageNumber);
+		search.setPageSize(pageSize);
+		
+		List<BigInteger> searchResult=jobBaseDao.searchBySQL(search);
+		for(BigInteger one:searchResult){
+			JobInfo theJob=new JobInfo();
+			THrJobBase thjb=jobBaseDao.findById(one.longValue());
+			theJob.setBase(BeanTrans.getJobInfoFromT(thjb));
+			theJob.setCom(BeanTrans.getFromTCompany(hrCompanyDao.findById(thjb.getCompanyId())));
+			returnList.add(theJob);
+		}
+		
+		return returnList;
+	}
+
+	private void getUserRecommendSearch(String userId, JobSearch search) {
+		//获得用户的求职意向
+		TUserProfileIntends intendSearch=new TUserProfileIntends();
+		intendSearch.setUserId(Long.valueOf(userId));
+		List<TUserProfileIntends> intendList=intentDao.findByExample(intendSearch);
+
+		if(intendList!=null&&intendList.size()>0){//如果有意向,则查询意向相关的职位
+			String sep=SystemPropties.getProperties("cfg.common_seperater");
+
+			StringBuffer intendAreaStr=new StringBuffer();
+			int areaTotal=0;
+			StringBuffer intendWorkTypeStr=new StringBuffer();
+			int workTypeTotal=0;
+			StringBuffer intendLocStr=new StringBuffer();
+			int locTotal=0;
+			
+			for(TUserProfileIntends tupi: intendList){
+				if(tupi.getType()==1){
+					if(areaTotal!=0){
+						intendAreaStr.append("__");
+					}
+					areaTotal++;
+					intendAreaStr.append(
+							tupi.getCommonName()
+							+sep
+							+tupi.getCommonNameRoot()
+							);
+				}else if(tupi.getType()==2){
+					if(workTypeTotal!=0){
+						intendWorkTypeStr.append("__");
+					}
+					workTypeTotal++;
+					intendWorkTypeStr.append(
+							tupi.getCommonName()
+							+sep
+							+tupi.getCommonNameRoot()
+							+sep
+							+tupi.getCommonNameSub()
+							);
+				}else if(tupi.getType()==3){
+					if(locTotal!=0){
+						intendLocStr.append("__");
+					}
+					locTotal++;
+					intendLocStr.append(
+							tupi.getCommonName()
+							+sep
+							+tupi.getCommonNameRoot()
+							+sep
+							+tupi.getCommonNameSub()
+							);
+					
+				}
+			}
+			search.setSearchAreaSep(intendAreaStr.toString());
+			search.setSearchWorkTypeSep(intendWorkTypeStr.toString());
+			search.setSearchLocationSep(intendLocStr.toString());
+		}else{//未设置意向,查询热门职位
+			search.setIsHot(1);
+		}
+
+	}
+
+	public int queryRecommendJobTotalCount(String userId, int pageNumber,
+			int pageSize) {
+		int totalCount=0;
+		JobSearch search=new JobSearch();
+		getUserRecommendSearch(userId,search);
+		totalCount=jobBaseDao.searchBySQLTotal(search);
+		return totalCount;
+	}
+
+	public List<UserJobInfo> queryAppliedJob(String userId, int pageNumber,
+			int pageSize) {
+		List<UserJobInfo> returnList=new ArrayList<UserJobInfo>();
+		THrResumes search=new THrResumes();
+		getUserAppliedSearch(userId,search);
+		List<THrResumes> searchResult=hrResumesDao.findByExample(search);
+		for(THrResumes r:searchResult){
+			UserJobInfo one=new UserJobInfo();
+			one.setId(r.getId().toString());
+			one.setHrStatus(r.getHrStatus().toString());
+			JobInfo job=new JobInfo();
+			job.setBase(BeanTrans.getJobInfoFromT(jobBaseDao.findById(r.getJobId())));
+			job.setCom(BeanTrans.getFromTCompany(hrCompanyDao.findById(job.getBase().getCompanyId())));
+			one.setJob(job);
+			one.setCreateDate(r.getCreateDate());
+			one.setStatus(String.valueOf(r.getStatus()));
+			returnList.add(one);
+		}
+		return returnList;
+	}
+	
+	private void getUserAppliedSearch(String userId, THrResumes search) {
+		search.setAccountId(Long.valueOf(userId));
+		search.setStatus(110);
+	}
+	public int queryAppliedTotalCount(String userId, int pageNumber,
+			int pageSize) {
+		THrResumes search=new THrResumes();
+		getUserAppliedSearch(userId,search);
+		List<THrResumes> searchResult=hrResumesDao.findByExample(search);
+		return searchResult.size();
+	}
+
+	public UserJobInfo addFavorite(String userId, String jobId, String companyId) {
+		UserJobInfo returnResult=new UserJobInfo();
+		TUserFavoriteJob search=new TUserFavoriteJob();
+		search.setAccountId(Long.valueOf(userId));
+		search.setCompanyId(Long.valueOf(companyId));
+		search.setJobId(Long.valueOf(jobId));
+		List<TUserFavoriteJob> searchResult=favoriteDao.findByExample(search);
+		if(searchResult!=null&&searchResult.size()>0){
+			search=searchResult.get(0);
+			search.setStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_status_favorite")));
+			search.setCreateDate(new Date());
+			search.setUpdateDate(new Date());
+			favoriteDao.updateObject(search);
+		}else{
+			search.setStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_status_favorite")));
+			search.setCreateDate(new Date());
+			search.setUpdateDate(new Date());
+			favoriteDao.persist(search);
+		}
+		returnResult.setId(String.valueOf(search.getId()));
+		returnResult.setStatus(SystemPropties.getProperties("cfg.user_job_status_favorite"));
+
+		return returnResult;
+	}
+	
+	public List<UserJobInfo> queryFavoriteJob(String userId, int pageNumber,
+			int pageSize) {
+		List<UserJobInfo> returnList=new ArrayList<UserJobInfo>();
+		
+		TUserFavoriteJob search=new TUserFavoriteJob();
+		getUserFavoriteSearch(userId,search);
+		List<TUserFavoriteJob> tfjList=favoriteDao.findByExample(search);
+		for(TUserFavoriteJob tfj:tfjList){
+			UserJobInfo one=new UserJobInfo();
+			JobInfo job=new JobInfo();
+			THrJobBase thji=jobBaseDao.findById(tfj.getJobId());
+			job.setBase(BeanTrans.getJobInfoFromT(thji));
+			job.setCom(BeanTrans.getFromTCompany(hrCompanyDao.findById(thji.getCompanyId())));
+			one.setJob(job);
+			one.setCreateDate(tfj.getCreateDate());
+			one.setStatus(String.valueOf(tfj.getStatus()));
+			returnList.add(one);			
+			
+		}
+		
+		return returnList;
+	}
+	
+	private void getUserFavoriteSearch(String userId, TUserFavoriteJob search) {
+		search.setAccountId(Long.valueOf(userId));
+		search.setStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_status_favorite")));
+	}
+	
+	public int querFavoriteJobTotalCount(String userId, int pageNumber,
+			int pageSize) {
+		TUserFavoriteJob search=new TUserFavoriteJob();
+		getUserFavoriteSearch(userId,search);
+		return favoriteDao.findByExample(search).size();
+	}
+
+	public UserJobInfo queryAppliedJobId(String userId, String jobId) {
+		UserJobInfo userJobInfo=new UserJobInfo();
+		THrResumes search=new THrResumes();
+		search.setAccountId(Long.valueOf(userId));
+		search.setJobId(Long.valueOf(jobId));
+		List<THrResumes> searchResult=hrResumesDao.findByExample(search);
+		if(searchResult!=null&&searchResult.size()>0){
+			THrResumes ut=searchResult.get(0);
+			userJobInfo.setId(ut.getId().toString());
+			userJobInfo.setStatus(ut.getStatus().toString());
+		}
+		return userJobInfo;
+	}
+
+
+	public UserJobInfo saveHrStatus(String id,String userId, String companyId,
+			String jobId, String hrId,String status, String hrStatus, String sendMessage,
+			String emailAddress,String emailTitle,String emailContent,int messageType) {
+		UserJobInfo result=new UserJobInfo();
+		boolean isDoAddTheHrStatus=false;
+		
+		THrResumes search=new THrResumes();
+		
+		if(id!=null&&!"".equals(id)&&!"0".equals(id)){
+			THrResumes theRe=hrResumesDao.findById(Long.valueOf(id));
+
+			if(status.equals(SystemPropties.getProperties("cfg.user_job_status_hrapplied"))||hrStatus.equals(SystemPropties.getProperties("cfg.user_job_status_hr_meet"))){
+				TUserBizcard theBiz=userBizcardDao.findByAccountId(Long.valueOf(userId));
+				
+				if(theBiz.getEmailAddress()==null||"".equals(theBiz.getEmailAddress().trim())){
+					result.setId("-400");
+					return result;
+				}
+				
+				String[] sendMails=SystemPropties.getProperties("cfg.admin_mail_address").split(",");
+				MailSimpleSender sms = MailSenderFactory.getSender(
+						sendMails[new Random().nextInt(sendMails.length)], SystemPropties.getProperties("cfg.admin_mail_pwd"));
+				MailInfo theMail=new MailInfo();
+				if(emailTitle!=null&&!"".equals(emailTitle)){
+					theMail.setSubject(emailTitle);
+				}else{
+					theMail.setSubject("来自易工作的面试通知");
+				}
+				if(emailContent!=null&&!"".equals(emailContent)){
+					theMail.setContent(ValidateTool.formatToHtml(emailContent));
+				}else{
+					theMail.setContent("有企业通知您面试,请登录 www.easyjob.com 查看");
+				}
+				try {
+					sms.send(theBiz.getEmailAddress(), theMail);
+					
+					sendMessage=emailTitle+"\n"+emailContent;
+					
+				} catch (AddressException e) {
+					e.printStackTrace();
+					result.setId("-410");
+					return result;
+					
+				} catch (MessagingException e) {
+					e.printStackTrace();
+					result.setId("-410");
+					return result;
+				}
+				
+			}
+			theRe.setAccountId(Long.valueOf(userId));
+			theRe.setCompanyId(Long.valueOf(companyId));
+			if(status!=null&&!"".equals(status)){
+				theRe.setStatus(Integer.valueOf(status));
+			}
+			theRe.setHrStatus(Integer.valueOf(hrStatus));
+			theRe.setJobId(Long.valueOf(jobId));
+			theRe.setUpdateDate(new Date());
+			hrResumesDao.updateObject(theRe);
+			result.setId(String.valueOf(theRe.getId()));
+
+		}else{
+			isDoAddTheHrStatus=true;
+			
+		}
+		if(isDoAddTheHrStatus){
+			search.setAccountId(Long.valueOf(userId));
+			search.setCompanyId(Long.valueOf(companyId));
+			search.setCreateDate(new Date());
+			search.setUpdateDate(new Date());
+			search.setHrId(Long.valueOf(hrId));
+			search.setStatus(Integer.valueOf(status));
+			search.setHrStatus(Integer.valueOf(hrStatus));
+			search.setJobId(Long.valueOf(jobId));
+			hrResumesDao.persist(search);
+			result.setId(String.valueOf(search.getId()));
+			
+		}		
+		if(sendMessage!=null&&!sendMessage.equals("")){
+			TUserMessages message=new TUserMessages();
+			message.setToAccountId(Long.valueOf(userId));
+			message.setFromAccountId(Long.valueOf(hrId));
+			message.setContent(sendMessage);
+			message.setCreateDate(new Date());
+			message.setUpdateDate(new Date());
+			message.setReadFlag(0);
+			message.setType(messageType);
+			message.setJobId(Long.valueOf(jobId));
+			messageDao.persist(message);
+		}
+		return result;
+	}
+
+	public List<MessageInfo> queryUsersMessage(String userId,int userType,String readFlag,int pageNumber,int pageSize) {
+		List<MessageInfo> retrunList=new ArrayList<MessageInfo>();
+		TUserMessages search=new TUserMessages();
+		if(userType==2){
+			THrAccount theHr=hrDao.findByAccountId(Long.valueOf(userId));
+			if(theHr.getIsMain()!=null&&theHr.getIsMain()==1){
+				search.setToAccountId(Long.valueOf(userId));
+			}else{
+				THrAccount searchHrs=new THrAccount();
+				searchHrs.setCompanyId(theHr.getCompanyId());
+				List<THrAccount> theComHrs=hrDao.findByExample(searchHrs);
+				for(THrAccount oneHr:theComHrs){
+					if(oneHr.getIsMain()!=null&&oneHr.getIsMain()==1){
+						search.setToAccountId(oneHr.getHrAccountId());
+					}
+				}
+			}
+			search.setReplyId(0L);
+			search.setReadFlag(Integer.valueOf(readFlag));
+			search.setType(Constants.MESSAGE_TYPE_COMPANY);
+			if(pageNumber==0){
+				pageNumber=1;
+			}
+			if(pageSize==0){
+				pageSize=10;
+			}
+			List<TUserMessages> userMs=messageDao.searchByCriteria(pageNumber, pageSize, search);
+			for(TUserMessages m:userMs){
+				MessageInfo theMessageInfo=BeanTrans.getMessageInfoFromT(m);
+				TUserMessages followReplySearch=new TUserMessages();
+				followReplySearch.setReplyId(m.getId());
+				List<TUserMessages> replyList=messageDao.findByExample(followReplySearch);
+				if(replyList!=null&&replyList.size()>0){
+					theMessageInfo.setFollowReply(BeanTrans.getMessageInfoFromT(replyList.get(0)));
+				}
+				if(m.getFromAccountId()!=null&&m.getFromAccountId()>0){
+					theMessageInfo.setFromUser(BeanTrans.getFromTUserAccount(userAccountDao.findById(m.getFromAccountId())));
+				}
+				if(m.getJobId()!=null&&m.getJobId()>0){
+					JobInfo relatedJob=new JobInfo();
+					relatedJob.setBase(BeanTrans.getJobInfoFromT(jobBaseDao.findById(m.getJobId())));
+					theMessageInfo.setRelatedJob(relatedJob);
+				}
+				retrunList.add(theMessageInfo);
+			}
+		}else{
+			search.setToAccountId(Long.valueOf(userId));
+			List<TUserMessages> userMs=messageDao.searchByCriteria(pageNumber, pageSize, search);
+			for(TUserMessages m:userMs){
+				MessageInfo theMessageInfo=BeanTrans.getMessageInfoFromT(m);
+				if(m.getReplyId()!=null&&m.getReplyId()!=0){
+					theMessageInfo.setReplyTo(BeanTrans.getMessageInfoFromT(messageDao.findById(m.getReplyId())));
+				}
+				
+				if(m.getType()==0){//系统类型,不用加载来源
+					
+				}else if(m.getType()==1){//企业类型,需要加载企业名称
+					TUserAccount theHrUser=userAccountDao.findById(m.getFromAccountId());
+					UserInfo theHrInfo=BeanTrans.getFromTUserAccount(theHrUser);
+					THrAccount theHr=hrDao.findByAccountId(theHrUser.getId());
+					if(theHr!=null){
+						THrCompany comT=hrCompanyDao.findById(theHr.getCompanyId());
+						if(comT!=null){
+							theHrInfo.setCompanyInfo(BeanTrans.getFromTCompany(comT));
+						}
+					}
+					theMessageInfo.setFromUser(theHrInfo);
+					
+				}else if(m.getType()==2){//活动类型,TODO 加载活动名称
+					TOrgActive aT=activityDao.findById(m.getJobId());
+					
+					UserInfo theActivityInfo=new UserInfo();
+					if(aT!=null){
+						theActivityInfo.setUsername(aT.getName());
+						theActivityInfo.setUserId(aT.getId().toString());
+					}
+					theMessageInfo.setFromUser(theActivityInfo);
+				}else if(m.getType()==3){//导师类型,需要加载导师名称
+					TMentorBase mT=mentorBaseDao.findById(m.getFromAccountId());
+					UserInfo theMentorInfo=new UserInfo();
+					if(mT!=null){
+						theMentorInfo.setUsername(mT.getName());
+						theMentorInfo.setUserId(mT.getId().toString());
+					}else{
+						theMentorInfo.setUsername("导师");
+					}
+					theMessageInfo.setFromUser(theMentorInfo);
+				}
+				
+				retrunList.add(theMessageInfo);
+			}
+		}
+		return retrunList;
+	}
+
+	public int queryUsersMessageTotal(String userId,int userType,String readFlag) {
+		TUserMessages search=new TUserMessages();
+		if(userType==2){
+			THrAccount theHr=hrDao.findByAccountId(Long.valueOf(userId));
+			if(theHr.getIsMain()!=null&&theHr.getIsMain()==1){
+				search.setToAccountId(Long.valueOf(userId));
+			}else{
+				THrAccount searchHrs=new THrAccount();
+				searchHrs.setCompanyId(theHr.getCompanyId());
+				List<THrAccount> theComHrs=hrDao.findByExample(searchHrs);
+				for(THrAccount oneHr:theComHrs){
+					if(oneHr.getIsMain()!=null&&oneHr.getIsMain()==1){
+						search.setToAccountId(oneHr.getHrAccountId());
+					}
+				}
+			}			
+			search.setReplyId(0L);
+			search.setReadFlag(Integer.valueOf(readFlag));
+			search.setType(Constants.MESSAGE_TYPE_COMPANY);
+			return messageDao.searchByCriteriaTotal( search);
+		}else{
+			search.setToAccountId(Long.valueOf(userId));
+			return messageDao.searchByCriteriaTotal(search);
+		}
+	}
+	
+	public void readMessageIds(String readMessageIds) {
+		String[] dbIds=readMessageIds.split(SystemPropties.getProperties("cfg.common_seperater"));
+		for(String id:dbIds){
+			TUserMessages tu=messageDao.findById(Long.valueOf(id));
+			tu.setReadFlag(Integer.valueOf(SystemPropties.getProperties("cfg.user_message_readflag_read")));
+			tu.setUpdateDate(new Date());
+			messageDao.updateObject(tu);
+		}
+	}
+
+	public List<UserJobInfo> getHrStatusResume(String hrId, String companyId,
+			String hrStatus, int pageNumber, int pageSize) {
+		List<UserJobInfo> returnList=new ArrayList<UserJobInfo>();
+		THrResumes search=new THrResumes();
+		getHrStatusResumeSearch(hrId,companyId,hrStatus,search);
+		List<THrResumes> searchResult=hrResumesDao.findByExample(search);
+		for(THrResumes r:searchResult){
+			UserJobInfo one=new UserJobInfo();
+			JobInfo job=new JobInfo();
+			UserInfo user=new UserInfo();
+			
+			if(r.getJobId()>0){
+				job.setBase(BeanTrans.getJobInfoFromT(jobBaseDao.findById(r.getJobId())));
+			}
+			
+			if(r.getAccountId()>0){
+				user.setBizInfo(BeanTrans.getUserBizInfoFromT(userBizcardDao.findByAccountId(r.getAccountId())));
+				user.setUserId(r.getAccountId().toString());
+			}
+			
+			one.setJob(job);
+			one.setUser(user);
+			
+			one.setCreateDate(r.getCreateDate());
+			one.setStatus(r.getStatus().toString());
+			one.setHrStatus(r.getHrStatus().toString());
+			returnList.add(one);
+		}
+		return returnList;
+	}
+
+	private void getHrStatusResumeSearch(String hrId, String companyId,
+			String hrStatus, THrResumes search) {
+		search.setHrId(Long.valueOf(hrId));
+		search.setCompanyId(Long.valueOf(companyId));
+		search.setHrStatus(Integer.valueOf(hrStatus));
+	}
+
+	public int getHrStatusResumeTotalCount(String hrId, String companyId,
+			String hrStatus) {
+		THrResumes search=new THrResumes();
+		getHrStatusResumeSearch(hrId,companyId,hrStatus,search);
+		return hrResumesDao.findByExample(search).size();
+	}
+
+	public UserJobInfo queryFavoriteJobId(String userId, String jobId) {
+		UserJobInfo userJobInfo=new UserJobInfo();
+		TUserFavoriteJob search=new TUserFavoriteJob();
+		search.setAccountId(Long.valueOf(userId));
+		search.setJobId(Long.valueOf(jobId));
+		List<TUserFavoriteJob> searchResult=favoriteDao.findByExample(search);
+		if(searchResult!=null&&searchResult.size()>0){
+			TUserFavoriteJob ut=searchResult.get(0);
+			userJobInfo.setStatus(ut.getStatus().toString());
+			userJobInfo.setId(ut.getId().toString());
+		}
+		return userJobInfo;
+	}
+
+	public UserJobInfo deleteFavoriteJobById(String userId,String jobId) {
+		UserJobInfo userJobInfo=new UserJobInfo();
+		TUserFavoriteJob search=new TUserFavoriteJob();
+		search.setAccountId(Long.valueOf(userId));
+		search.setJobId(Long.valueOf(jobId));
+		List<TUserFavoriteJob> searchResult=favoriteDao.findByExample(search);
+		for(TUserFavoriteJob tub:searchResult){
+			tub.setStatus(9);
+			tub.setUpdateDate(new Date());
+			favoriteDao.updateObject(tub);
+			userJobInfo.setStatus("9");
+		}
+		return userJobInfo;
+	}
+
+	public UserJobInfo setUserJob(String id, String jobId) {
+		UserJobInfo result=new UserJobInfo();
+		
+		if(id!=null&&!"".equals(id)&&!"0".equals(id)){
+			THrResumes theRe=hrResumesDao.findById(Long.valueOf(id));
+			theRe.setJobId(Long.valueOf(jobId));
+			hrResumesDao.updateObject(theRe);
+			result.setId(id);
+		}
+		return result;
+	}
+
+	public void sentMessageToCompany(String userId, String jobId,String companyId,
+			String sendMessage) {
+
+		THrAccount hrSearch=new THrAccount();
+		hrSearch.setCompanyId(Long.valueOf(companyId));
+		List<THrAccount> hrList=hrDao.findByExample(hrSearch);
+		
+		for(THrAccount tha:hrList){
+			if(tha.getIsMain()!=null&&tha.getIsMain()==1){//TODO 未来有可能改成每个HR都要收到信息
+				TUserMessages newMessage=new TUserMessages();
+				newMessage.setContent(sendMessage);
+				newMessage.setFromAccountId(Long.valueOf(userId));
+				newMessage.setToAccountId(tha.getHrAccountId());
+				if(jobId!=null&&!"".equals(jobId.trim())){
+					newMessage.setJobId(Long.valueOf(jobId));
+				}
+				newMessage.setType(Constants.MESSAGE_TYPE_COMPANY);
+				newMessage.setReadFlag(0);
+				newMessage.setReplyId(0L);
+				newMessage.setCreateDate(new Date());
+				newMessage.setUpdateDate(new Date());
+				messageDao.persist(newMessage);
+			}
+		}
+		
+	}
+
+	public void sentMessageToMentor(String userId, String mentorId,
+			String sendMessage) {
+				TUserMessages newMessage=new TUserMessages();
+				newMessage.setContent(sendMessage);
+				newMessage.setFromAccountId(Long.valueOf(userId));
+				newMessage.setToAccountId(Long.valueOf(mentorId));
+				newMessage.setType(Constants.MESSAGE_TYPE_MENTOR);
+				newMessage.setReadFlag(0);
+				newMessage.setReplyId(0L);
+				newMessage.setCreateDate(new Date());
+				newMessage.setUpdateDate(new Date());
+				messageDao.persist(newMessage);
+		
+	}	
+	public void replyUserMessage(String hrId, String readMessageIds,
+			String sendMessage) {
+		if(readMessageIds!=null){
+			TUserMessages tum=messageDao.findById(Long.valueOf(readMessageIds));
+			
+			TUserMessages newMessage=new TUserMessages();
+			newMessage.setContent(sendMessage);
+			newMessage.setFromAccountId(Long.valueOf(hrId));
+			newMessage.setToAccountId(tum.getFromAccountId());
+			if(tum.getJobId()!=null&&tum.getJobId()>0){
+				newMessage.setJobId(tum.getJobId());
+			}else{
+				newMessage.setJobId(0L);
+			}
+			newMessage.setType(Constants.MESSAGE_TYPE_COMPANY);
+			newMessage.setReadFlag(0);
+			newMessage.setCreateDate(new Date());
+			newMessage.setUpdateDate(new Date());
+			newMessage.setReplyId(tum.getId());
+			messageDao.persist(newMessage);
+			
+			tum.setReadFlag(1);//已回复
+			messageDao.updateObject(tum);//修改已回复状态
+		}
+	}
+
+	private void setCompanyResumeSearch(THrResumes search,String companyId, String jobId,String status,String hrStatus){
+		search.setCompanyId(Long.valueOf(companyId));
+		search.setStatus(Integer.valueOf(status));
+		if(hrStatus==null||"".equals(hrStatus)){
+			search.setHrStatus(Integer.valueOf(SystemPropties.getProperties("cfg.user_job_hr_not_handle")));
+		}else{
+			search.setHrStatus(Integer.valueOf(hrStatus));
+		}
+		if(jobId!=null&&!"".equals(jobId)){
+			search.setJobId(Long.valueOf(jobId));
+		}		
+	}
+	public int queryCompanyResumesTotal(String companyId, String jobId,String status,String hrStatus){
+		THrResumes search=new THrResumes();
+		setCompanyResumeSearch(search,companyId,jobId,status,hrStatus);
+		return hrResumesDao.searchByCriteriaTotal(search);
+	}
+	
+	public int queryCompanyResumesTotal(String companyId){
+
+		return hrResumesDao.searchByCriteriaNotTotal(Long.valueOf(companyId));
+	}
+	
+	public MessageInfo queryMeetMessageByUserJobId(String userId, String jobId) {
+		MessageInfo rt=new MessageInfo(); 
+		TUserMessages search=new TUserMessages();
+		search.setToAccountId(Long.valueOf(userId));
+		search.setJobId(Long.valueOf(jobId));
+		List<TUserMessages> userMs=messageDao.searchByCriteria(1, 10, search);
+		for(TUserMessages oneMs:userMs){
+			if(oneMs.getFromAccountId()>0&&oneMs.getType()==1){
+				rt=BeanTrans.getMessageInfoFromT(oneMs);
+			}
+		}
+		return rt;
+	}	
+	
+}

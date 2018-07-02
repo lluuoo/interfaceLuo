@@ -1,0 +1,48 @@
+package com.jite.struts.action;
+
+import java.util.List;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.HrCompanyService;
+import com.jite.struts.bean.MediaInfo;
+import com.jite.utils.SystemPropties;
+
+public class MediasAction extends BaseAction{
+	
+	private static final long serialVersionUID = -7944423709546354810L;
+	
+	private HrCompanyService hrCompanyService;
+	
+	
+	
+	public HrCompanyService getHrCompanyService() {
+		return hrCompanyService;
+	}
+
+
+
+	public void setHrCompanyService(HrCompanyService hrCompanyService) {
+		this.hrCompanyService = hrCompanyService;
+	}
+
+
+
+	public void queryHotPosition(){
+		returnJson=new JSONObject();
+		if(hrCompanyService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");	
+		}
+		List<MediaInfo> MediaHotPosition=hrCompanyService.queryAllHotPosition();
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("hotLinkList", MediaHotPosition);
+
+		returnJsonStr(returnJson.toString());		
+	}
+
+}

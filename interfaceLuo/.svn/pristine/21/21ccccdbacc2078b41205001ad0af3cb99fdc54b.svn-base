@@ -1,0 +1,29 @@
+package com.jite.struts.bean;
+
+import java.util.List;
+
+public class AreaRootInfo extends PageInfo{
+	private String rootName;
+	private List<HrCompanyInfo> companyList;
+	
+	public AreaRootInfo() {
+	}
+
+	public String getRootName() {
+		return rootName;
+	}
+
+	public void setRootName(String rootName) {
+		this.rootName = rootName;
+	}
+
+	public List<HrCompanyInfo> getCompanyList() {
+		return companyList;
+	}
+
+	public void setCompanyList(List<HrCompanyInfo> companyList) {
+		this.companyList = companyList;
+	}
+
+
+}

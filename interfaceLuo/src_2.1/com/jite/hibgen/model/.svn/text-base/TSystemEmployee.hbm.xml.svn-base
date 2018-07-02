@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-4-12 12:49:13 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TSystemEmployee" table="t_system_employee" catalog="qch">
+        <id name="employeeId" type="java.lang.Long">
+            <column name="employee_id" />
+            <generator class="identity" />
+        </id>
+        <property name="departmentId" type="java.lang.Long">
+            <column name="department_id" />
+        </property>
+        <property name="employeeName" type="string">
+            <column name="employee_name" length="50" />
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="50" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="100" />
+        </property>
+        <property name="sex" type="string">
+            <column name="sex" length="2" />
+        </property>
+        <property name="age" type="java.lang.Integer">
+            <column name="age" />
+        </property>
+        <property name="address" type="string">
+            <column name="address" length="50" />
+        </property>
+        <property name="creatorId" type="java.lang.Long">
+            <column name="creator_id" />
+        </property>
+        <property name="createdDate" type="timestamp">
+            <column name="created_date" length="19" />
+        </property>
+        <property name="employeeType" type="string">
+            <column name="employee_type" length="2" />
+        </property>
+        <property name="contactCompanyName" type="string">
+            <column name="contact_company_name" length="100" />
+        </property>
+        <property name="contactDepartment" type="string">
+            <column name="contact_department" length="100" />
+        </property>
+        <property name="empCustId" type="java.lang.Long">
+            <column name="emp_cust_id" />
+        </property>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+        <property name="contactNumber" type="string">
+            <column name="contact_number" length="50" />
+        </property>
+        <property name="qq" type="string">
+            <column name="qq" length="50" />
+        </property>
+        <property name="imageName" type="string">
+            <column name="image_name" length="50" />
+        </property>
+        <property name="imageUrl" type="string">
+            <column name="image_url" length="100" />
+        </property>
+        <property name="signature" type="string">
+            <column name="signature" length="100" />
+        </property>
+        <property name="msn" type="string">
+            <column name="msn" length="50" />
+        </property>
+        <property name="state" type="string">
+            <column name="state" length="2" />
+        </property>
+        <property name="recordLostTime" type="timestamp">
+            <column name="record_lost_time" length="19" />
+        </property>
+        <property name="authShowSubemp" type="string">
+            <column name="auth_show_subemp" length="2" />
+        </property>
+        <property name="birthday" type="timestamp">
+            <column name="birthday" length="19" />
+        </property>
+        <property name="duty" type="string">
+            <column name="duty" length="50" />
+        </property>
+        <property name="remark" type="string">
+            <column name="remark" length="200" />
+        </property>
+        <property name="englishName" type="string">
+            <column name="english_name" length="50" />
+        </property>
+        <property name="isEmail" type="string">
+            <column name="is_email" length="2" />
+        </property>
+    </class>
+</hibernate-mapping>

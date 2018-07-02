@@ -1,0 +1,575 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+import com.jite.struts.bean.JobSearch;
+import com.jite.utils.SystemPropties;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class THrJobBase.
+ * 
+ * @see com.jite.hibgen.dao.THrJobBase
+ * @author Hibernate Tools
+ */
+public class THrJobBaseDao extends BaseDao<THrJobBase> {
+
+	private static final Log log = LogFactory.getLog(THrJobBaseDao.class);
+
+	public void persist(THrJobBase transientInstance) {
+		log.debug("persisting THrJobBase instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(THrJobBase instance) {
+		log.debug("attaching dirty THrJobBase instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(THrJobBase instance) {
+		log.debug("attaching clean THrJobBase instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(THrJobBase persistentInstance) {
+		log.debug("deleting THrJobBase instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public THrJobBase merge(THrJobBase detachedInstance) {
+		log.debug("merging THrJobBase instance");
+		try {
+			THrJobBase result = (THrJobBase) getHibernateTemplate().merge(
+					detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public THrJobBase findById(java.lang.Long id) {
+		log.debug("getting THrJobBase instance with id: " + id);
+		try {
+			THrJobBase instance = (THrJobBase) getHibernateTemplate().get(
+					"com.jite.hibgen.model.THrJobBase", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<THrJobBase> findByExample(THrJobBase instance) {
+		log.debug("finding THrJobBase instance by example");
+		try {
+			List<THrJobBase> results = (List<THrJobBase>) getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.THrJobBase")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<THrJobBase> findByCriteria(THrJobBase search,int pageNo,int pageSize) {
+		log.debug("finding THrJobBase instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(THrJobBase.class);
+			if(search.getCompanyId()!=0){
+				criteria.add(Restrictions.eq("companyId", search.getCompanyId()));
+			}
+			if(search.getStatus()!=null){
+				criteria.add(Restrictions.eq("status", search.getStatus()));
+			}else{
+				criteria.add(Restrictions.ne("status", "9"));
+			}
+			if(search.getWorkTypeRoot()!=null){
+				criteria.add(Restrictions.eq("workTypeRoot", search.getWorkTypeRoot()));
+			}
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  			
+			List<THrJobBase> results = (List<THrJobBase>) 
+					criteria.list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public int findByCriteriaTotal(THrJobBase search) {
+		log.debug("finding THrJobBase instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(THrJobBase.class);
+			if(search.getCompanyId()!=0){
+				criteria.add(Restrictions.eq("companyId", search.getCompanyId()));
+			}
+			if(search.getStatus()!=null){
+				criteria.add(Restrictions.eq("status", search.getStatus()));
+			}else{
+				criteria.add(Restrictions.ne("status", "0"));
+			}
+			if(search.getWorkTypeRoot()!=null){
+				criteria.add(Restrictions.eq("workTypeRoot", search.getWorkTypeRoot()));
+			}
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate")); 			
+			List<THrJobBase> results = (List<THrJobBase>) 
+					criteria.list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results.size();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	
+	public List<THrJobBase> searchByCriteria(THrJobBase search) {
+		log.debug("search THrJobBase instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(THrJobBase.class);
+
+			setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate"));
+			List<THrJobBase> results = (List<THrJobBase>) 
+					criteria.list();
+			log.debug("search by criteria successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("search by criteria failed", re);
+			throw re;
+		}
+	}
+	
+	public List<THrJobBase> searchByCriteria(int pageNo, int pageSize,THrJobBase search) {
+		log.debug("search THrJobBase instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(THrJobBase.class);
+			setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+			
+			List<THrJobBase> results = (List<THrJobBase>) 
+					criteria.list();
+			log.debug("search by criteria successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("search by criteria failed", re);
+			throw re;
+		}
+	}
+
+	public int searchByCriteriaTotal(THrJobBase search) {
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(THrJobBase.class);
+
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());
+	}
+	
+	public void setCritieaByAdvanceSearch(Criteria criteria,THrJobBase search ){
+		if(null!=search.getName()&&!"".equals(search.getName())){
+			criteria.add(Restrictions.like("name", search.getName(),MatchMode.ANYWHERE));
+		}
+		if(null!=search.getCompanyId()&&0!=search.getCompanyId()){
+			criteria.add(Restrictions.eq("companyId", search.getCompanyId()));
+		}
+		if(search.getStatus()!=null){
+			criteria.add(Restrictions.eq("status", search.getStatus()));
+		}else{
+			criteria.add(Restrictions.eq("status", "1"));//必须为证在招聘状态的工作		
+		}
+		if(search.getWorkTypeRoot()!=null){
+			criteria.add(Restrictions.eq("workTypeRoot", search.getWorkTypeRoot()));
+		}
+		if(search.getCharType()!=null){
+			criteria.add(Restrictions.eq("charType", search.getCharType()));
+		}
+		if(search.getWestplanFlag()!=null){
+			criteria.add(Restrictions.eq("westplanFlag", search.getWestplanFlag()));
+		}
+				
+	}
+
+	private String getSQLFromSearch(JobSearch jobSearch){
+		StringBuffer sql=new StringBuffer("select thjb.id  from  t_hr_job_base thjb "
+				  +"left join t_hr_company thc on thjb.company_id=thc.id "
+				  +"left join t_hr_company_areas tca on thc.id=tca.company_id "
+				  +"where thjb.status=1  ");
+		if(jobSearch.getSearchAreaRoot()!=null&&!"".equals(jobSearch.getSearchAreaRoot())){
+			sql.append(" and (tca.area_name_root like '%"+jobSearch.getSearchAreaRoot()+"%' ) ");
+		}
+		if(jobSearch.getSearchWorkTypeRoot()!=null&&!"".equals(jobSearch.getSearchWorkTypeRoot())){
+			sql.append(" and (thjb.work_type_root like '%"+jobSearch.getSearchWorkTypeRoot()+"%' ) ");
+		}
+		if(jobSearch.getSearchLocation()!=null&&!"".equals(jobSearch.getSearchLocation())){
+			sql.append(" and (thjb.location like '%"+jobSearch.getSearchLocation()+"%' ) ");
+		}
+		if(jobSearch.getSearchKey()!=null&&!"".equals(jobSearch.getSearchKey())){
+			if(jobSearch.getSearchKeyType()==null||"".equals(jobSearch.getSearchKeyType())){
+				sql.append(" and (thc.name like '%"+jobSearch.getSearchKey()
+					+"%' or thjb.name like '%"+jobSearch.getSearchKey()
+					+"%' or thc.short_name like '%"+jobSearch.getSearchKey()
+					+"%' or thjb.description like '%"+jobSearch.getSearchKey()+"%' ) ");
+			}else if("name".equals(jobSearch.getSearchKeyType())){
+				sql.append(" and thjb.name like '%"+jobSearch.getSearchKey()+"%'");
+			}else if("companyName".equalsIgnoreCase(jobSearch.getSearchKeyType())){
+				sql.append(" and (thc.name like '%"+jobSearch.getSearchKey()+"%' or thc.short_name like '%"+jobSearch.getSearchKey()+"%')");
+			}else if("description".equalsIgnoreCase(jobSearch.getSearchKeyType())){
+				sql.append(" and thjb.description like '%"+jobSearch.getSearchKey()+"%'");
+			}
+		}
+		if(jobSearch.getSearchwestplanFlag()!=null&&jobSearch.getSearchwestplanFlag()==1){
+			sql.append(" and thjb.westplan_flag =1 ");
+		}		
+		if(jobSearch.getSearchCompanyType()!=null&&!"".equals(jobSearch.getSearchCompanyType())){
+			sql.append(" and (thc.type like '%"+jobSearch.getSearchCompanyType()+"%' ) ");
+		}		
+
+		if(jobSearch.getIsHot()!=null&&jobSearch.getIsHot()==1){
+			sql.append(" and thjb.is_hot =1");
+		}
+		
+		if(jobSearch.getSearchAreaSep()!=null&&!"".equals(jobSearch.getSearchAreaSep())){
+			if(jobSearch.getSearchAreaSep().indexOf("__")>=0){
+				appendMultArea(sql,jobSearch.getSearchAreaSep());
+			}else{
+				appendOneArea(sql,jobSearch.getSearchAreaSep());
+			}
+
+		}
+		if(jobSearch.getSearchWorkTypeSep()!=null&&!"".equals(jobSearch.getSearchWorkTypeSep())){
+			if(jobSearch.getSearchWorkTypeSep().indexOf("__")>=0){
+				appendMultWorkType(sql,jobSearch.getSearchWorkTypeSep());
+			}else{
+				appendOneWorkType(sql,jobSearch.getSearchWorkTypeSep());
+			}			
+		}
+		if(jobSearch.getSearchLocationSep()!=null&&!"".equals(jobSearch.getSearchLocationSep())){
+			if(jobSearch.getSearchLocationSep().indexOf("__")>=0){
+				appendMultLocation(sql,jobSearch.getSearchLocationSep());
+			}else{
+				appendOneLocation(sql,jobSearch.getSearchLocationSep());
+			}			
+			
+		}
+		
+		sql.append(" order by thjb.update_date desc ");
+		
+		return sql.toString();		
+	}
+	
+	private void appendOneLocation(StringBuffer sql, String oneIntent) {
+		if(oneIntent!=null&&!"".equals(oneIntent)){
+			String[] items=oneIntent.split(SystemPropties.getProperties("cfg.common_seperater"));
+			
+			if(items.length==3){
+				sql.append(" and (");
+				if(items[0]!=null&&items[0].equals(items[1])&&items[0].equals(items[2])){
+					sql.append(" thjb.location like '%"+items[1]+"%'  ");
+				}else if(items[0]!=null&&items[0].equals(items[2])){
+					sql.append(" thjb.location like '%"+items[2]+"%'  ");
+				}else{
+					if(items[0]!=null&&!"".equals(items[0])){
+						if("市辖区".equals(items[0])){
+							sql.append(" thjb.location like '%"+items[2]+"%'  ");
+						}else{	
+							sql.append(" thjb.location like '%"+items[2]+" "+items[0]+"%'  ");
+						}
+					}
+				}
+				sql.append(")");
+			}
+
+		}		
+	}
+
+	private void appendMultLocation(StringBuffer sql, String searchLocationSep) {
+		String[] locs=searchLocationSep.split("__");
+		int condLength=locs.length;
+
+		int theIndex=0;
+		sql.append(" and (");
+		for(String oneIntent:locs){
+			if(oneIntent!=null&&!"".equals(oneIntent)){
+				theIndex++;
+
+				String[] items=oneIntent.split(SystemPropties.getProperties("cfg.common_seperater"));
+				if(items.length==3){
+					sql.append(" ( ");
+					if(items[0]!=null&&items[0].equals(items[1])&&items[0].equals(items[2])){
+						sql.append(" thjb.location like '%"+items[1]+"%'  ");
+					}else if(items[0]!=null&&items[0].equals(items[2])){
+						sql.append(" thjb.location like '%"+items[2]+"%'  ");
+					}else{
+						if(items[0]!=null&&!"".equals(items[0])){
+							if("市辖区".equals(items[0])){
+								sql.append(" thjb.location like '%"+items[1]+"%'  ");
+							}else{
+								sql.append(" thjb.location like '%"+items[2]+" "+items[0]+"%'  ");
+							}
+						}
+					}
+					
+					if(theIndex==condLength){
+						sql.append(" ) ");
+					}else{
+						sql.append(" ) or ");
+					}					
+				}
+			}
+		}
+		sql.append(")");
+				
+	}
+
+	private void appendOneWorkType(StringBuffer sql, String oneIntent) {
+		if(oneIntent!=null&&!"".equals(oneIntent)){
+			String[] items=oneIntent.split(SystemPropties.getProperties("cfg.common_seperater"));
+			if(items.length==3){
+				sql.append(" and (");
+				
+				if(items[0]!=null&&items[0].equals(items[1])&&items[0].equals(items[2])){
+					sql.append(" thjb.work_type_root ='"+items[1]+"'  ");
+				}else if(items[0]!=null&&items[0].equals(items[2])){
+					sql.append(" thjb.work_type_root ='"+items[1]+"' and thjb.work_type_sub ='"+items[2]+"'  ");
+				}else{
+					boolean addedZero=false;
+					if(items[0]!=null&&!"".equals(items[0])){
+						sql.append(" thjb.work_type ='"+items[0]+"'  ");
+						addedZero=true;
+					}
+					if(items[1]!=null&&!"".equals(items[1])){
+						if(addedZero){
+							sql.append(" and ");
+						}
+						sql.append(" thjb.work_type_root ='"+items[1]+"'  ");
+					}
+					if(items[2]!=null&&!"".equals(items[2])){
+						if(addedZero){
+							sql.append(" and ");
+						}
+						sql.append(" thjb.work_type_sub ='"+items[2]+"'  ");
+					}					
+				}
+				sql.append(")");
+			}
+		}		
+	}
+
+	private void appendMultWorkType(StringBuffer sql, String searchWorkTypeSep) {
+		String[] workTypes=searchWorkTypeSep.split("__");
+		int condLength=workTypes.length;
+
+		int theIndex=0;
+		sql.append(" and (");
+		for(String oneIntent:workTypes){
+			if(oneIntent!=null&&!"".equals(oneIntent)){
+				theIndex++;
+
+				String[] items=oneIntent.split(SystemPropties.getProperties("cfg.common_seperater"));
+				if(items.length==3){
+					sql.append(" ( ");
+					
+					if(items[0]!=null&&items[0].equals(items[1])&&items[0].equals(items[2])){
+						sql.append(" thjb.work_type_root ='"+items[1]+"'  ");
+					}else if(items[0]!=null&&items[0].equals(items[2])){
+						sql.append(" thjb.work_type_root ='"+items[1]+"' and thjb.work_type_sub ='"+items[2]+"'  ");
+					}else{					
+						boolean addedZero=false;
+						if(items[0]!=null&&!"".equals(items[0])){
+							sql.append(" thjb.work_type ='"+items[0]+"'  ");
+							addedZero=true;
+						}
+						if(items[1]!=null&&!"".equals(items[1])){
+							if(addedZero){
+								sql.append(" and ");
+							}
+							sql.append(" thjb.work_type_root ='"+items[1]+"'  ");
+						}
+						if(items[2]!=null&&!"".equals(items[2])){
+							if(addedZero){
+								sql.append(" and ");
+							}
+							sql.append(" thjb.work_type_sub ='"+items[2]+"'  ");
+						}		
+					}
+					
+					if(theIndex==condLength){
+						sql.append(" ) ");
+					}else{
+						sql.append(" ) or ");
+					}					
+				}
+			}
+		}
+		sql.append(")");
+		
+	}
+
+	private void appendOneArea(StringBuffer sql, String oneIntent) {
+		if(oneIntent!=null&&!"".equals(oneIntent)){
+			String[] items=oneIntent.split(SystemPropties.getProperties("cfg.common_seperater"));
+			if(items.length==2){
+				sql.append(" and (");
+				boolean addedZero=false;
+				if(items[0]!=null&&items[0].equals(items[1])){
+						sql.append(" tca.area_name_root ='"+items[1]+"'  ");
+				}else{
+					if(items[0]!=null&&!"".equals(items[0])){
+						sql.append(" tca.area_name ='"+items[0]+"'  ");
+						addedZero=true;
+					}
+					if(items[1]!=null&&!"".equals(items[1])){
+						if(addedZero){
+							sql.append(" and ");
+						}
+						sql.append(" tca.area_name_root ='"+items[1]+"'  ");
+					}					
+				}
+				sql.append(")");
+			}
+		}
+	}
+
+	private void appendMultArea(StringBuffer sql, String searchAreaSep) {
+		String[] areas=searchAreaSep.split("__");
+		int condLength=areas.length;
+
+
+		int theIndex=0;
+		sql.append(" and (");
+		for(String oneIntent:areas){
+			if(oneIntent!=null&&!"".equals(oneIntent)){
+				theIndex++;
+
+				sql.append(" ( ");
+				String[] items=oneIntent.split(SystemPropties.getProperties("cfg.common_seperater"));
+				boolean addedZero=false;
+				if(items.length==2&&items[0]!=null&&items[0].equals(items[1])){
+						sql.append(" tca.area_name_root ='"+items[1]+"'  ");
+				}else{				
+					if(items[0]!=null&&!"".equals(items[0])){
+						sql.append(" tca.area_name ='"+items[0]+"'  ");
+						addedZero=true;
+					}
+					if(items.length>1){
+						if(items[1]!=null&&!"".equals(items[1])){
+							if(addedZero){
+								sql.append(" and ");
+							}
+							sql.append(" tca.area_name_root ='"+items[1]+"'  ");
+						}
+	
+					}
+				}
+				if(theIndex==condLength){
+					sql.append(" ) ");
+				}else{
+					sql.append(" ) or ");
+				}				
+			}
+		}
+		sql.append(")");
+		
+	}
+
+	public int searchBySQLTotal(JobSearch jobSearch) {
+		String sql = getSQLFromSearch(jobSearch);
+		 
+		SQLQuery query = getHibernateTemplate().getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql); 
+		 
+		return query.list().size();	
+	}
+	private String appendLimit(String sql, int pageNo,int pageSize) {
+		return sql+" limit "+(pageNo-1)*pageSize+","+pageSize;
+	}	
+	public List<BigInteger> searchBySQL(JobSearch jobSearch) {
+		String sql=getSQLFromSearch(jobSearch);
+		sql=appendLimit(sql,jobSearch.getPageNumber(),jobSearch.getPageSize());
+		SQLQuery query = getHibernateTemplate().getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql); 
+		 
+		return query.list();
+	}
+
+
+}

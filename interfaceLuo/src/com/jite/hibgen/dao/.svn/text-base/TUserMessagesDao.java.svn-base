@@ -1,0 +1,195 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserMessages.
+ * @see com.jite.hibgen.dao.TUserMessages
+ * @author Hibernate Tools
+ */
+public class TUserMessagesDao extends BaseDao<TUserMessages>{
+
+	private static final Log log = LogFactory.getLog(TUserMessagesDao.class);
+
+
+
+	public void persist(TUserMessages transientInstance) {
+		log.debug("persisting TUserMessages instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserMessages instance) {
+		log.debug("attaching dirty TUserMessages instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserMessages instance) {
+		log.debug("attaching clean TUserMessages instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserMessages persistentInstance) {
+		log.debug("deleting TUserMessages instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserMessages merge(TUserMessages detachedInstance) {
+		log.debug("merging TUserMessages instance");
+		try {
+			TUserMessages result = (TUserMessages) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserMessages findById(java.lang.Long id) {
+		log.debug("getting TUserMessages instance with id: " + id);
+		try {
+			TUserMessages instance = (TUserMessages) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.TUserMessages", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserMessages> findByExample(TUserMessages instance) {
+		log.debug("finding TUserMessages instance by example");
+		try {
+			List<TUserMessages> results = (List<TUserMessages>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserMessages")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TUserMessages> searchByCriteria(int pageNo, int pageSize,TUserMessages search) {
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TUserMessages.class);
+		setCritieaByAdvanceSearch(criteria,search);
+		criteria.setProjection(null);
+		criteria.addOrder(Order.asc("readFlag"));
+		criteria.addOrder(Order.desc("updateDate"));
+		criteria.addOrder(Order.desc("createDate"));
+		criteria.setFirstResult((pageNo - 1) * pageSize);  
+        criteria.setMaxResults(pageSize);  		
+		List<TUserMessages> results = (List<TUserMessages>) 
+				criteria.list();
+		log.debug("search by criteria successful, result size: "
+				+ results.size());
+		return results;
+	}
+
+	private void setCritieaByAdvanceSearch(Criteria criteria,
+			TUserMessages search) {
+		if(search.getToAccountId()!=null&&search.getToAccountId()>0){
+			criteria.add(Restrictions.eq("toAccountId", search.getToAccountId()));
+		}
+		if(search.getReplyId()!=null){
+			criteria.add(Restrictions.eq("replyId", search.getReplyId()));
+		}		
+		if(search.getType()!=null){
+			criteria.add(Restrictions.eq("type", search.getType()));
+		}		
+		if(search.getReadFlag()!=null){
+			criteria.add(Restrictions.eq("readFlag", search.getReadFlag()));
+		}		
+	}
+
+	public int searchByCriteriaTotal(TUserMessages search) {
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TUserMessages.class);
+
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+	
+	public List<TUserMessages> searchMentorMsgs(int pageNo, int pageSize,TUserMessages search) {
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TUserMessages.class);
+		setCritieaByMentor(criteria,search);
+		criteria.setProjection(null);
+		criteria.addOrder(Order.asc("openOrder"));
+		criteria.addOrder(Order.desc("updateDate"));
+		criteria.addOrder(Order.desc("createDate"));
+		criteria.setFirstResult((pageNo - 1) * pageSize);  
+        criteria.setMaxResults(pageSize);  		
+		List<TUserMessages> results = (List<TUserMessages>) 
+				criteria.list();
+		log.debug("search by criteria successful, result size: "
+				+ results.size());
+		return results;
+	}
+	
+	private void setCritieaByMentor(Criteria criteria,
+			TUserMessages search) {
+		if(search.getToAccountId()!=null&&search.getToAccountId()>0){
+			criteria.add(Restrictions.eq("toAccountId", search.getToAccountId()));
+		}
+		if(search.getType()!=null){
+			criteria.add(Restrictions.eq("type", search.getType()));
+		}		
+		if(search.getOpenFlag()!=null){
+			criteria.add(Restrictions.eq("openFlag", search.getOpenFlag()));
+		}		
+	}	
+}

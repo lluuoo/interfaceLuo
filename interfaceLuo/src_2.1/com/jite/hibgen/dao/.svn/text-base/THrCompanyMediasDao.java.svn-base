@@ -1,0 +1,168 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class THrCompanyMedias.
+ * @see com.jite.hibgen.dao.THrCompanyMedias
+ * @author Hibernate Tools
+ */
+public class THrCompanyMediasDao extends BaseDao<THrCompanyMedias>{
+
+	private static final Log log = LogFactory
+			.getLog(THrCompanyMediasDao.class);
+
+	public THrCompanyMediasDao(){
+		super(THrCompanyMedias.class);
+	}
+	public THrCompanyMediasDao(THrCompanyMedias poClass){
+		super(poClass.getClass());
+	}
+	
+	public void persist(THrCompanyMedias transientInstance) {
+		log.debug("persisting THrCompanyMedias instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(THrCompanyMedias instance) {
+		log.debug("attaching dirty THrCompanyMedias instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(THrCompanyMedias instance) {
+		log.debug("attaching clean THrCompanyMedias instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(THrCompanyMedias persistentInstance) {
+		log.debug("deleting THrCompanyMedias instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public THrCompanyMedias merge(THrCompanyMedias detachedInstance) {
+		log.debug("merging THrCompanyMedias instance");
+		try {
+			THrCompanyMedias result = (THrCompanyMedias) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public THrCompanyMedias findById(java.lang.Long id) {
+		log.debug("getting THrCompanyMedias instance with id: " + id);
+		try {
+			THrCompanyMedias instance = (THrCompanyMedias) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.THrCompanyMedias", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<THrCompanyMedias> findByExample(THrCompanyMedias instance) {
+		log.debug("finding THrCompanyMedias instance by example");
+		try {
+			List<THrCompanyMedias> results = (List<THrCompanyMedias>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.THrCompanyMedias")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	
+	
+	public List<THrCompanyMedias> searchByCriteria(int pageNo, int pageSize,THrCompanyMedias search){
+		log.debug("search THrCompanyMedias instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(THrCompanyMedias.class);
+			
+			setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.desc("hotPosition"));
+
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<THrCompanyMedias>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+	
+	public int searchByCriteriaTotal(THrCompanyMedias search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(THrCompanyMedias.class);
+		
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+	
+	private void setCritieaByAdvanceSearch(Criteria criteria, THrCompanyMedias search) {
+		criteria.add(Restrictions.ge("hotPosition", 1));//TODO,查询未删除的数据			
+	}
+
+}
+

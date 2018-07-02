@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TVersion" table="t_version" catalog="qch" optimistic-lock="version">
+        <id name="versionId" type="java.lang.Long">
+            <column name="version_id" />
+            <generator class="identity" />
+        </id>
+        <property name="versionName" type="string">
+            <column name="version_name" length="50" />
+        </property>
+        <property name="versionCode" type="string">
+            <column name="version_code" length="50" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="appUrl" type="string">
+            <column name="app_url" length="200" />
+        </property>
+        <property name="versionRemark" type="string">
+            <column name="version_remark" length="1000" />
+        </property>
+        <property name="type" type="java.lang.Integer">
+            <column name="type">
+                <comment>1 -androud 2 ios</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

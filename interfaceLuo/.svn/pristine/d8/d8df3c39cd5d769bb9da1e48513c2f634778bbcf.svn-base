@@ -1,0 +1,110 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TShowAppbannerDao;
+import com.jite.hibgen.dao.TShowActivesBannerDao;
+import com.jite.hibgen.dao.TShowActivesDao;
+import com.jite.hibgen.dao.TShowHomebannerDao;
+import com.jite.hibgen.dao.TShowStartbannerDao;
+import com.jite.hibgen.model.TShowAppbanner;
+import com.jite.hibgen.model.TShowActives;
+import com.jite.hibgen.model.TShowActivesbanner;
+import com.jite.hibgen.model.TShowHomebanner;
+import com.jite.hibgen.model.TShowStartbanner;
+import com.jite.struts.bean.BannerInfo;
+import com.jite.utils.BeanTrans;
+
+public class BannerService {
+	@Resource
+	private TShowHomebannerDao bannerHomeDao;
+	private TShowStartbannerDao bannerStartDao;
+	private TShowAppbannerDao bannerAppDao;
+	private TShowActivesBannerDao bannerActivesDao;
+
+	public TShowHomebannerDao getBannerHomeDao() {
+		return bannerHomeDao;
+	}
+
+	public void setBannerHomeDao(TShowHomebannerDao bannerHomeDao) {
+		this.bannerHomeDao = bannerHomeDao;
+	}
+
+	public TShowStartbannerDao getBannerStartDao() {
+		return bannerStartDao;
+	}
+
+	public void setBannerStartDao(TShowStartbannerDao bannerStartDao) {
+		this.bannerStartDao = bannerStartDao;
+	}
+	public TShowAppbannerDao getBannerAppDao() {
+		return bannerAppDao;
+	}
+
+	public void setBannerAppDao(TShowAppbannerDao bannerAppDao) {
+		this.bannerAppDao = bannerAppDao;
+	}
+	
+	public TShowActivesBannerDao getBannerActivesDao() {
+		return bannerActivesDao;
+	}
+
+	public void setBannerActivesDao(TShowActivesBannerDao bannerActivesDao) {
+		this.bannerActivesDao = bannerActivesDao;
+	}
+
+	public List<BannerInfo> queryHome() {
+		List<BannerInfo> result=new ArrayList<BannerInfo>();
+		
+		List<TShowHomebanner> banners=bannerHomeDao.searchByRank(1, 10, new TShowHomebanner());
+		if(banners!=null&&banners.size()>0){
+			for(TShowHomebanner tb:banners){
+				result.add(BeanTrans.getBannerInfoFromHomeT(tb));
+			}
+		}
+		return result;
+	}
+	
+	public List<BannerInfo> queryStart() {
+		List<BannerInfo> result=new ArrayList<BannerInfo>();
+		
+		List<TShowStartbanner> banners=bannerStartDao.searchByRank(1, 10, new TShowStartbanner());
+		if(banners!=null&&banners.size()>0){
+			for(TShowStartbanner tb:banners){
+				result.add(BeanTrans.getBannerInfoFromStartT(tb));
+			}
+		}
+		return result;
+	}
+	
+	public List<BannerInfo> queryApp(int type) {
+		List<BannerInfo> result=new ArrayList<BannerInfo>();
+		TShowAppbanner theSear=new TShowAppbanner();
+		theSear.setType(type);
+		List<TShowAppbanner> banners=bannerAppDao.searchByRank(1, 10,theSear );
+		if(banners!=null&&banners.size()>0){
+			for(TShowAppbanner tb:banners){
+				result.add(BeanTrans.getBannerInfoFromAppT(tb));
+			}
+		}
+		return result;
+	}
+
+
+		
+	public List<BannerInfo> queryActive() {
+		List<BannerInfo> result=new ArrayList<BannerInfo>();
+		
+		List<TShowActivesbanner> banners=bannerActivesDao.searchByRank(1, 10, new TShowActivesbanner());
+		if(banners!=null&&banners.size()>0){
+			for(TShowActivesbanner tb:banners){
+				result.add(BeanTrans.getBannerInfoFromActivesT(tb));
+			}
+		}
+		return result;
+	}
+	
+}

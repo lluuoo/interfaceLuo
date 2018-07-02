@@ -1,0 +1,140 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserProfileIntends.
+ * @see com.jite.hibgen.dao.TUserProfileIntends
+ * @author Hibernate Tools
+ */
+public class TUserProfileIntendsDao extends BaseDao<TUserLoginlog>{
+
+	private static final Log log = LogFactory
+			.getLog(TUserProfileIntendsDao.class);
+
+	public void persist(TUserProfileIntends transientInstance) {
+		log.debug("persisting TUserProfileIntends instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserProfileIntends instance) {
+		log.debug("attaching dirty TUserProfileIntends instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserProfileIntends instance) {
+		log.debug("attaching clean TUserProfileIntends instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserProfileIntends persistentInstance) {
+		log.debug("deleting TUserProfileIntends instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileIntends merge(TUserProfileIntends detachedInstance) {
+		log.debug("merging TUserProfileIntends instance");
+		try {
+			TUserProfileIntends result = (TUserProfileIntends) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileIntends findById(java.lang.Long id) {
+		log.debug("getting TUserProfileIntends instance with id: " + id);
+		try {
+			TUserProfileIntends instance = (TUserProfileIntends) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.TUserProfileIntends", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserProfileIntends> findByExample(TUserProfileIntends instance) {
+		log.debug("finding TUserProfileIntends instance by example");
+		try {
+			List<TUserProfileIntends> results = (List<TUserProfileIntends>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserProfileIntends")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public void deleteByAccountId(Long accountId) {
+		log.debug("delte TUserProfileIntends by userId");
+		try {
+			String hql = "delete TUserProfileIntends as tupi where tupi.userId=?";
+			Query query = getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().createQuery(hql);
+			query.setLong(0, accountId);
+			query.executeUpdate();
+		} catch (Exception re) {
+			log.error("Delete failed", re);
+		}
+	}
+	
+	public void deleteByAccountIdWithoutLocation(Long accountId) {
+		log.debug("delte TUserProfileIntends by userId");
+		try {
+			String hql = "delete TUserProfileIntends as tupi where tupi.userId=? and type!=3 ";
+			Query query = getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().createQuery(hql);
+			query.setLong(0, accountId);
+			query.executeUpdate();
+		} catch (Exception re) {
+			log.error("Delete failed", re);
+		}
+	}	
+}

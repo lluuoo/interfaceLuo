@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-11-29 23:53:38 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TRedPkgPwd" table="t_red_pkg_pwd" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="type" type="java.lang.Integer">
+            <column name="type">
+                <comment>1&#215;&#162;&#178;&#225;&#209;&#233;&#214;&#164;&#186;&#236;&#176;&#252; 2&#205;&#234;&#201;&#198;&#188;&#242;&#192;&#250;&#186;&#236;&#176;&#252;
+                3&#205;&#182;&#181;&#221;&#188;&#242;&#192;&#250;&#186;&#236;&#176;&#252;</comment>
+            </column>
+        </property>
+        <property name="unitm" type="java.lang.Integer">
+            <column name="unitm" />
+        </property>
+        <property name="cardNum" type="string">
+            <column name="card_num" length="20" />
+        </property>
+        <property name="cardPwd" type="string">
+            <column name="card_pwd" length="20" />
+        </property>
+        <property name="status" type="java.lang.Integer">
+            <column name="status">
+                <comment>1&#206;&#180;&#202;&#185;&#211;&#195; 2&#210;&#209;&#202;&#185;&#211;&#195;</comment>
+            </column>
+        </property>
+        <property name="sentTo" type="string">
+            <column name="sent_to" length="20" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

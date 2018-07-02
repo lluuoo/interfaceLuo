@@ -1,0 +1,129 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+
+import static org.hibernate.criterion.Example.create;
+
+public class TUserProfileCertificateDao extends BaseDao<TUserProfileCertificate>{
+	
+	private static final Log log = LogFactory.getLog(TUserProfileCertificateDao.class);
+
+	public TUserProfileCertificateDao(){
+		super(TUserProfileCertificate.class);
+	}
+	public TUserProfileCertificateDao(TUserProfileCertificate po){
+		super(po.getClass());
+	}
+	public void persist(TUserProfileCertificate transientInstance) {
+		log.debug("persisting TUserProfileCertificate instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserProfileCertificate instance) {
+		log.debug("attaching dirty TUserProfileCertificate instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserProfileCertificate instance) {
+		log.debug("attaching clean TUserProfileCertificate instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserProfileCertificate persistentInstance) {
+		log.debug("deleting TUserProfileCertificate instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileCertificate merge(TUserProfileCertificate detachedInstance) {
+		log.debug("merging TUserProfileCertificate instance");
+		try {
+			TUserProfileCertificate result = (TUserProfileCertificate) getHibernateTemplate().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileCertificate findById(java.lang.Long id) {
+		log.debug("getting TUserProfileCertificate instance with id: " + id);
+		try {
+			TUserProfileCertificate instance = (TUserProfileCertificate) getHibernateTemplate().get(
+							"com.jite.hibgen.model.TUserProfileCertificate", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserProfileCertificate> findByExample(
+			TUserProfileCertificate instance) {
+		log.debug("finding TUserProfileCertificate instance by example");
+		try {
+			List<TUserProfileCertificate> results = (List<TUserProfileCertificate>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserProfileCertificate")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public void deleteByAccountId(Long accountId) {
+		log.debug("delte TUserProfileCertificate by userId");
+		try {
+			String hql = "delete TUserProfileCertificate as tupi where tupi.accountId=?";
+			Query query = getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().createQuery(hql);
+			query.setLong(0, accountId);
+			query.executeUpdate();
+		} catch (Exception re) {
+			log.error("Delete failed", re);
+		}
+	}
+}

@@ -1,0 +1,93 @@
+package com.jite.struts.action;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.BannerService;
+import com.jite.utils.SystemPropties;
+
+public class BannerAction extends BaseAction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7548491842791520106L;
+	@Resource
+	@Autowired
+	private BannerService bannerService;
+
+	public BannerService getBannerService() {
+		return bannerService;
+	}
+	public void setBannerService(BannerService bannerService) {
+		this.bannerService = bannerService;
+	}
+	
+
+	public void queryHome() {
+		returnJson=new JSONObject();
+		if(bannerService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			bannerService=(BannerService)ac.getBean("bannerService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.query")+SystemPropties.getProperties("txt.success"));
+		returnJson.put("bannerInfo", bannerService.queryHome());
+		returnJsonStr(returnJson.toString());
+	}
+	
+	
+	public void queryStart() {
+		returnJson=new JSONObject();
+		if(bannerService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			bannerService=(BannerService)ac.getBean("bannerService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.query")+SystemPropties.getProperties("txt.success"));
+		returnJson.put("bannerInfo", bannerService.queryStart());
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryActive() {
+		returnJson=new JSONObject();
+		if(bannerService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			bannerService=(BannerService)ac.getBean("bannerService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.query")+SystemPropties.getProperties("txt.success"));
+		returnJson.put("bannerInfo", bannerService.queryActive());
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void queryApp() {
+		returnJson=new JSONObject();
+		if(bannerService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			bannerService=(BannerService)ac.getBean("bannerService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.query")+SystemPropties.getProperties("txt.success"));
+		returnJson.put("bannerInfo", bannerService.queryApp(type));
+		returnJsonStr(returnJson.toString());
+	}
+	
+	private int type;
+
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	
+}

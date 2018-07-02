@@ -1,0 +1,112 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TAgentAccountDao;
+import com.jite.hibgen.dao.TOrgActiveUserDao;
+import com.jite.hibgen.dao.TUserBizcardDao;
+import com.jite.hibgen.dao.TUserMessagesDao;
+import com.jite.hibgen.model.TAgentAccount;
+import com.jite.hibgen.model.TAgentAccountUser;
+import com.jite.hibgen.model.TUserBizcard;
+import com.jite.hibgen.model.TUserMessages;
+import com.jite.struts.bean.AgentAccountInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.Constants;
+import com.jite.utils.SystemPropties;
+import com.jite.utils.VerificationCodeUtil;
+
+public class AgentService {
+	@Resource
+	private TAgentAccountDao agentAccountDao;
+
+	public TAgentAccountDao getAgentAccountDao() {
+		return agentAccountDao;
+	}
+
+
+	public void setAgentAccountDao(TAgentAccountDao agentAccountDao) {
+		this.agentAccountDao = agentAccountDao;
+	}
+
+
+	public List<AgentAccountInfo> queryPublishedActivities(int pageNumber,int pageSize) {
+		List<AgentAccountInfo> returnList=new ArrayList<AgentAccountInfo>();
+
+		return returnList;
+	}
+
+
+	public AgentAccountInfo queryById(String activeId,String userId) {
+		AgentAccountInfo result=null;
+
+
+		return result;
+	}
+
+
+	public String getInviteCodeByDistrict(int agentDistrict,int type) {
+		String returnCodeStr="";
+		String[] letter = { "1","2","3","4","5","6","7","8","9","A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+				"K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+				"W", "X", "Y", "Z" };	
+		
+		if(type==0){
+			returnCodeStr="0"+agentDistrict+"00";
+		}else if(type==1){
+			TAgentAccount taa=agentAccountDao.findTypeOneMaxInviteCode(agentDistrict);
+			if(taa==null||taa.getId()==null){
+				returnCodeStr="0"+agentDistrict+"01";
+			}else{
+				String maxCode=taa.getInviteCode().toUpperCase();
+				char lastChar=maxCode.charAt(maxCode.length()-1);
+				char lastTwoChar=maxCode.charAt(maxCode.length()-2);
+				if(lastChar=='Z'){
+					returnCodeStr=maxCode.substring(0,2)+(lastTwoChar+1)+"0";
+				}else if(lastChar=='9'){
+					returnCodeStr=maxCode.substring(0,3)+"A";
+				}else{
+					char nextChar=(char) (lastChar+1);
+					returnCodeStr=maxCode.substring(0,3)+String.valueOf(nextChar);
+				}
+			}
+		}else if(type==2){
+			Random random = new Random(); // 生成随机类
+	
+			String[] theTenCode=new String[5];
+			for(int i=0;i<theTenCode.length;i++){
+				theTenCode[i]=agentDistrict+letter[random.nextInt(letter.length)]+letter[random.nextInt(letter.length)]+letter[random.nextInt(letter.length)];
+			}
+			List<TAgentAccount> findResultList= agentAccountDao.findByInviteCodes(theTenCode);
+			if(findResultList==null||findResultList.size()==0){
+				returnCodeStr=theTenCode[0];
+			}else if(findResultList.size()<theTenCode.length){
+				for(int i=0;i<theTenCode.length;i++){
+					boolean theCurCodeNotExists=true;
+					for(TAgentAccount taa:findResultList){
+						if(taa.getInviteCode().equalsIgnoreCase(theTenCode[i])){
+							theCurCodeNotExists=false;
+						}
+					}
+					if(theCurCodeNotExists){
+						returnCodeStr=theTenCode[i];
+						break;
+					}
+				}
+			}			
+		}
+
+		return returnCodeStr;
+	}
+
+	
+
+
+
+}

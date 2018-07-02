@@ -1,0 +1,194 @@
+
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+import com.jite.struts.bean.ProfileSearch;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserBizcard.
+ * @see com.jite.hibgen.dao.TUserBizcard
+ * @author Hibernate Tools
+ */
+public class TUserBizcardDao extends BaseDao<TUserBizcard>{
+
+	private static final Log log = LogFactory.getLog(TUserBizcardDao.class);
+	
+	public TUserBizcardDao(){
+		super(TUserBizcard.class);
+	}
+	public TUserBizcardDao(TUserBizcard po){
+		super(po.getClass());
+	}
+	
+	public void persist(TUserBizcard transientInstance) {
+		log.debug("persisting TUserBizcard instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+
+	public void attachDirty(TUserBizcard instance) {
+		log.debug("attaching dirty TUserBizcard instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserBizcard instance) {
+		log.debug("attaching clean TUserBizcard instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserBizcard persistentInstance) {
+		log.debug("deleting TUserBizcard instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserBizcard merge(TUserBizcard detachedInstance) {
+		log.debug("merging TUserBizcard instance");
+		try {
+			TUserBizcard result = (TUserBizcard)getHibernateTemplate().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserBizcard findById(java.lang.Long id) {
+		log.debug("getting TUserBizcard instance with id: " + id);
+		try {
+			TUserBizcard instance = (TUserBizcard) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.TUserBizcard", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserBizcard> findByExample(TUserBizcard instance) {
+		log.debug("finding TUserBizcard instance by example");
+		try {
+			List<TUserBizcard> results = (List<TUserBizcard>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserBizcard")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public TUserBizcard findByAccountId(Long accountId) {
+		log.debug("finding TUserBizcard instance by example");
+		try {
+			@SuppressWarnings("unchecked")
+			List<TUserBizcard> results = (List<TUserBizcard>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserBizcard")
+					.add(Restrictions.eq("accountId", accountId)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results.size()>0?results.get(0):new TUserBizcard();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public int searchByProfileSearchTotal(ProfileSearch theSearch) {
+		String sql = getSQLFromProfileSearch(theSearch);
+		 
+		SQLQuery query = getHibernateTemplate().getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql); 
+		 
+		return query.list().size();
+	}
+	private String getSQLFromProfileSearch(ProfileSearch theSearch) {
+		StringBuffer sql=new StringBuffer("select tua.id  from  t_user_account tua "
+				  +"left join t_user_bizcard tub on tua.id=tub.account_id "
+				  +"left join t_user_profile_basic tupb on tua.id=tupb.account_id where tua.status=1 and (tua.is_mail_verified=1 or tua.is_phone_verified=1) ");
+		if(theSearch.getSearchKey()!=null&&!"".equals(theSearch.getSearchKey())){
+			sql.append(" and (tub.real_name like '%"+theSearch.getSearchKey()+"%' or tupb.description like '%"+theSearch.getSearchKey()+"%' "
+					+ "or tupb.cur_location like '%"+theSearch.getSearchKey()+"%' or tub.major like '%"+theSearch.getSearchKey()+"%' "
+					+ "or tub.major_root like '%"+theSearch.getSearchKey()+"%' or tub.school_name like '%"+theSearch.getSearchKey()+"%' "
+					+ "or tub.school_name_root like '%"+theSearch.getSearchKey()+"%' or tub.degree like '%"+theSearch.getSearchKey()+"%')");
+		}
+		if(theSearch.getSearchLocation()!=null&&!"".equals(theSearch.getSearchLocation())){
+			sql.append(" and tupb.cur_location like '%"+theSearch.getSearchLocation()+"%'  ");
+		}
+		if(theSearch.getSearchMajor()!=null&&!"".equals(theSearch.getSearchMajor())){
+			sql.append(" and (tub.major like '%"+theSearch.getSearchMajor()+"%' or tub.major_root like '%"+theSearch.getSearchMajor()+"%' "
+					+ "or tub.major_sub like '%"+theSearch.getSearchMajor()+"%' ) ");
+		}
+		if(theSearch.getSearchSchool()!=null&&!"".equals(theSearch.getSearchSchool())){
+			sql.append(" and (tub.school_name like '%"+theSearch.getSearchSchool()+"%' or tub.school_name_root like '%"+theSearch.getSearchSchool()+"%' ) ");
+		}
+		if(theSearch.getSearchDegree()!=null&&!"".equals(theSearch.getSearchDegree())){
+			sql.append(" and (tub.degree like '%"+theSearch.getSearchDegree()+"%' ) ");
+		}
+		sql.append(" order by tub.update_date desc ");
+		
+		return sql.toString();
+	}
+	private String appendLimit(ProfileSearch theSearch,String sql) {
+		
+		return sql+" limit "+(theSearch.getPageNumber()-1)*theSearch.getPageSize()+","+theSearch.getPageSize();
+	}	
+	
+	@SuppressWarnings("unchecked")
+	public List<BigInteger> searchByProfileSearch(ProfileSearch theSearch) {
+		String sql=getSQLFromProfileSearch(theSearch);
+		sql=appendLimit(theSearch,sql);
+		SQLQuery query = getHibernateTemplate().getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql); 
+		 
+		return query.list();		
+	}
+
+}

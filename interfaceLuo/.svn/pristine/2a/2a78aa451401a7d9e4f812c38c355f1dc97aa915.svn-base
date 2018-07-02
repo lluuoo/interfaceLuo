@@ -1,0 +1,681 @@
+package com.jite.struts.action;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import net.sf.json.JSONObject;
+
+import com.jite.service.HrCompanyService;
+import com.jite.struts.bean.JobBaseInfo;
+import com.jite.struts.bean.JobInfo;
+import com.jite.struts.bean.JobRequireInfo;
+import com.jite.struts.bean.JobSearch;
+import com.jite.utils.SystemPropties;
+
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+public class JobAction extends BaseAction{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7548491842791520104L;
+		@Resource
+		@Autowired
+		private HrCompanyService hrCompanyService;
+
+		public HrCompanyService getHrCompanyService() {
+			return hrCompanyService;
+		}
+
+		public void setHrCompanyService(HrCompanyService hrCompanyService) {
+			this.hrCompanyService = hrCompanyService;
+		}
+
+		/*@Override
+		public void validate() {
+			boolean inputError=false;
+			StringBuffer err=new StringBuffer();
+			if(null==accountId){
+				inputError=true;
+				err.append("accountId ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+			}
+			if(null==username||"".equals(username.trim())){
+				inputError=true;
+				err.append("username ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+			}
+			if(null==birthday||"".equals(birthday.trim())){
+				inputError=true;
+				err.append("birthday ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+			}
+			if(null==degree||"".equals(degree.trim())){
+				inputError=true;
+				err.append("degree ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+			}
+			if(null==phoneNumber||"".equals(phoneNumber.trim())){
+				inputError=true;
+				err.append("phoneNumber ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+			}
+			if(inputError){
+				returnError(SystemPropties.getProperties("code.input_error"),err.toString());
+			}
+			
+			super.validate();
+		}*/
+
+		public void save() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				JobInfo jobInfo=new JobInfo();
+				JobBaseInfo base=new JobBaseInfo();
+				base.setCharType(character);
+				base.setCompanyId(companyId);
+				base.setDepartment(department);
+				base.setDescription(description);
+				base.setDegree(degree);
+				Date theEndDate=new Date();
+				theEndDate.setTime(Long.valueOf(endDate));
+				base.setEndDate(theEndDate);
+				base.setLocation(location);
+				base.setName(name);
+				base.setId(id);
+				base.setSalary(salary);
+				base.setSalaryAbove(salaryAbove);
+				base.setNotShowSalary(notShowSalary);
+				base.setHumanNumber(humanNumber);
+				base.setMailtoAddress(mailtoAddress);
+				base.setMailtoFlag(mailtoFlag);
+				base.setSeqNum(seqNum);
+				base.setTags(tags);
+				base.setType(type);
+				base.setUpdater(updater);
+				base.setWorkType(workType);
+				base.setWorkTypeRoot(workTypeRoot);
+				base.setWorkTypeSub(workTypeSub);
+				base.setWestplanFlag(westplanFlag);
+				base.setWorkYears(workYears);
+				base.setStatus(status);
+				jobInfo.setBase(base);
+				
+				jobInfo=hrCompanyService.saveHrJob(Long.valueOf(userId),jobInfo);
+				if(null!=jobInfo && null!=jobInfo.getBase().getId()&&!"".equals(jobInfo.getBase().getId())){
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+					returnJson.put("info",SystemPropties.getProperties("txt.fail"));
+					returnJson.put("jobInfo", jobInfo);			
+				}
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		public void query() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				List<JobInfo> jobInfoList=hrCompanyService.queryJobList(companyId,status,pageNumber,pageSize);
+				
+
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("jobInfoList", jobInfoList);
+				returnJson.put("totalCount", hrCompanyService.queryJobListTotalCount(companyId,status));
+
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		
+		//发布中的职位数
+		public void queryTotal() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+			
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("totalCount", hrCompanyService.queryJobListTotalCount(companyId,status));
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		
+		//历史发布的职位数
+		public void queryhistoryTotal() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+			
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("totalCount", hrCompanyService.queryJobListTotalCount(companyId));
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		
+		
+		public void queryByWorkTypeRoot() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				List<JobInfo> jobInfoList=hrCompanyService.queryWorkTypeRootJobList(pageNumber,pageSize,workTypeRoot);
+				
+
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("jobInfoList", jobInfoList);
+				returnJson.put("totalCount", hrCompanyService.queryWorkTypeRootJobListTotalCount(workTypeRoot));
+				returnJsonStr(returnJson.toString());
+			//}
+		}		
+		public void queryById() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				JobInfo jobInfo=hrCompanyService.queryJobById(id,companyId);
+				
+
+				if(null!=jobInfo && null!=jobInfo.getBase().getId()&&!"".equals(jobInfo.getBase().getId())){
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.success"));
+					returnJson.put("jobInfo", jobInfo);
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+					returnJson.put("info",SystemPropties.getProperties("txt.fail"));
+				}
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		
+		public void userQueryById() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				JobInfo jobInfo=hrCompanyService.userQueryJobById(id,userId);
+				
+
+				if(null!=jobInfo && null!=jobInfo.getBase().getId()&&!"".equals(jobInfo.getBase().getId())){
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.success"));
+					returnJson.put("jobInfo", jobInfo);
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+					returnJson.put("info",SystemPropties.getProperties("txt.fail"));
+				}
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		
+		public void queryUserLatestView() {
+			returnJson=new JSONObject();
+			if(hrCompanyService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+			}
+			List<JobInfo> jobInfoList=hrCompanyService.queryUserLatestViewJobList(pageNumber,pageSize,userId,id);
+	
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			returnJson.put("jobInfoList", jobInfoList);
+			returnJson.put("totalCount", hrCompanyService.queryUserLatestViewJobListTotalCount(userId,id));
+			returnJsonStr(returnJson.toString());
+		}		
+
+		public void modifyStatus() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				JobInfo jobInfo=hrCompanyService.modifyStatus(id,companyId,status,userId);
+				
+
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("jobInfo", jobInfo);
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		public void refresh() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				JobInfo jobInfo=hrCompanyService.refresh(id,companyId,userId);
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("jobInfo", jobInfo);
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}
+		
+		public void advanceQuery() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				JobInfo jobInfo=new JobInfo();
+				JobBaseInfo base=new JobBaseInfo();
+				base.setCompanyId(companyId);
+				if(userId!=null){
+					base.setCreater(Long.valueOf(userId));
+				}
+				base.setDescription(description);
+				base.setLocation(location);
+				base.setName(name);
+				base.setId(id);
+				base.setSalary(salary);
+				base.setStatus(status);
+				base.setCharType(character);
+				base.setWestplanFlag(westplanFlag);
+				jobInfo.setBase(base);
+				
+				jobInfo.setPageNumber(pageNumber);
+				jobInfo.setPageSize(pageSize);
+				int totalCount=hrCompanyService.advanceSearchTotalCount(jobInfo);
+				List<JobInfo> jobInfoList=hrCompanyService.advanceSearch(jobInfo);
+				
+
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("jobInfoList", jobInfoList);
+				returnJson.put("totalCount",totalCount);
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}		
+
+		public void userQuery() {
+			//if(checkInputParas()){
+				returnJson=new JSONObject();
+				if(hrCompanyService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+				}
+				JobSearch jobSearch=new JobSearch();
+				jobSearch.setSearchKey(name);
+				jobSearch.setSearchKeyType(keyType);
+				jobSearch.setSearchAreaRoot(searchArea);
+				jobSearch.setSearchWorkTypeRoot(workTypeRoot);
+				jobSearch.setSearchLocation(location);
+				jobSearch.setSearchwestplanFlag(westplanFlag);//西部计划
+				//jobSearch.setSearchCompanyScale(searchComScale);企业规模
+				jobSearch.setSearchCompanyType(searchComType);
+				
+				jobSearch.setPageNumber(pageNumber);
+				jobSearch.setPageSize(pageSize);
+				int totalCount=hrCompanyService.userSearchTotalCount(jobSearch);
+				List<JobInfo> jobInfoList=hrCompanyService.userSearch(jobSearch,userId);
+				
+
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.success"));
+				returnJson.put("jobInfoList", jobInfoList);
+				returnJson.put("totalCount",totalCount);
+				
+				returnJsonStr(returnJson.toString());
+			//}
+		}			
+		private String userId;
+		private long companyId;
+		private long id;
+		private String character;
+		private String name;
+		private String seqNum;
+		private String workType;
+		private String workTypeRoot;
+		private String workTypeSub;
+		private String humanNumber;
+		private String degree;
+		private String workYears;
+		private Integer westplanFlag;
+		private String tags;
+		private String location;
+		private String department;
+		private String departReportTo;
+		private Integer departUnderCount;
+		private String description;
+		private Integer type;
+		private Double salary;
+		private Double salaryAbove;
+		private Integer notShowSalary;
+		private String status;
+		private String mailtoFlag;
+		private String mailtoAddress;
+		private String fromDate;
+		private String endDate;
+		private Long creater;
+		private Long updater;
+		
+		private int pageNumber;
+		private int pageSize;
+		
+		private String searchArea;
+		private String searchComType;
+		private String searchComScale;
+		private String keyType;
+		
+		public long getCompanyId() {
+			return companyId;
+		}
+		public void setCompanyId(long companyId) {
+			this.companyId = companyId;
+		}
+		
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getLocation() {
+			return location;
+		}
+		public void setLocation(String location) {
+			this.location = location;
+		}
+		public String getDepartment() {
+			return department;
+		}
+		public void setDepartment(String department) {
+			this.department = department;
+		}
+		public String getDepartReportTo() {
+			return departReportTo;
+		}
+		public void setDepartReportTo(String departReportTo) {
+			this.departReportTo = departReportTo;
+		}
+		public int getDepartUnderCount() {
+			return departUnderCount;
+		}
+		public void setDepartUnderCount(int departUnderCount) {
+			this.departUnderCount = departUnderCount;
+		}
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		public int getType() {
+			return type;
+		}
+		public void setType(int type) {
+			this.type = type;
+		}
+		public double getSalary() {
+			return salary;
+		}
+		public void setSalary(double salary) {
+			this.salary = salary;
+		}
+		public String getStatus() {
+			return status;
+		}
+		public void setStatus(String status) {
+			this.status = status;
+		}
+		public String getFromDate() {
+			return fromDate;
+		}
+		public void setFromDate(String fromDate) {
+			this.fromDate = fromDate;
+		}
+		public String getEndDate() {
+			return endDate;
+		}
+		public void setEndDate(String endDate) {
+			this.endDate = endDate;
+		}
+		public long getCreater() {
+			return creater;
+		}
+		public void setCreater(long creater) {
+			this.creater = creater;
+		}
+		public long getUpdater() {
+			return updater;
+		}
+		public void setUpdater(long updater) {
+			this.updater = updater;
+		}
+
+		public String getUserId() {
+			return userId;
+		}
+
+		public void setUserId(String userId) {
+			this.userId = userId;
+		}
+
+
+
+		public long getId() {
+			return id;
+		}
+
+		public void setId(long id) {
+			this.id = id;
+		}
+
+		public int getPageNumber() {
+			return pageNumber;
+		}
+
+		public void setPageNumber(int pageNumber) {
+			this.pageNumber = pageNumber;
+		}
+
+		public int getPageSize() {
+			return pageSize;
+		}
+
+		public void setPageSize(int pageSize) {
+			this.pageSize = pageSize;
+		}
+
+		public String getCharacter() {
+			return character;
+		}
+
+		public void setCharacter(String character) {
+			this.character = character;
+		}
+
+		public String getSeqNum() {
+			return seqNum;
+		}
+
+		public void setSeqNum(String seqNum) {
+			this.seqNum = seqNum;
+		}
+
+		public String getWorkType() {
+			return workType;
+		}
+
+		public void setWorkType(String workType) {
+			this.workType = workType;
+		}
+
+		public String getWorkTypeRoot() {
+			return workTypeRoot;
+		}
+
+		public void setWorkTypeRoot(String workTypeRoot) {
+			this.workTypeRoot = workTypeRoot;
+		}
+
+		public String getWorkTypeSub() {
+			return workTypeSub;
+		}
+
+		public void setWorkTypeSub(String workTypeSub) {
+			this.workTypeSub = workTypeSub;
+		}
+
+		public Double getSalaryAbove() {
+			return salaryAbove;
+		}
+
+		public void setSalaryAbove(Double salaryAbove) {
+			this.salaryAbove = salaryAbove;
+		}
+
+		public void setDepartUnderCount(Integer departUnderCount) {
+			this.departUnderCount = departUnderCount;
+		}
+
+		public void setType(Integer type) {
+			this.type = type;
+		}
+
+		public void setSalary(Double salary) {
+			this.salary = salary;
+		}
+
+		public void setCreater(Long creater) {
+			this.creater = creater;
+		}
+
+		public void setUpdater(Long updater) {
+			this.updater = updater;
+		}
+
+		public String getHumanNumber() {
+			return humanNumber;
+		}
+
+		public void setHumanNumber(String humanNumber) {
+			this.humanNumber = humanNumber;
+		}
+
+		public String getDegree() {
+			return degree;
+		}
+
+		public void setDegree(String degree) {
+			this.degree = degree;
+		}
+
+		public String getWorkYears() {
+			return workYears;
+		}
+
+		public void setWorkYears(String workYears) {
+			this.workYears = workYears;
+		}
+
+		public Integer getWestplanFlag() {
+			return westplanFlag;
+		}
+
+		public void setWestplanFlag(Integer westplanFlag) {
+			this.westplanFlag = westplanFlag;
+		}
+
+		public String getTags() {
+			return tags;
+		}
+
+		public void setTags(String tags) {
+			this.tags = tags;
+		}
+
+		public Integer getNotShowSalary() {
+			return notShowSalary;
+		}
+
+		public void setNotShowSalary(Integer notShowSalary) {
+			this.notShowSalary = notShowSalary;
+		}
+
+		public String getMailtoFlag() {
+			return mailtoFlag;
+		}
+
+		public void setMailtoFlag(String mailtoFlag) {
+			this.mailtoFlag = mailtoFlag;
+		}
+
+		public String getMailtoAddress() {
+			return mailtoAddress;
+		}
+
+		public void setMailtoAddress(String mailtoAddress) {
+			this.mailtoAddress = mailtoAddress;
+		}
+
+		public String getSearchArea() {
+			return searchArea;
+		}
+
+		public void setSearchArea(String searchArea) {
+			this.searchArea = searchArea;
+		}
+
+		public String getSearchComScale() {
+			return searchComScale;
+		}
+
+		public void setSearchComScale(String searchComScale) {
+			this.searchComScale = searchComScale;
+		}
+
+		public String getSearchComType() {
+			return searchComType;
+		}
+
+		public void setSearchComType(String searchComType) {
+			this.searchComType = searchComType;
+		}
+
+		public String getKeyType() {
+			return keyType;
+		}
+
+		public void setKeyType(String keyType) {
+			this.keyType = keyType;
+		} 
+
+	}

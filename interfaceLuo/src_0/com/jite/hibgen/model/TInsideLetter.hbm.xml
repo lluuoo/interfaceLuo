@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TInsideLetter" table="`t_inside letter`" catalog="qch" optimistic-lock="version">
+        <composite-id name="id" class="com.jite.hibgen.model.TInsideLetterId">
+            <key-property name="id" type="java.lang.Long">
+                <column name="id" />
+            </key-property>
+            <key-property name="contentId" type="java.lang.Long">
+                <column name="content_id" />
+            </key-property>
+            <key-property name="type" type="java.lang.Integer">
+                <column name="type" />
+            </key-property>
+            <key-property name="content" type="string">
+                <column name="content" length="1000" />
+            </key-property>
+        </composite-id>
+    </class>
+</hibernate-mapping>

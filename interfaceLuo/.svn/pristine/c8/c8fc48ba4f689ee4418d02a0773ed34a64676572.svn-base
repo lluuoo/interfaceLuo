@@ -1,0 +1,88 @@
+package com.jite.struts.action;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.hibgen.model.TVersion;
+import com.jite.service.VersionService;
+import com.jite.utils.SystemPropties;
+
+public class VersionAction extends BaseAction{
+
+	private static final long serialVersionUID = 7675067217417249340L;
+	@Resource
+	@Autowired
+	private VersionService versionService;
+
+	
+	public VersionService getVersionService() {
+		return versionService;
+	}
+
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+	
+	public void update(){
+		returnJson = new JSONObject();
+		if (versionService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession()
+							.getServletContext());
+			versionService = (VersionService) ac.getBean("versionService");
+		}
+		
+		TVersion theVersion=versionService.update(type,curVCode);
+		if(theVersion.getVersionId()!=null&&theVersion.getVersionId()>0L){//需要升级
+			returnJson.put("code",SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			returnJson.put("theVersion", theVersion);
+		}else{//已存在该版本，不需要升级
+			returnJson.put("code",SystemPropties.getProperties("code.already_exists"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			returnJson.put("theVersion", theVersion);
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+    public void versionList()
+    {
+        returnJson = new JSONObject();
+        if(versionService == null)
+        {
+            ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
+            versionService = (VersionService)ac.getBean("versionService");
+        }
+        java.util.List versionList = versionService.getList(type, curVCode);
+        returnJson.put("code", SystemPropties.getProperties("code.success"));
+        returnJson.put("info", SystemPropties.getProperties("txt.success"));
+        returnJson.put("versionList", versionList);
+        returnJsonStr(returnJson.toString());
+    }
+	private int type;
+
+	private String curVCode;
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public String getCurVCode() {
+		return curVCode;
+	}
+
+	public void setCurVCode(String curVCode) {
+		this.curVCode = curVCode;
+	}
+}

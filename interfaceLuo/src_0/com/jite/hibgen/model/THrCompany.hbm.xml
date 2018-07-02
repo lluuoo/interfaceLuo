@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.THrCompany" table="t_hr_company" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="100" />
+        </property>
+        <property name="shortName" type="string">
+            <column name="short_name" length="50" />
+        </property>
+        <property name="logo" type="string">
+            <column name="logo" length="100" />
+        </property>
+        <property name="scaleType" type="string">
+            <column name="scale_type" length="100">
+                <comment>
+                &#198;&#243;&#210;&#181;&#185;&#230;&#196;&#163;(0,1,2,3,4,5...&#183;&#214;&#177;&#240;&#180;&#250;&#177;&#237;&#178;&#187;&#205;&#172;&#181;&#196;&#185;&#230;&#196;&#163;)</comment>
+            </column>
+        </property>
+        <property name="type" type="string">
+            <column name="type" length="100">
+                <comment>&#198;&#243;&#210;&#181;&#208;&#212;&#214;&#202;&#192;&#224;&#208;&#205;(0...)</comment>
+            </column>
+        </property>
+        <property name="province" type="string">
+            <column name="province" length="50" />
+        </property>
+        <property name="tags" type="string">
+            <column name="tags" length="500" />
+        </property>
+        <property name="address" type="string">
+            <column name="address" length="100" />
+        </property>
+        <property name="traffic" type="string">
+            <column name="traffic" length="500" />
+        </property>
+        <property name="homepage" type="string">
+            <column name="homepage" length="100" />
+        </property>
+        <property name="telephone" type="string">
+            <column name="telephone" length="100" />
+        </property>
+        <property name="shortDesc" type="string">
+            <column name="short_desc" length="500" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="65535">
+                <comment>&#198;&#243;&#210;&#181;&#189;&#233;&#201;&#220;</comment>
+            </column>
+        </property>
+        <property name="isStart" type="java.lang.Integer">
+            <column name="is_start">
+                <comment>0 &#195;&#251;&#198;&#243; 1 &#180;&#180;&#210;&#181;&#208;&#205;&#185;&#171;&#203;&#190;</comment>
+            </column>
+        </property>
+        <property name="status" type="java.lang.Integer">
+            <column name="status">
+                <comment>0-&#180;&#253;&#201;&#243;&#186;&#203; 1&#191;&#201;&#211;&#195; 2&#178;&#187;&#191;&#201;&#211;&#195;</comment>
+            </column>
+        </property>
+        <property name="certificateFile" type="string">
+            <column name="certificate_file" length="100" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+        <property name="updater" type="java.lang.Long">
+            <column name="updater" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2017-4-4 23:45:13 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.luo.hibgen.model.THrJobBase" table="t_hr_job_base" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+        <property name="charType" type="string">
+            <column name="char_type" length="20" />
+        </property>
+        <property name="name" type="string">
+            <column name="name" length="50">
+                <comment>&#214;&#176;&#206;&#187;&#195;&#251;&#179;&#198;</comment>
+            </column>
+        </property>
+        <property name="seqNum" type="string">
+            <column name="seq_num" length="20" />
+        </property>
+        <property name="workType" type="string">
+            <column name="work_type" length="120" />
+        </property>
+        <property name="workTypeRoot" type="string">
+            <column name="work_type_root" length="120" />
+        </property>
+        <property name="workTypeSub" type="string">
+            <column name="work_type_sub" length="120" />
+        </property>
+        <property name="humanNumber" type="string">
+            <column name="human_number" length="5" />
+        </property>
+        <property name="degree" type="string">
+            <column name="degree" length="100" />
+        </property>
+        <property name="workYears" type="string">
+            <column name="work_years" length="50" />
+        </property>
+        <property name="westplanFlag" type="java.lang.Integer">
+            <column name="westplan_flag" />
+        </property>
+        <property name="tags" type="string">
+            <column name="tags" length="200" />
+        </property>
+        <property name="location" type="string">
+            <column name="location" length="100" />
+        </property>
+        <property name="department" type="string">
+            <column name="department" length="100" />
+        </property>
+        <property name="departReportTo" type="string">
+            <column name="depart_report_to" length="100" />
+        </property>
+        <property name="departUnderCount" type="java.lang.Integer">
+            <column name="depart_under_count" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="65535" />
+        </property>
+        <property name="type" type="java.lang.Integer">
+            <column name="type">
+                <comment>&#198;&#243;&#210;&#181;&#192;&#224;&#177;&#240;&#163;&#168;1,2,3,4,5,6&#163;&#169;</comment>
+            </column>
+        </property>
+        <property name="salary" type="java.lang.Double">
+            <column name="salary" precision="20" scale="4" />
+        </property>
+        <property name="salaryAbove" type="java.lang.Double">
+            <column name="salary_above" precision="20" scale="4" />
+        </property>
+        <property name="notShowSalary" type="java.lang.Integer">
+            <column name="not_show_salary" />
+        </property>
+        <property name="status" type="string">
+            <column name="status" length="1">
+                <comment>0--&#178;&#221;&#184;&#229;&#214;&#176;&#206;&#187; 1--&#213;&#253;&#212;&#218;&#213;&#208;&#198;&#184; 2--&#212;&#221;&#205;&#163;
+                3-&#189;&#225;&#202;&#248; 9-&#201;&#190;&#179;&#253;</comment>
+            </column>
+        </property>
+        <property name="mailtoFlag" type="string">
+            <column name="mailto_flag" length="50" />
+        </property>
+        <property name="mailtoAddress" type="string">
+            <column name="mailto_address" length="200" />
+        </property>
+        <property name="fromDate" type="timestamp">
+            <column name="from_date" length="19" />
+        </property>
+        <property name="endDate" type="timestamp">
+            <column name="end_date" length="19" />
+        </property>
+        <property name="isHot" type="java.lang.Integer">
+            <column name="is_hot" />
+        </property>
+        <property name="creater" type="java.lang.Long">
+            <column name="creater" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updater" type="java.lang.Long">
+            <column name="updater" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

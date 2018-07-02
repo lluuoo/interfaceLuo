@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-6-4 14:43:20 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserProfileLanguages" table="t_user_profile_languages" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+        <property name="languageType" type="string">
+            <column name="l_type" length="10" />
+        </property>
+        <property name="languageExplain" type="string">
+            <column name="l_explain" length="200" />
+        </property>
+        
+         <property name="languageOracy" type="string">
+            <column name="l_oracy" length="50">
+                <comment>&#191;&#218;&#211;&#239;&#188;&#182;&#177;&#240;</comment>
+            </column>
+        </property>
+        
+        <property name="languageScore" type="string">
+            <column name="l_score" length="10" />
+        </property>
+        
+       
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

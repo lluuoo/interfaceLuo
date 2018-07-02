@@ -1,0 +1,1355 @@
+package com.jite.struts.action;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.*;
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.UserService;
+import com.jite.struts.bean.HrCompanyInfo;
+import com.jite.struts.bean.ProfileInfo;
+import com.jite.struts.bean.ProfileSearch;
+import com.jite.struts.bean.UserInfo;
+import com.jite.struts.bean.UserProfileBasicInfo;
+import com.jite.utils.Constants;
+import com.jite.utils.FileAbsolutePathEnum;
+import com.jite.utils.FileOperateUtil;
+import com.jite.utils.SystemPropties;
+
+public class ProfileAction extends BaseAction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7675067217417249340L;
+	@Resource
+	@Autowired
+	private UserService userService;
+
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void blockOne() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		boolean result = userService.updateProfileBlockOne(userId, realName, curcarrier, volunteerNumber, headImage);
+		if (result) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			// 更新缓存
+			UserInfo userInfo = (UserInfo) request.getSession()
+					.getAttribute(SystemPropties.getProperties("cfg.session_user"));
+			if (null != userInfo) {
+				userInfo.setRealName(realName);
+				if (userInfo.getBizInfo() != null) {
+					userInfo.getBizInfo().setUsername(realName);
+					userInfo.getBizInfo().setCurcarrier(curcarrier);
+					userInfo.getBizInfo().setVolunteerNumber(volunteerNumber);
+				}
+			}
+			
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+			
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockTwo() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockTwo(userId, sex, curLocation, huKou, phoneNumber, email,
+				birthday, height, weight, nation, idCard, nationalOutlook, personalHomepage, zipAddress, zipCode);
+		if (theProfile != null && theProfile.getBizInfo() != null && theProfile.getBase() != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+			// 更新缓存
+			UserInfo userInfo = (UserInfo) request.getSession()
+					.getAttribute(SystemPropties.getProperties("cfg.session_user"));
+			if (null != userInfo) {
+				if (userInfo.getBizInfo() != null) {
+					userInfo.getBizInfo().setSex(sex);
+					userInfo.getBizInfo().setPhoneNumber(phoneNumber);
+					userInfo.getBizInfo().setEmailAddress(email);
+					userInfo.getBizInfo().setBirthday(birthday);
+					userInfo.setBirthYear(birthday.substring(0, birthday.indexOf("-")));
+					if(theProfile.getUser()!=null){
+						userInfo.setPhoneNumber(theProfile.getUser().getPhoneNumber());
+						userInfo.setIsPhoneVerified(theProfile.getUser().getIsPhoneVerified());
+						userInfo.setEmail(theProfile.getUser().getEmail());
+						userInfo.setIsMailVerified(theProfile.getUser().getIsMailVerified());
+					}
+				}
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockThree() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockThree(userId, description);
+		if (theProfile != null && theProfile.getBase() != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockFour() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockFour(userId, eduFrom, eduTo, eduDegree, eduSchool,
+				eduSchoolRoot, eduMajor, eduMajorRoot, eduMajorSub);
+		if (theProfile != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+			
+			UserInfo userInfo = (UserInfo) request.getSession()
+					.getAttribute(SystemPropties.getProperties("cfg.session_user"));
+			if (null != userInfo) {
+				if (userInfo.getBizInfo() != null) {
+					if(theProfile.getBizInfo()!=null){
+						userInfo.getBizInfo().setDegree(theProfile.getBizInfo().getDegree());
+						userInfo.getBizInfo().setSchoolName(theProfile.getBizInfo().getSchoolName());
+						userInfo.getBizInfo().setSchoolNameRoot(theProfile.getBizInfo().getSchoolNameRoot());
+						userInfo.getBizInfo().setMajor(theProfile.getBizInfo().getMajor());
+						userInfo.getBizInfo().setMajorRoot(theProfile.getBizInfo().getMajorRoot());
+						userInfo.getBizInfo().setMajorSub(theProfile.getBizInfo().getMajorSub());
+					}
+				}
+			}
+			
+
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockFive() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockFive(userId, type, fromDate, endDate, company, depart,
+				jobDescription);
+		if (theProfile != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockSix() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockSix(userId, time, awardProportion1, awardProportion2);
+		if (theProfile != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockSeven() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockSeven(userId, languageType, languageOracy, languageScore,
+				languageExplain);
+		if (theProfile != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockAight() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockAight(userId, certificateTime, certificateType,
+				certificateResult, certificateDescription);
+		if (theProfile != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockNine() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockNine(userId, skillName, skillTime, proficiency);
+		if (theProfile != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void blockTwenty() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		int beforeSavePercent=userService.getProfilePercent(userId);
+		ProfileInfo theProfile = userService.updateProfileBlockTwenty(userId, intendArea, intendAreaRoot, intendWork,
+				intendWorkRoot, intendWorkSub, intendLocation, intendLocationRoot, intendLocationSub);
+		if (theProfile != null) {
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+
+			//增加完善简历红包判断
+			if(beforeSavePercent<getRedPkgScoreLevel){
+				int afterSavePercent=userService.getProfilePercent(userId);
+				if(afterSavePercent>=getRedPkgScoreLevel){
+					boolean redPkgSuccessful=userService.setResumeRedPkg(userId);
+					if(redPkgSuccessful){
+						returnJson.put("redPkg", "1");
+					}
+				}
+			}
+			
+			UserInfo userInfo = (UserInfo) request.getSession()
+					.getAttribute(SystemPropties.getProperties("cfg.session_user"));
+			if (null != userInfo) {
+				if(userInfo.getBizInfo()!=null){
+					userInfo.getBizInfo().setIntentArea(intendArea);
+					userInfo.getBizInfo().setIntentAreaRoot(intendAreaRoot);
+					userInfo.getBizInfo().setIntentWork(intendWork);
+					userInfo.getBizInfo().setIntentWorkRoot(intendWorkRoot);
+					userInfo.getBizInfo().setIntentWorkSub(intendWorkSub);
+					userInfo.getBizInfo().setIntentLocation(intendLocation);
+					userInfo.getBizInfo().setIntentLocationRoot(intendLocationRoot);
+					userInfo.getBizInfo().setIntentLocationSub(intendLocationSub);
+				}
+			}
+			
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void add() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		UserProfileBasicInfo userprofileBasicInfo = userService.addUserProfilebasic(accountId, height, weight, nation,
+				curLocation, huKou, idCard, nationalOutlook, personalHomepage);
+		if (null != userprofileBasicInfo && null != userprofileBasicInfo.getAccountId()
+				&& !"".equals(userprofileBasicInfo.getAccountId())) {
+			if ("-100".equals(userprofileBasicInfo.getAccountId())) {
+				returnJson.put("code", SystemPropties.getProperties("code.not_exists"));
+				returnJson.put("info", accountId + SystemPropties.getProperties("txt.not_exists"));
+				returnJson.put("userprofileBasicInfo", userprofileBasicInfo);
+			} else {
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info", SystemPropties.getProperties("txt.success"));
+				returnJson.put("userprofileBasicInfo", userprofileBasicInfo);
+			}
+		} else {
+			returnJson.put("code", SystemPropties.getProperties("code.fail"));
+			returnJson.put("info", SystemPropties.getProperties("txt.fail"));
+			returnJson.put("userprofileBasicInfo", userprofileBasicInfo);
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void query() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		ProfileSearch theSearch = new ProfileSearch();
+		theSearch.setSearchKey(realName);
+		theSearch.setSearchLocation(curLocation);
+		theSearch.setSearchMajor(eduMajor);
+		theSearch.setSearchSchool(eduSchool);
+		theSearch.setSearchDegree(eduDegree);
+		theSearch.setSearchBy(userId);
+		theSearch.setPageNumber(pageNumber);
+		theSearch.setPageSize(pageSize);
+		List<ProfileInfo> profileList = userService.searchProfile(theSearch);
+		int totalCount = userService.searchProfileTotalCount(theSearch);
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info", SystemPropties.getProperties("txt.success"));
+
+		returnJson.put("profileList", profileList);
+		returnJson.put("totalCount", totalCount);
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void queryWholeById() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+
+		ProfileInfo theProfile = userService.wholeProfileById(userId, company, hrId);
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info", SystemPropties.getProperties("txt.success"));
+		returnJson.put("profile", theProfile);
+		returnJsonStr(returnJson.toString());
+	}
+	
+
+	public void beVisitByTotal() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+
+		List<HrCompanyInfo> beVisitCompanies = userService.beVisitBy(userId, pageNumber, pageSize);
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info", SystemPropties.getProperties("txt.success"));
+		returnJson.put("beVisitCompanies", beVisitCompanies);
+		returnJson.put("totalCount", userService.beVisitByTotal(userId));
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void percent() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+
+		int profilePercent = userService.getProfilePercent(userId);
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info", SystemPropties.getProperties("txt.success"));
+		returnJson.put("profilePercent", profilePercent);
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void modifyStatus() {
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession().getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+
+		userService.modifyUserStatus(userId, type);
+		UserInfo userInfo = (UserInfo) request.getSession()
+				.getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if (userInfo != null) {
+			userInfo.setStatus(Integer.valueOf(type));
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info", SystemPropties.getProperties("txt.success"));
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void headImage() throws Exception {
+		UserInfo userInfo = (UserInfo) request.getSession()
+				.getAttribute(SystemPropties.getProperties("cfg.session_user"));
+
+		if (null == userInfo) {
+			return;
+		}
+
+		long file_size_max = Integer.parseInt(SystemPropties.getProperties("cfg.com_upload_file_size")) * 1024;// 多少k
+		InputStream is = null;
+		try {
+			long file_size = file.length();
+			if (file_size < file_size_max) {
+				FileInputStream inStream = new FileInputStream(file);
+				String filename = userInfo.getUserId() + fileFileName.substring(fileFileName.lastIndexOf("."));
+				;
+				String iconRelativePath = FileOperateUtil.saveFile(inStream, FileAbsolutePathEnum.UPLOADFILE_PATH,
+						FileAbsolutePathEnum.HEAD_IMAGE, filename);
+				f_url = iconRelativePath;
+				userInfo.getBizInfo().setHeadImage(f_url);
+				;
+				getRequest().setAttribute("flag", "success");
+				getRequest().setAttribute("f_url", f_url.replace("\\", "/"));
+				getRequest().setAttribute("submitType", submitType);
+				getRequest().setAttribute("file", fileFileName);
+				getRequest().setAttribute("f_border", f_border);
+				getRequest().setAttribute("f_align", f_align);
+				getRequest().setAttribute("f_vert", f_vert);
+				getRequest().setAttribute("f_horiz", f_horiz);
+			} else {
+				f_url = "error: ";
+				userInfo.setSessionSavedMessage(SystemPropties.getProperties("txt.upload_file_large_than_limit"));
+			}
+			// getResponse().reset();
+			getResponse().setContentType("text/html;charset=utf-8");
+			getResponse().getWriter().print(f_url);
+		} catch (FileNotFoundException e) {
+			getRequest().setAttribute("flag", "missing");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+					is = null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void headImageForApp() throws Exception {
+
+		long file_size_max = 20 * Integer.parseInt(SystemPropties.getProperties("cfg.com_upload_file_size")) * 1024;// 多少k
+		InputStream is = null;
+		try {
+			//System.out.println("userId"+userId);
+			//System.out.println("file"+file);
+			//System.out.println("file_size"+file.length());
+			long file_size = file.length();
+			if (file_size < file_size_max) {
+				FileInputStream inStream = new FileInputStream(file);
+				String filename = userId + fileFileName.substring(fileFileName.lastIndexOf("."));
+				String iconRelativePath = FileOperateUtil.saveFile(inStream, FileAbsolutePathEnum.UPLOADFILE_PATH,
+						FileAbsolutePathEnum.HEAD_IMAGE, filename);
+				f_url = iconRelativePath;
+				// userInfo.getBizInfo().setHeadImage(f_url);;
+				getRequest().setAttribute("flag", "success");
+				getRequest().setAttribute("f_url", f_url.replace("\\", "/"));
+				getRequest().setAttribute("submitType", submitType);
+				getRequest().setAttribute("file", fileFileName);
+				getRequest().setAttribute("f_border", f_border);
+				getRequest().setAttribute("f_align", f_align);
+				getRequest().setAttribute("f_vert", f_vert);
+				getRequest().setAttribute("f_horiz", f_horiz);
+			} else {
+				f_url = "error:文件大小不能超过20M";
+			}
+			// getResponse().reset();
+			getResponse().setContentType("text/html;charset=utf-8");
+			getResponse().getWriter().print(f_url);
+		} catch (FileNotFoundException e) {
+			getRequest().setAttribute("flag", "missing");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+					is = null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void headImageForWX() throws Exception {
+		long file_size_max = 10 * Integer.parseInt(SystemPropties.getProperties("cfg.com_upload_file_size")) * 1024;// 多少k
+		InputStream is = null;
+		try {
+			long file_size = file.length();
+			if (file_size < file_size_max) {
+				FileInputStream inStream = new FileInputStream(file);
+				String filename = (new StringBuilder(String.valueOf(userId)))
+						.append(fileFileName.substring(fileFileName.lastIndexOf("."))).toString();
+				String iconRelativePath = FileOperateUtil.saveFile(inStream, FileAbsolutePathEnum.UPLOADFILE_PATH,
+						FileAbsolutePathEnum.HEAD_IMAGE, filename);
+				f_url = iconRelativePath;
+				getRequest().setAttribute("flag", "success");
+				getRequest().setAttribute("f_url", f_url.replace("\\", "/"));
+				getRequest().setAttribute("submitType", submitType);
+				getRequest().setAttribute("file", fileFileName);
+				getRequest().setAttribute("f_border", f_border);
+				getRequest().setAttribute("f_align", f_align);
+				getRequest().setAttribute("f_vert", f_vert);
+				getRequest().setAttribute("f_horiz", f_horiz);
+			} else {
+				f_url = "error:文件大小不能超过10M";
+			}
+			UserInfo hdInfo = new UserInfo();
+			hdInfo.setUserId(userId);
+			hdInfo.setHeadImage(f_url);
+			hdInfo.setLastLogin(new Date());
+			Constants.weixinHeadImage.put(userId, hdInfo);
+			System.out.println((new StringBuilder("----WX upload head image count is "))
+					.append(Constants.weixinHeadImage.size()).toString());
+			if (Constants.weixinHeadImage.size() > 50) {
+				for (Iterator it = Constants.weixinHeadImage.keySet().iterator(); it.hasNext();) {
+					String theKey = (String) it.next();
+					UserInfo theInfo = (UserInfo) Constants.weixinHeadImage.get(theKey);
+					if ((new Date()).getTime() - theInfo.getLastLogin().getTime() > 24*60*60*1000){
+						Constants.weixinHeadImage.remove(theKey);
+					}
+				}
+
+			}
+			// getResponse().reset();
+			getResponse().setContentType("text/html;charset=utf-8");
+			getResponse().getWriter().print(f_url);
+		} catch (FileNotFoundException e) {
+			getRequest().setAttribute("flag", "missing");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+					is = null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void getWXUploadImageURL() {
+		returnJson = new JSONObject();
+		if (userId == null || "".equals(userId.trim())) {
+			returnJson.put("code", "404");
+			returnJson.put("info", "userId\u4E0D\u80FD\u4E3A\u7A7A");
+		} else {
+			UserInfo theUser = (UserInfo) Constants.weixinHeadImage.get(userId);
+			if (theUser != null) {
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("headImageUrl", theUser.getHeadImage());
+				returnJson.put("info", SystemPropties.getProperties("txt.success"));
+			} else {
+				returnJson.put("code", "404");
+				returnJson.put("info", (new StringBuilder("\u672A\u627E\u5230UserId\u4E3A")).append(userId).toString());
+			}
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public String getCurcarrier() {
+		return curcarrier;
+	}
+
+	public void setCurcarrier(String curcarrier) {
+		this.curcarrier = curcarrier;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	// 图片上传需要的属性值 start
+	private String headImage;
+	private String f_url;
+	private String f_alt;
+	private String f_border;
+	private String f_align;
+	private String f_vert;
+	private String f_horiz;
+	private File file;
+	private String fileFileName;
+	private String fileContentType;
+	private String submitType;
+
+	public String getF_url() {
+		return f_url;
+	}
+
+	public void setF_url(String f_url) {
+		this.f_url = f_url;
+	}
+
+	public String getF_alt() {
+		return f_alt;
+	}
+
+	public void setF_alt(String f_alt) {
+		this.f_alt = f_alt;
+	}
+
+	public String getF_border() {
+		return f_border;
+	}
+
+	public void setF_border(String f_border) {
+		this.f_border = f_border;
+	}
+
+	public String getF_align() {
+		return f_align;
+	}
+
+	public void setF_align(String f_align) {
+		this.f_align = f_align;
+	}
+
+	public String getF_vert() {
+		return f_vert;
+	}
+
+	public void setF_vert(String f_vert) {
+		this.f_vert = f_vert;
+	}
+
+	public String getF_horiz() {
+		return f_horiz;
+	}
+
+	public void setF_horiz(String f_horiz) {
+		this.f_horiz = f_horiz;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public String getFileFileName() {
+		return fileFileName;
+	}
+
+	public void setFileFileName(String fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	public String getSubmitType() {
+		return submitType;
+	}
+
+	public void setSubmitType(String submitType) {
+		this.submitType = submitType;
+	}
+	// 图片上传需要的属性值end
+
+	public String getHeadImage() {
+		return headImage;
+	}
+
+	public void setHeadImage(String headImage) {
+		this.headImage = headImage;
+	}
+
+	private Long hrId;
+	private String userId;
+	private String realName;
+	private String curcarrier;
+	private String volunteerNumber;
+	private Long accountId;
+	private int sex;
+	private String curLocation;
+	private String huKou;
+	private String phoneNumber;
+	private String email;
+	private String birthday;
+	private float height;
+	private float weight;
+	private String nation;
+	private String idCard;
+	private String nationalOutlook;
+	private String personalHomepage;
+	private String zipAddress;
+	private String zipCode;
+
+	private String description;
+
+	private String eduFrom;
+	private String eduTo;
+	private String eduSchool;
+	private String eduSchoolRoot;
+	private String eduDegree;
+	private String eduMajor;
+	private String eduMajorRoot;
+	private String eduMajorSub;
+
+	private String type;
+	private String fromDate;
+	private String endDate;
+	private String company;
+	private String depart;
+	private String jobDescription;
+
+	private String time;
+	private String awardProportion1;
+	private String awardProportion2;
+
+	private String languageType;
+	private String languageOracy;
+	private String languageScore;
+	private String languageExplain;
+
+	private String certificateTime;
+	private String certificateType;
+	private String certificateResult;
+	private String certificateDescription;
+
+	private String skillName;
+	private String skillTime;
+	private String proficiency;
+
+	// BlockTwenty
+	private String intendArea;
+	private String intendAreaRoot;
+	private String intendWork;
+	private String intendWorkRoot;
+	private String intendWorkSub;
+	private String intendLocation;
+	private String intendLocationRoot;
+	private String intendLocationSub;
+
+	private int pageNumber;
+	private int pageSize;
+
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
+	public float getHeight() {
+		return height;
+	}
+
+	public void setHeight(float height) {
+		this.height = height;
+	}
+
+	public float getWeight() {
+		return weight;
+	}
+
+	public void setWeight(float weight) {
+		this.weight = weight;
+	}
+
+	public String getNation() {
+		return nation;
+	}
+
+	public void setNation(String nation) {
+		this.nation = nation;
+	}
+
+	public String getCurLocation() {
+		return curLocation;
+	}
+
+	public void setCurLocation(String curLocation) {
+		this.curLocation = curLocation;
+	}
+
+	public String getHuKou() {
+		return huKou;
+	}
+
+	public void setHuKou(String huKou) {
+		this.huKou = huKou;
+	}
+
+	public String getIdCard() {
+		return idCard;
+	}
+
+	public void setIdCard(String idCard) {
+		this.idCard = idCard;
+	}
+
+	public String getNationalOutlook() {
+		return nationalOutlook;
+	}
+
+	public void setNationalOutlook(String nationalOutlook) {
+		this.nationalOutlook = nationalOutlook;
+	}
+
+	public String getPersonalHomepage() {
+		return personalHomepage;
+	}
+
+	public void setPersonalHomepage(String personalHomepage) {
+		this.personalHomepage = personalHomepage;
+	}
+
+	public int getSex() {
+		return sex;
+	}
+
+	public void setSex(int sex) {
+		this.sex = sex;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
+	public String getZipAddress() {
+		return zipAddress;
+	}
+
+	public void setZipAddress(String zipAddress) {
+		this.zipAddress = zipAddress;
+	}
+
+	public String getZipCode() {
+		return zipCode;
+	}
+
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getEduFrom() {
+		return eduFrom;
+	}
+
+	public void setEduFrom(String eduFrom) {
+		this.eduFrom = eduFrom;
+	}
+
+	public String getEduTo() {
+		return eduTo;
+	}
+
+	public void setEduTo(String eduTo) {
+		this.eduTo = eduTo;
+	}
+
+	public String getEduSchool() {
+		return eduSchool;
+	}
+
+	public void setEduSchool(String eduSchool) {
+		this.eduSchool = eduSchool;
+	}
+
+	public String getEduDegree() {
+		return eduDegree;
+	}
+
+	public void setEduDegree(String eduDegree) {
+		this.eduDegree = eduDegree;
+	}
+
+	public String getEduMajor() {
+		return eduMajor;
+	}
+
+	public void setEduMajor(String eduMajor) {
+		this.eduMajor = eduMajor;
+	}
+
+	public String getEduSchoolRoot() {
+		return eduSchoolRoot;
+	}
+
+	public void setEduSchoolRoot(String eduSchoolRoot) {
+		this.eduSchoolRoot = eduSchoolRoot;
+	}
+
+	public String getEduMajorRoot() {
+		return eduMajorRoot;
+	}
+
+	public void setEduMajorRoot(String eduMajorRoot) {
+		this.eduMajorRoot = eduMajorRoot;
+	}
+
+	public String getEduMajorSub() {
+		return eduMajorSub;
+	}
+
+	public void setEduMajorSub(String eduMajorSub) {
+		this.eduMajorSub = eduMajorSub;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(String fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getCompany() {
+		return company;
+	}
+
+	public void setCompany(String company) {
+		this.company = company;
+	}
+
+	public String getDepart() {
+		return depart;
+	}
+
+	public void setDepart(String depart) {
+		this.depart = depart;
+	}
+
+	public String getJobDescription() {
+		return jobDescription;
+	}
+
+	public void setJobDescription(String jobDescription) {
+		this.jobDescription = jobDescription;
+	}
+
+	public String getTime() {
+		return time;
+	}
+
+	public void setTime(String time) {
+		this.time = time;
+	}
+
+	public String getAwardProportion1() {
+		return awardProportion1;
+	}
+
+	public void setAwardProportion1(String awardProportion1) {
+		this.awardProportion1 = awardProportion1;
+	}
+
+	public String getAwardProportion2() {
+		return awardProportion2;
+	}
+
+	public void setAwardProportion2(String awardProportion2) {
+		this.awardProportion2 = awardProportion2;
+	}
+
+	public String getLanguageType() {
+		return languageType;
+	}
+
+	public void setLanguageType(String languageType) {
+		this.languageType = languageType;
+	}
+
+	public String getLanguageOracy() {
+		return languageOracy;
+	}
+
+	public void setLanguageOracy(String languageOracy) {
+		this.languageOracy = languageOracy;
+	}
+
+	public String getLanguageScore() {
+		return languageScore;
+	}
+
+	public void setLanguageScore(String languageScore) {
+		this.languageScore = languageScore;
+	}
+
+	public String getLanguageExplain() {
+		return languageExplain;
+	}
+
+	public void setLanguageExplain(String languageExplain) {
+		this.languageExplain = languageExplain;
+	}
+
+	public String getCertificateTime() {
+		return certificateTime;
+	}
+
+	public void setCertificateTime(String certificateTime) {
+		this.certificateTime = certificateTime;
+	}
+
+	public String getCertificateType() {
+		return certificateType;
+	}
+
+	public void setCertificateType(String certificateType) {
+		this.certificateType = certificateType;
+	}
+
+	public String getCertificateResult() {
+		return certificateResult;
+	}
+
+	public void setCertificateResult(String certificateResult) {
+		this.certificateResult = certificateResult;
+	}
+
+	public String getCertificateDescription() {
+		return certificateDescription;
+	}
+
+	public void setCertificateDescription(String certificateDescription) {
+		this.certificateDescription = certificateDescription;
+	}
+
+	public String getSkillName() {
+		return skillName;
+	}
+
+	public void setSkillName(String skillName) {
+		this.skillName = skillName;
+	}
+
+	public String getSkillTime() {
+		return skillTime;
+	}
+
+	public void setSkillTime(String skillTime) {
+		this.skillTime = skillTime;
+	}
+
+	public String getProficiency() {
+		return proficiency;
+	}
+
+	public void setProficiency(String proficiency) {
+		this.proficiency = proficiency;
+	}
+
+	public String getIntendArea() {
+		return intendArea;
+	}
+
+	public void setIntendArea(String intendArea) {
+		this.intendArea = intendArea;
+	}
+
+	public String getIntendAreaRoot() {
+		return intendAreaRoot;
+	}
+
+	public void setIntendAreaRoot(String intendAreaRoot) {
+		this.intendAreaRoot = intendAreaRoot;
+	}
+
+	public String getIntendWork() {
+		return intendWork;
+	}
+
+	public void setIntendWork(String intendWork) {
+		this.intendWork = intendWork;
+	}
+
+	public String getIntendWorkRoot() {
+		return intendWorkRoot;
+	}
+
+	public void setIntendWorkRoot(String intendWorkRoot) {
+		this.intendWorkRoot = intendWorkRoot;
+	}
+
+	public String getIntendWorkSub() {
+		return intendWorkSub;
+	}
+
+	public void setIntendWorkSub(String intendWorkSub) {
+		this.intendWorkSub = intendWorkSub;
+	}
+
+	public String getIntendLocation() {
+		return intendLocation;
+	}
+
+	public void setIntendLocation(String intendLocation) {
+		this.intendLocation = intendLocation;
+	}
+
+	public String getIntendLocationRoot() {
+		return intendLocationRoot;
+	}
+
+	public void setIntendLocationRoot(String intendLocationRoot) {
+		this.intendLocationRoot = intendLocationRoot;
+	}
+
+	public String getIntendLocationSub() {
+		return intendLocationSub;
+	}
+
+	public void setIntendLocationSub(String intendLocationSub) {
+		this.intendLocationSub = intendLocationSub;
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public Long getHrId() {
+		return hrId;
+	}
+
+	public void setHrId(Long hrId) {
+		this.hrId = hrId;
+	}
+
+	public String getVolunteerNumber() {
+		return volunteerNumber;
+	}
+
+	public void setVolunteerNumber(String volunteerNumber) {
+		this.volunteerNumber = volunteerNumber;
+	}
+
+	
+	private int getRedPkgScoreLevel=60;
+}

@@ -1,0 +1,138 @@
+package com.jite.hibgen.dao;
+
+import static org.hibernate.criterion.Example.create;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+
+import com.jite.hibgen.model.*;
+
+
+public class TShowSchoolDao extends BaseDao<TShowSchool>{
+	
+	private static final Log log = LogFactory.getLog(TShowSchoolDao.class);
+	public void persist(TShowSchool transientInstance) {
+		log.debug("persisting TShowSchool instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+	public void attachDirty(TShowSchool instance) {
+		log.debug("attaching dirty TShowSchool instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TShowSchool instance) {
+		log.debug("attaching clean TShowSchool instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TShowSchool persistentInstance) {
+		log.debug("deleting TShowSchool instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TShowSchool merge(TShowSchool detachedInstance) {
+		log.debug("merging TShowSchool instance");
+		try {
+			TShowSchool result = (TShowSchool) getHibernateTemplate()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TShowSchool findById(java.lang.Long id) {
+		log.debug("getting TShowSchool instance with id: " + id);
+		try {
+			TShowSchool instance = (TShowSchool) getHibernateTemplate()
+					.get("com.jite.hibgen.model.TShowSchool",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TShowSchool> findByExample(TShowSchool instance) {
+		log.debug("finding TShowSchool instance by example");
+		try {
+			List<TShowSchool> results = (List<TShowSchool>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TShowSchool")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public List<TShowSchool> searchByCriteria(int pageNo, int pageSize,TShowSchool search){
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TShowSchool.class);
+			
+			//setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.asc("rank"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<TShowSchool>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+
+	public int searchByCriteriaTotal(TShowSchool search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TShowSchool.class);
+		
+		//setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+}

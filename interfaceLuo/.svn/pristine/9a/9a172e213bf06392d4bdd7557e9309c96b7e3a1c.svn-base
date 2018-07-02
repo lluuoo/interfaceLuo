@@ -1,0 +1,120 @@
+package com.jite.hibgen.dao;
+
+import static org.hibernate.criterion.Example.create;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+
+import com.jite.hibgen.model.TUserSearchlog;
+
+/**
+ * Home object for domain model class TUserSearchlog.
+ * @see com.jite.hibgen.dao.TUserSearchlog
+ * @author Hibernate Tools
+ */
+public class TUserSearchlogDao extends BaseDao<TUserSearchlog>{
+
+	private static final Log log = LogFactory.getLog(TUserSearchlogDao.class);
+
+	public TUserSearchlogDao(){
+		super(TUserSearchlog.class);
+	}
+	public TUserSearchlogDao(TUserSearchlog po){
+		super(po.getClass());
+	}
+
+
+	public void persist(TUserSearchlog transientInstance) {
+		log.debug("persisting TUserSearchlog instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserSearchlog instance) {
+		log.debug("attaching dirty TUserSearchlog instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserSearchlog instance) {
+		log.debug("attaching clean TUserSearchlog instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserSearchlog persistentInstance) {
+		log.debug("deleting TUserSearchlog instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserSearchlog merge(TUserSearchlog detachedInstance) {
+		log.debug("merging TUserSearchlog instance");
+		try {
+			TUserSearchlog result = (TUserSearchlog) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserSearchlog findById(java.lang.Long id) {
+		log.debug("getting TUserSearchlog instance with id: " + id);
+		try {
+			TUserSearchlog instance = (TUserSearchlog) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.dao.TUserSearchlog", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserSearchlog> findByExample(TUserSearchlog instance) {
+		log.debug("finding TUserSearchlog instance by example");
+		try {
+			List<TUserSearchlog> results = (List<TUserSearchlog>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.dao.TUserSearchlog")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}

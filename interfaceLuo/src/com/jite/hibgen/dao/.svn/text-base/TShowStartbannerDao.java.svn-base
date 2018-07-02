@@ -1,0 +1,152 @@
+package com.jite.hibgen.dao;
+
+	import com.jite.hibgen.model.*;
+
+	import java.util.List;
+
+	import javax.naming.InitialContext;
+
+	import org.apache.commons.logging.Log;
+	import org.apache.commons.logging.LogFactory;
+	import org.hibernate.Criteria;
+	import org.hibernate.LockMode;
+	import org.hibernate.SessionFactory;
+	import org.hibernate.criterion.Order;
+	import org.hibernate.criterion.Projections;
+	import org.hibernate.criterion.Restrictions;
+
+	import static org.hibernate.criterion.Example.create;
+
+	/**
+	 * Home object for domain model class TShowStartbanner.
+	 * @see com.jite.hibgen.dao.TShowStartbanner
+	 * @author Hibernate Tools
+	 */
+	public class TShowStartbannerDao extends BaseDao<TShowStartbanner>{
+
+		private static final Log log = LogFactory.getLog(TShowStartbannerDao.class);
+
+
+		public void persist(TShowStartbanner transientInstance) {
+			log.debug("persisting TShowStartbanner instance");
+			try {
+				getHibernateTemplate().persist(transientInstance);
+				log.debug("persist successful");
+			} catch (RuntimeException re) {
+				log.error("persist failed", re);
+				throw re;
+			}
+		}
+
+		public void attachDirty(TShowStartbanner instance) {
+			log.debug("attaching dirty TShowStartbanner instance");
+			try {
+				getHibernateTemplate().saveOrUpdate(instance);
+				log.debug("attach successful");
+			} catch (RuntimeException re) {
+				log.error("attach failed", re);
+				throw re;
+			}
+		}
+
+		public void attachClean(TShowStartbanner instance) {
+			log.debug("attaching clean TShowStartbanner instance");
+			try {
+				getHibernateTemplate().lock(instance, LockMode.NONE);
+				log.debug("attach successful");
+			} catch (RuntimeException re) {
+				log.error("attach failed", re);
+				throw re;
+			}
+		}
+
+		public void delete(TShowStartbanner persistentInstance) {
+			log.debug("deleting TShowStartbanner instance");
+			try {
+				getHibernateTemplate().delete(persistentInstance);
+				log.debug("delete successful");
+			} catch (RuntimeException re) {
+				log.error("delete failed", re);
+				throw re;
+			}
+		}
+
+		public TShowStartbanner merge(TShowStartbanner detachedInstance) {
+			log.debug("merging TShowStartbanner instance");
+			try {
+				TShowStartbanner result = (TShowStartbanner) getHibernateTemplate()
+						.merge(detachedInstance);
+				log.debug("merge successful");
+				return result;
+			} catch (RuntimeException re) {
+				log.error("merge failed", re);
+				throw re;
+			}
+		}
+
+		public TShowStartbanner findById(java.lang.Long id) {
+			log.debug("getting TShowStartbanner instance with id: " + id);
+			try {
+				TShowStartbanner instance = (TShowStartbanner) getHibernateTemplate()
+						.get("com.jite.hibgen.model.TShowStartbanner",
+								id);
+				if (instance == null) {
+					log.debug("get successful, no instance found");
+				} else {
+					log.debug("get successful, instance found");
+				}
+				return instance;
+			} catch (RuntimeException re) {
+				log.error("get failed", re);
+				throw re;
+			}
+		}
+		
+		public List<TShowStartbanner> findByExample(TShowStartbanner instance) {
+			log.debug("finding TShowStartbanner instance by example");
+			try {
+				List<TShowStartbanner> results = (List<TShowStartbanner>) getHibernateTemplate().getSessionFactory()
+						.getCurrentSession()
+						.createCriteria("com.jite.hibgen.model.TShowStartbanner")
+						.add(create(instance)).list();
+				log.debug("find by example successful, result size: "
+						+ results.size());
+				return results;
+			} catch (RuntimeException re) {
+				log.error("find by example failed", re);
+				throw re;
+			}
+		}
+		public List<TShowStartbanner> searchByRank(int pageNo, int pageSize,TShowStartbanner search){
+			try {
+				Criteria criteria=getHibernateTemplate()
+						.getSessionFactory().getCurrentSession()
+						.createCriteria(TShowStartbanner.class);
+				
+				criteria.add(Restrictions.eq("status", 0));
+				
+				criteria.setProjection(null);
+				criteria.addOrder(Order.asc("rank"));
+				criteria.addOrder(Order.desc("updateDate"));
+				criteria.setFirstResult((pageNo - 1) * pageSize);  
+		        criteria.setMaxResults(pageSize);  
+		        
+				return (List<TShowStartbanner>)criteria.list();
+			} catch (RuntimeException re) {
+				log.error("find by example failed", re);
+				throw re;
+			}		
+		}
+
+		public int searchByCriteriaTotal(TShowStartbanner search){
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TShowStartbanner.class);
+			
+			//setCritieaByAdvanceSearch(criteria,search);
+			
+			return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+		}
+}
+
+

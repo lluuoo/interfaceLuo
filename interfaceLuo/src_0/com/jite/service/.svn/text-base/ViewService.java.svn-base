@@ -1,0 +1,39 @@
+package com.jite.service;
+
+import com.jite.hibgen.dao.THrViewuserlogDao;
+import com.jite.hibgen.model.THrViewuserlog;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ViewService
+{
+
+    public ViewService()
+    {
+    }
+
+    public THrViewuserlogDao getHrViewDao()
+    {
+        return hrViewDao;
+    }
+
+    public void setHrViewDao(THrViewuserlogDao hrViewDao)
+    {
+        this.hrViewDao = hrViewDao;
+    }
+
+    public List getList(String userId, String companyId)
+    {
+        List resultList = new ArrayList();
+        if(userId != null && companyId != null && !"".equals(userId) && !"".equals(userId))
+        {
+            THrViewuserlog search = new THrViewuserlog();
+            search.setCompanyId(Long.valueOf(companyId));
+            search.setUserId(Long.valueOf(userId));
+            resultList = hrViewDao.searchByCriteria(1, 10, search);
+        }
+        return resultList;
+    }
+
+    private THrViewuserlogDao hrViewDao;
+}

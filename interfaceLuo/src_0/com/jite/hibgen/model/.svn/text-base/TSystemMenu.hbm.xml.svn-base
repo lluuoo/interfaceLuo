@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-4-12 12:49:13 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TSystemMenu" table="t_system_menu" catalog="qch">
+        <id name="menuId" type="java.lang.Long">
+            <column name="menu_id" />
+            <generator class="identity" />
+        </id>
+        <property name="menuName" type="string">
+            <column name="menu_name" length="100" />
+        </property>
+        <property name="parentMenuId" type="java.lang.Long">
+            <column name="parent_menu_id" />
+        </property>
+        <property name="menuCode" type="string">
+            <column name="menu_code" length="50" />
+        </property>
+        <property name="menuUrl" type="string">
+            <column name="menu_url" length="200" />
+        </property>
+        <property name="icon" type="string">
+            <column name="icon" length="50" />
+        </property>
+        <property name="pageId" type="string">
+            <column name="page_id" length="50" />
+        </property>
+        <property name="adminFlag" type="string">
+            <column name="admin_flag" length="10" />
+        </property>
+    </class>
+</hibernate-mapping>

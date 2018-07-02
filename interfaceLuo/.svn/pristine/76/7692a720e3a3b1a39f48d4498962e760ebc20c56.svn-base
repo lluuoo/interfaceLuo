@@ -1,0 +1,2432 @@
+package com.jite.service;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.common.util.DateUtil;
+import com.jite.hibgen.dao.TAgentAccountDao;
+import com.jite.hibgen.dao.TAgentAccountUserDao;
+import com.jite.hibgen.dao.THrAccountDao;
+import com.jite.hibgen.dao.THrCompanyAreasDao;
+import com.jite.hibgen.dao.THrCompanyDao;
+import com.jite.hibgen.dao.THrCompanyMediasDao;
+import com.jite.hibgen.dao.THrCompanyStartDao;
+import com.jite.hibgen.dao.THrSearchlogDao;
+import com.jite.hibgen.dao.THrViewuserlogDao;
+import com.jite.hibgen.dao.TRedPkgPwdDao;
+import com.jite.hibgen.dao.TShowCooperativeUnitDao;
+import com.jite.hibgen.dao.TSystemSmslogDao;
+import com.jite.hibgen.dao.TUserAccountDao;
+import com.jite.hibgen.dao.TUserBizcardDao;
+import com.jite.hibgen.dao.TUserLoginlogDao;
+import com.jite.hibgen.dao.THrJobBaseDao;
+import com.jite.hibgen.dao.TUserProfileBasicDao;
+import com.jite.hibgen.dao.TUserProfileEducationDao;
+import com.jite.hibgen.dao.TUserProfileExperienceDao;
+import com.jite.hibgen.dao.TUserProfileAwardDao;
+import com.jite.hibgen.dao.TUserProfileLanguagesDao;
+import com.jite.hibgen.dao.TUserProfileCertificateDao;
+import com.jite.hibgen.dao.TUserProfileSkillDao;
+import com.jite.hibgen.dao.TUserProfileIntendsDao;
+import com.jite.hibgen.dao.THrResumesDao;
+import com.jite.hibgen.model.TAgentAccount;
+import com.jite.hibgen.model.TAgentAccountUser;
+import com.jite.hibgen.model.THrAccount;
+import com.jite.hibgen.model.THrCompany;
+import com.jite.hibgen.model.THrCompanyAreas;
+import com.jite.hibgen.model.THrCompanyMedias;
+import com.jite.hibgen.model.THrCompanyStart;
+import com.jite.hibgen.model.THrSearchlog;
+import com.jite.hibgen.model.THrViewuserlog;
+import com.jite.hibgen.model.TRedPkgPwd;
+import com.jite.hibgen.model.TSystemSmslog;
+import com.jite.hibgen.model.TUserAccount;
+import com.jite.hibgen.model.TUserBizcard;
+import com.jite.hibgen.model.TUserLoginlog;
+import com.jite.hibgen.model.THrJobBase;
+import com.jite.hibgen.model.TUserProfileIntends;
+import com.jite.hibgen.model.TUserProfileBasic;
+import com.jite.hibgen.model.TUserProfileEducation;
+import com.jite.hibgen.model.TUserProfileExperience;
+import com.jite.hibgen.model.TUserProfileAward;
+import com.jite.hibgen.model.TUserProfileLanguages;
+import com.jite.hibgen.model.TUserProfileCertificate;
+import com.jite.hibgen.model.TUserProfileSkill;
+import com.jite.hibgen.model.TShowCooperativeUnit;
+import com.jite.hibgen.model.THrResumes;
+import com.jite.struts.bean.BizInfo;
+import com.jite.struts.bean.CommonInfo;
+import com.jite.struts.bean.CommonItem;
+import com.jite.struts.bean.HrCompanyAreasInfo;
+import com.jite.struts.bean.HrCompanyInfo;
+import com.jite.struts.bean.MediaInfo;
+import com.jite.struts.bean.ProfileInfo;
+import com.jite.struts.bean.ProfileSearch;
+import com.jite.struts.bean.RedpkgInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.struts.bean.JobBaseInfo;
+import com.jite.struts.bean.UserProfileBasicInfo;
+import com.jite.struts.bean.ShowCooperativeUnitInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.Constants;
+import com.jite.utils.SystemPropties;
+import com.jite.utils.ValidateTool;
+import com.jite.utils.VerificationCodeUtil;
+
+public class UserService {
+
+	@Resource
+	private TUserAccountDao userAccountDao;
+
+	private TAgentAccountDao agentAccountDao;
+
+	private TAgentAccountUserDao agentAccountUserDao;
+
+	private TUserLoginlogDao userLoginlogDao;
+
+	private TUserBizcardDao userBizcardDao;
+	
+	private TUserProfileBasicDao userProfileBasicDao;
+	
+	private TUserProfileEducationDao userProfileEducationDao;
+	
+	private TUserProfileExperienceDao userProfileExperienceDao;
+	
+	private TUserProfileAwardDao userProfileAwardDao;
+	
+	private TUserProfileLanguagesDao userProfileLanguagesDao;
+	
+	private TUserProfileCertificateDao userProfileCertificateDao;
+	
+	private TUserProfileSkillDao userProfileSkillDao;
+	
+	private TUserProfileIntendsDao intentDao;
+
+	private THrCompanyDao hrCompanyDao;
+
+	private THrCompanyAreasDao areasDao;
+
+	private THrCompanyMediasDao mediasDao;
+	
+	private THrCompanyStartDao startDao;
+	
+	private THrJobBaseDao hrJobBaseDao;
+
+	private THrAccountDao hrDao;
+	
+	private THrSearchlogDao hrSearchDao;
+	
+	private THrViewuserlogDao hrViewDao;
+
+	private TRedPkgPwdDao redPkgPwdDao;
+	
+	private THrResumesDao resumesDao;
+	
+
+	//显示合作单位的DAO
+	private TShowCooperativeUnitDao showCooperativeUnitDao;
+
+	private TSystemSmslogDao smsDao;
+	
+	
+
+
+	public THrResumesDao getResumesDao() {
+		return resumesDao;
+	}
+
+	public void setResumesDao(THrResumesDao resumesDao) {
+		this.resumesDao = resumesDao;
+	}
+
+	public TUserLoginlogDao getUserLoginlogDao() {
+		return userLoginlogDao;
+	}
+
+	public void setUserLoginlogDao(TUserLoginlogDao userLoginlogDao) {
+		this.userLoginlogDao = userLoginlogDao;
+	}
+
+	public TUserAccountDao getUserAccountDao() {
+		return userAccountDao;
+	}
+
+	public void setUserAccountDao(TUserAccountDao userAccountDao) {
+		this.userAccountDao = userAccountDao;
+	}
+
+	public TAgentAccountDao getAgentAccountDao() {
+		return agentAccountDao;
+	}
+
+	public void setAgentAccountDao(TAgentAccountDao agentAccountDao) {
+		this.agentAccountDao = agentAccountDao;
+	}
+
+	public TAgentAccountUserDao getAgentAccountUserDao() {
+		return agentAccountUserDao;
+	}
+
+	public void setAgentAccountUserDao(TAgentAccountUserDao agentAccountUserDao) {
+		this.agentAccountUserDao = agentAccountUserDao;
+	}
+
+	public TUserBizcardDao getUserBizcardDao() {
+		return userBizcardDao;
+	}
+
+	public void setUserBizcardDao(TUserBizcardDao userBizcardDao) {
+		this.userBizcardDao = userBizcardDao;
+	}
+
+	public TUserProfileIntendsDao getIntentDao() {
+		return intentDao;
+	}
+
+	public void setIntentDao(TUserProfileIntendsDao intentDao) {
+		this.intentDao = intentDao;
+	}
+	
+	public THrJobBaseDao getHrJobBaseDao() {
+		return hrJobBaseDao;
+	}
+
+	public void setHrJobBaseDao(THrJobBaseDao hrJobBaseDao) {
+		this.hrJobBaseDao = hrJobBaseDao;
+	}
+	
+	public THrCompanyStartDao getStartDao() {
+		return startDao;
+	}
+
+	public void setStartDao(THrCompanyStartDao startDao) {
+		this.startDao = startDao;
+	}
+
+	public TUserProfileBasicDao getUserProfileBasicDao() {
+		return userProfileBasicDao;
+	}
+
+	public void setUserProfileBasicDao(TUserProfileBasicDao userProfileBasicDao) {
+		this.userProfileBasicDao = userProfileBasicDao;
+	}
+	
+	public TUserProfileEducationDao getUserProfileEducationDao() {
+		return userProfileEducationDao;
+	}
+
+	public void setUserProfileEducationDao(
+			TUserProfileEducationDao userProfileEducationDao) {
+		this.userProfileEducationDao = userProfileEducationDao;
+	}
+	
+	public TUserProfileExperienceDao getUserProfileExperienceDao() {
+		return userProfileExperienceDao;
+	}
+
+	public void setUserProfileExperienceDao(TUserProfileExperienceDao userProfileExperienceDao) {
+		this.userProfileExperienceDao = userProfileExperienceDao;
+	}
+
+	public TUserProfileAwardDao getUserProfileAwardDao() {
+		return userProfileAwardDao;
+	}
+
+	public void setUserProfileAwardDao(TUserProfileAwardDao userProfileAwardDao) {
+		this.userProfileAwardDao = userProfileAwardDao;
+	}
+	
+	public TUserProfileLanguagesDao getUserProfileLanguagesDao() {
+		return userProfileLanguagesDao;
+	}
+
+	public void setUserProfileLanguagesDao(
+			TUserProfileLanguagesDao userProfileLanguagesDao) {
+		this.userProfileLanguagesDao = userProfileLanguagesDao;
+	}
+
+	public TUserProfileCertificateDao getUserProfileCertificateDao() {
+		return userProfileCertificateDao;
+	}
+
+	public void setUserProfileCertificateDao(
+			TUserProfileCertificateDao userProfileCertificateDao) {
+		this.userProfileCertificateDao = userProfileCertificateDao;
+	}
+	
+	public THrSearchlogDao getHrSearchDao() {
+		return hrSearchDao;
+	}
+
+	public void setHrSearchDao(THrSearchlogDao hrSearchDao) {
+		this.hrSearchDao = hrSearchDao;
+	}
+
+	public TUserProfileSkillDao getUserProfileSkillDao() {
+		return userProfileSkillDao;
+	}
+
+	public void setUserProfileSkillDao(TUserProfileSkillDao userProfileSkillDao) {
+		this.userProfileSkillDao = userProfileSkillDao;
+	}
+
+	public TRedPkgPwdDao getRedPkgPwdDao() {
+		return redPkgPwdDao;
+	}
+
+	public void setRedPkgPwdDao(TRedPkgPwdDao redPkgPwdDao) {
+		this.redPkgPwdDao = redPkgPwdDao;
+	}
+
+	public TShowCooperativeUnitDao getShowCooperativeUnitDao() {
+		return showCooperativeUnitDao;
+	}
+
+	public void setShowCooperativeUnitDao(
+			TShowCooperativeUnitDao showCooperativeUnitDao) {
+		this.showCooperativeUnitDao = showCooperativeUnitDao;
+	}
+
+	public TSystemSmslogDao getSmsDao() {
+		return smsDao;
+	}
+
+	public void setSmsDao(TSystemSmslogDao smsDao) {
+		this.smsDao = smsDao;
+	}
+	
+	
+
+	public UserInfo addUserAccount(String username, String password, int type,String agentAccount,String invitecode,int operater) {
+		UserInfo returnUser = new UserInfo();
+
+		TUserAccount searchUserAccount = new TUserAccount();
+		searchUserAccount.setAccount(username);
+		List<TUserAccount> resultList = userAccountDao
+				.findByExample(searchUserAccount);
+		if (null != resultList && 0 < resultList.size()) {
+			returnUser.setUserId("-100");
+			returnUser.setType(resultList.get(0).getType().toString());
+			return returnUser;
+		} else {
+			TUserAccount userAccount = new TUserAccount();
+			userAccount.setAccount(username);
+			userAccount.setPassword(password);
+			userAccount.setType(type);
+			userAccount.setCreateDate(new Date());
+			userAccount.setUpdateDate(new Date());
+			userAccount.setLastlogin(new Date());
+			userAccount.setIsMailVerified(0);
+			userAccount.setIsPhoneVerified(0);
+			userAccount.setStatus(1);//默认开放简历
+			userAccountDao.saveObject(userAccount);
+
+			if (0 < userAccount.getId()) {
+				returnUser.setType(String.valueOf(type));
+				returnUser.setUserId(String.valueOf(userAccount.getId()));
+				returnUser.setUsername(username);
+				if (ValidateTool.isMobile(username)) {
+					returnUser.setPhoneNumber(username);
+				}
+				if (ValidateTool.isEmail(username)) {
+					returnUser.setEmail(username);
+				}
+				TUserBizcard userBizcard = new TUserBizcard();
+				userBizcard.setAccountId(userAccount.getId());
+				userBizcard.setCreateDate(new Date());
+				userBizcardDao.saveObject(userBizcard);																
+				if(type==1||type==3){//保存用户的邀请码信息
+					TAgentAccountUser taau=new TAgentAccountUser();
+					taau.setRegUserId(userAccount.getId());
+					List<TAgentAccountUser> theList=agentAccountUserDao.findByExample(taau);
+					if(theList!=null&&theList.size()>0){
+						taau=theList.get(0);
+					}
+					taau.setAgentAccount(agentAccount);
+					if(invitecode!=null){
+						taau.setInviteCode(invitecode.toUpperCase());
+					}
+					if(taau.getCreateDate()==null){
+						taau.setCreateDate(new Date());
+					}
+					taau.setUpdateDate(new Date());
+					taau.setOperater(String.valueOf(operater));
+					
+					agentAccountUserDao.merge(taau);
+					
+				}
+				
+			}
+
+		}
+
+		return returnUser;
+	}
+	
+	
+	public boolean updateTime(Long accountId){
+		boolean result = false;
+		try{
+			TUserAccount accountBean = userAccountDao.findById(accountId);// accountId是否存在TUserAccount表内
+
+			if (null != accountBean) {
+
+				accountBean.setUpdateDate(new Date());
+				userAccountDao.updateObject(accountBean);
+
+				TUserBizcard searchBean2 = new TUserBizcard();
+				searchBean2.setAccountId(accountId);
+				List<TUserBizcard> bizList = userBizcardDao
+						.findByExample(searchBean2);
+				TUserBizcard userBizcard;
+				if (null != bizList && 0 < bizList.size()) {
+					userBizcard = bizList.get(0);
+					userBizcard.setUpdateDate(new Date());
+					userBizcardDao.updateObject(userBizcard);
+				}
+
+				TUserProfileBasic searchBean3 = new TUserProfileBasic();
+				searchBean3.setAccountId(accountId);
+				List<TUserProfileBasic> profileList = userProfileBasicDao
+						.findByExample(searchBean3);
+				TUserProfileBasic userProfileBasic = new TUserProfileBasic();
+				if (null != profileList && 0 < profileList.size()) {
+					userProfileBasic = profileList.get(0);
+					userProfileBasic.setUpdateDate(new Date());
+					userProfileBasicDao.updateObject(userProfileBasic);
+				}
+			}
+			result = true;
+		}catch(Exception e){			
+		}
+		return result;
+		}
+	
+	public boolean verificationState(Long accountId){
+		boolean result = false;
+		try{
+		TUserAccount accountBean = userAccountDao.findById(accountId);
+		if(null!=accountBean.getIsMailVerified()&&1==accountBean.getIsMailVerified()){
+		result = true;
+		}
+		}catch(Exception e){			
+		}
+		return result;
+		}
+	
+	public boolean phoneVerificationState(Long accountId){
+		boolean result = false;
+		try{
+		TUserAccount accountBean = userAccountDao.findById(accountId);
+		if(null!=accountBean.getIsPhoneVerified()&&1==accountBean.getIsPhoneVerified()){
+		result = true;
+		}
+		}catch(Exception e){			
+		}
+		return result;
+		}
+	
+	
+	
+	public UserProfileBasicInfo addUserProfilebasic(Long accountId, float height,float weight,String
+			nation,String curLocation,String huKou,String idCard,String nationalOutlook,String personalHomepage){
+		
+		UserProfileBasicInfo returnBean = new UserProfileBasicInfo();
+		
+		TUserAccount accountBean = userAccountDao.findById(accountId);
+		if(null !=accountBean){
+		
+		TUserProfileBasic searchBean = new TUserProfileBasic();
+		
+		searchBean.setAccountId(accountId);
+		
+		List<TUserProfileBasic> profileList = userProfileBasicDao.findByExample(searchBean);
+		TUserProfileBasic userProfileBasic = new TUserProfileBasic();
+		
+		if(null !=profileList && 0<profileList.size()){
+			userProfileBasic=profileList.get(0);
+		userProfileBasic.setAccountId(accountId);
+		userProfileBasic.setHeight(height);
+		userProfileBasic.setWeight(weight);
+		userProfileBasic.setNation(nation);
+		userProfileBasic.setCurLocation(curLocation);
+		userProfileBasic.setHuKou(huKou);
+		userProfileBasic.setIdCard(idCard);
+		userProfileBasic.setNationalOutlook(nationalOutlook);
+		userProfileBasic.setPersonalHomepage(personalHomepage);
+		userProfileBasic.setUpdateDate(new Date());
+		userProfileBasicDao.updateObject(userProfileBasic);
+		
+		if (0 < userProfileBasic.getId()) {
+			returnBean.setAccountId(accountId);
+			returnBean.setHeight(height);
+			returnBean.setWeight(weight);
+			returnBean.setNation(nation);
+			returnBean.setCurLocation(curLocation);
+			returnBean.setHuKou(huKou);
+			returnBean.setIdCard(idCard);
+			returnBean.setNationalOutlook(nationalOutlook);
+			returnBean.setPersonalHomepage(personalHomepage);
+	}
+	}else{
+		userProfileBasic.setAccountId(accountId);
+		userProfileBasic.setHeight(height);
+		userProfileBasic.setWeight(weight);
+		userProfileBasic.setNation(nation);
+		userProfileBasic.setCurLocation(curLocation);
+		userProfileBasic.setHuKou(huKou);
+		userProfileBasic.setIdCard(idCard);
+		userProfileBasic.setNationalOutlook(nationalOutlook);
+		userProfileBasic.setPersonalHomepage(personalHomepage);
+		userProfileBasic.setCreateDate(new Date());
+		userProfileBasic.setUpdateDate(new Date());
+		userProfileBasicDao.saveObject(userProfileBasic);
+		
+		if (0 < userProfileBasic.getId()) {
+			returnBean.setAccountId(accountId);
+			returnBean.setHeight(height);
+			returnBean.setWeight(weight);
+			returnBean.setNation(nation);
+			returnBean.setCurLocation(curLocation);
+			returnBean.setHuKou(huKou);
+			returnBean.setIdCard(idCard);
+			returnBean.setNationalOutlook(nationalOutlook);
+			returnBean.setPersonalHomepage(personalHomepage);
+	}
+	}
+	}else{
+		returnBean.setAccountId(-100L);
+		return returnBean;
+	}
+		return returnBean;
+	}
+
+	public BizInfo addUserBizcard(Long accountId, String username,
+			String birthday, int sex, String schoolName,String schoolNameRoot, String degree,String curcarrier,String volunteerNumber,
+			String major, String majorRoot, String majorSub,String phoneNumber, String emailAddress, 
+			String intentArea,String intentAreaRoot, String intentWork,String intentWorkRoot, String intentWorkSub) {
+		BizInfo returnBean = new BizInfo();
+		Date birthdays = DateUtil.start2Date(birthday, "yyyy");
+
+		TUserAccount accountBean = userAccountDao.findById(accountId);// accountId是否存在TUserAccount表内
+
+		if (null != accountBean) {
+
+			TUserBizcard searchBean = new TUserBizcard();
+			searchBean.setAccountId(accountId);
+			List<TUserBizcard> bizList = userBizcardDao
+					.findByExample(searchBean);
+			TUserBizcard userBizcard;
+			if (null != bizList && 0 < bizList.size()) {//修改
+				userBizcard = bizList.get(0);
+				userBizcard.setAccountId(accountId);
+				userBizcard.setRealName(username);
+				userBizcard.setBirthday(birthdays);
+				userBizcard.setSex(sex);
+				userBizcard.setSchoolName(schoolName);
+				userBizcard.setSchoolNameRoot(schoolNameRoot);
+				userBizcard.setDegree(degree);
+				userBizcard.setCurcarrier(curcarrier);
+				userBizcard.setVolunteerNumber(volunteerNumber);
+				userBizcard.setMajor(major);
+				userBizcard.setMajorRoot(majorRoot);
+				userBizcard.setMajorSub(majorSub);
+				userBizcard.setPhoneNumber(phoneNumber);
+				userBizcard.setEmailAddress(emailAddress);
+				userBizcard.setUpdateDate(new Date());
+				userBizcardDao.updateObject(userBizcard);
+				
+				TUserAccount tua=userAccountDao.findById(accountId);
+				if(tua!=null){//增加修改手机号码需要重新验证
+					if(phoneNumber!=null&&!phoneNumber.equals(tua.getPhone())){
+						tua.setPhone(phoneNumber);
+						tua.setIsPhoneVerified(0);
+						returnBean.setIsPhoneVerified(0);
+					}
+					if(emailAddress!=null&&!emailAddress.equals(tua.getEmail())){
+						tua.setEmail(emailAddress);
+						tua.setIsMailVerified(0);
+						returnBean.setIsMailVerified(0);
+					}
+					userAccountDao.updateObject(tua);
+				}
+				
+				if (0 < userBizcard.getId()) {
+					returnBean.setAccountId(accountId);
+					returnBean.setUserId(String.valueOf(userBizcard.getId()));
+					returnBean.setUsername(username);
+					returnBean.setBirthday(birthday);
+					returnBean.setSex(sex);
+					returnBean.setVolunteerNumber(volunteerNumber);
+					returnBean.setSchoolName(schoolName);
+					returnBean.setSchoolNameRoot(schoolNameRoot);
+					returnBean.setDegree(degree);
+					returnBean.setCurcarrier(curcarrier);
+					returnBean.setMajor(major);
+					returnBean.setMajorRoot(majorRoot);
+					returnBean.setMajorSub(majorSub);
+					returnBean.setPhoneNumber(phoneNumber);
+					returnBean.setEmailAddress(emailAddress);
+					returnBean.setIntentArea(intentArea);
+					returnBean.setIntentAreaRoot(intentAreaRoot);
+					returnBean.setIntentWork(intentWork);
+					returnBean.setIntentWorkRoot(intentWorkRoot);
+					returnBean.setIntentWorkSub(intentWorkSub);
+					saveUserIntents(returnBean);
+				}
+
+			} else {//新增
+				userBizcard = new TUserBizcard();
+				userBizcard.setAccountId(accountId);
+				userBizcard.setRealName(username);
+				userBizcard.setBirthday(birthdays);
+				userBizcard.setSex(sex);
+				userBizcard.setSchoolName(schoolName);
+				userBizcard.setSchoolNameRoot(schoolNameRoot);
+				userBizcard.setDegree(degree);
+				userBizcard.setCurcarrier(curcarrier);
+				userBizcard.setVolunteerNumber(volunteerNumber);
+				userBizcard.setMajor(major);
+				userBizcard.setMajorRoot(majorRoot);
+				userBizcard.setMajorSub(majorSub);
+				userBizcard.setPhoneNumber(phoneNumber);
+				userBizcard.setEmailAddress(emailAddress);
+				userBizcard.setCreateDate(new Date());
+				userBizcard.setUpdateDate(new Date());
+				userBizcardDao.saveObject(userBizcard);
+
+				if (0 < userBizcard.getId()) {
+					returnBean.setAccountId(accountId);
+					returnBean.setUserId(String.valueOf(userBizcard.getId()));
+					returnBean.setUsername(username);
+					returnBean.setBirthday(birthday);
+					returnBean.setSex(sex);
+					returnBean.setSchoolName(schoolName);
+					returnBean.setSchoolNameRoot(schoolNameRoot);
+					returnBean.setDegree(degree);
+					returnBean.setCurcarrier(curcarrier);
+					returnBean.setVolunteerNumber(volunteerNumber);
+					returnBean.setMajor(major);
+					returnBean.setMajorRoot(majorRoot);
+					returnBean.setMajorSub(majorSub);
+					returnBean.setPhoneNumber(phoneNumber);
+					returnBean.setEmailAddress(emailAddress);
+					returnBean.setIntentArea(intentArea);
+					returnBean.setIntentAreaRoot(intentAreaRoot);
+					returnBean.setIntentWork(intentWork);
+					returnBean.setIntentWorkRoot(intentWorkRoot);
+					returnBean.setIntentWorkSub(intentWorkSub);
+					saveUserIntents(returnBean);
+				}
+			}
+		} else {
+			returnBean.setUserId("-100");
+			return returnBean;
+		}
+
+		return returnBean;
+	}
+
+	private void saveUserIntents(BizInfo returnBean) {
+		if(null!=returnBean.getIntentLocation()&&!"".equals(returnBean.getIntentLocation().trim())){
+			intentDao.deleteByAccountId(returnBean.getAccountId());
+		}else{
+			intentDao.deleteByAccountIdWithoutLocation(returnBean.getAccountId());
+		}
+		
+		if(null!=returnBean.getIntentArea()&&!"".equals(returnBean.getIntentArea().trim())){
+			String [] areas=returnBean.getIntentArea().split(Constants.ITEM_STR_SEPERATER_SPACE);
+			String [] areasRoot=returnBean.getIntentAreaRoot().split(Constants.ITEM_STR_SEPERATER_SPACE);
+			for(int i=0;i<areas.length;i++){
+				TUserProfileIntends oneAreaAdd=new TUserProfileIntends();
+				oneAreaAdd.setCommonName(areas[i]);
+				oneAreaAdd.setCommonNameRoot(areasRoot[i]);
+				oneAreaAdd.setType(Constants.INTENT_TYPE_AREA);
+				oneAreaAdd.setUserId(returnBean.getAccountId());
+				oneAreaAdd.setCreateDate(new Date());
+				oneAreaAdd.setUpdateDate(new Date());
+				intentDao.persist(oneAreaAdd);
+			}
+		}
+		
+		if(null!=returnBean.getIntentWork()&&!"".equals(returnBean.getIntentWork().trim())){
+			String [] works=returnBean.getIntentWork().split(Constants.ITEM_STR_SEPERATER_SPACE);
+			String [] worksRoot=returnBean.getIntentWorkRoot().split(Constants.ITEM_STR_SEPERATER_SPACE);
+			String [] worksSub=returnBean.getIntentWorkSub().split(Constants.ITEM_STR_SEPERATER_SPACE);
+			for(int i=0;i<works.length;i++){
+				TUserProfileIntends oneWorkAdd=new TUserProfileIntends();
+				oneWorkAdd.setCommonName(works[i]);
+				oneWorkAdd.setCommonNameRoot(worksRoot[i]);
+				oneWorkAdd.setCommonNameSub(worksSub[i]);
+				oneWorkAdd.setType(Constants.INTENT_TYPE_WORK);
+				oneWorkAdd.setUserId(returnBean.getAccountId());
+				oneWorkAdd.setCreateDate(new Date());
+				oneWorkAdd.setUpdateDate(new Date());
+				intentDao.persist(oneWorkAdd);
+			}
+		}
+		
+		if(null!=returnBean.getIntentLocation()&&!"".equals(returnBean.getIntentLocation().trim())){
+			String [] locations=returnBean.getIntentLocation().split(Constants.ITEM_STR_SEPERATER_SPACE);
+			String [] locationsRoot=returnBean.getIntentLocationRoot().split(Constants.ITEM_STR_SEPERATER_SPACE);
+			String [] locationsSub=returnBean.getIntentLocationSub().split(Constants.ITEM_STR_SEPERATER_SPACE);		
+			for(int i=0;i<locations.length;i++){
+				TUserProfileIntends oneLocationAdd=new TUserProfileIntends();
+				oneLocationAdd.setCommonName(locations[i]);
+				oneLocationAdd.setCommonNameRoot(locationsRoot[i]);
+				oneLocationAdd.setCommonNameSub(locationsSub[i]);
+				oneLocationAdd.setType(Constants.INTENT_TYPE_LOCATION);
+				oneLocationAdd.setUserId(returnBean.getAccountId());
+				oneLocationAdd.setCreateDate(new Date());
+				oneLocationAdd.setUpdateDate(new Date());
+				intentDao.persist(oneLocationAdd);
+			}
+		}
+		
+	}
+
+	public JobBaseInfo addHrJobBase(Long companyId, String name,
+			String location, String department, String departReportTo,
+			int departUnderCount, String description, int type, double salary,
+			String status, String fromDate, String endDate, long creater,
+			long updater) {
+		JobBaseInfo returnUser = new JobBaseInfo();
+		Date fromDates = DateUtil.start2Date(fromDate);
+		Date endDates = DateUtil.start2Date(fromDate);
+
+		THrJobBase jobBaseBean = hrJobBaseDao.findById(companyId);// accountId是否存在TUserAccount表内
+
+		if (null != jobBaseBean) {
+
+			THrJobBase searchBean = new THrJobBase();
+			searchBean.setCompanyId(companyId);
+			List<THrJobBase> bizList = hrJobBaseDao.findByExample(searchBean);
+			THrJobBase hrJobBase;
+			if (null != bizList && 0 < bizList.size()) {
+				hrJobBase = bizList.get(0);
+				hrJobBase.setCompanyId(companyId);
+				hrJobBase.setName(name);
+				hrJobBase.setLocation(location);
+				hrJobBase.setDepartment(department);
+				hrJobBase.setDepartReportTo(departReportTo);
+				hrJobBase.setDepartUnderCount(departUnderCount);
+				hrJobBase.setDescription(description);
+				hrJobBase.setType(type);
+				hrJobBase.setSalary(salary);
+				hrJobBase.setStatus(status);
+				hrJobBase.setFromDate(fromDates);
+				hrJobBase.setEndDate(endDates);
+				hrJobBase.setCreater(creater);
+				hrJobBase.setUpdater(updater);
+				hrJobBase.setUpdateDate(new Date());
+				hrJobBaseDao.updateObject(hrJobBase);
+
+				if (0 < hrJobBase.getId()) {
+					returnUser.setId(hrJobBase.getId());
+					hrJobBase.setCompanyId(companyId);
+					hrJobBase.setName(name);
+					hrJobBase.setLocation(location);
+					hrJobBase.setDepartment(department);
+					hrJobBase.setDepartReportTo(departReportTo);
+					hrJobBase.setDepartUnderCount(departUnderCount);
+					hrJobBase.setDescription(description);
+					hrJobBase.setType(type);
+					hrJobBase.setSalary(salary);
+					hrJobBase.setStatus(status);
+					hrJobBase.setFromDate(fromDates);
+					hrJobBase.setEndDate(endDates);
+					hrJobBase.setCreater(creater);
+					hrJobBase.setUpdater(updater);
+				}
+
+			} else {
+				hrJobBase = bizList.get(0);
+				hrJobBase.setCompanyId(companyId);
+				hrJobBase.setName(name);
+				hrJobBase.setLocation(location);
+				hrJobBase.setDepartment(department);
+				hrJobBase.setDepartReportTo(departReportTo);
+				hrJobBase.setDepartUnderCount(departUnderCount);
+				hrJobBase.setDescription(description);
+				hrJobBase.setType(type);
+				hrJobBase.setSalary(salary);
+				hrJobBase.setStatus(status);
+				hrJobBase.setFromDate(fromDates);
+				hrJobBase.setEndDate(endDates);
+				hrJobBase.setCreater(creater);
+				hrJobBase.setUpdater(updater);
+				hrJobBase.setUpdateDate(new Date());
+				hrJobBaseDao.saveObject(hrJobBase);
+
+				if (0 < hrJobBase.getId()) {
+					returnUser.setId(hrJobBase.getId());
+					hrJobBase.setCompanyId(companyId);
+					hrJobBase.setName(name);
+					hrJobBase.setLocation(location);
+					hrJobBase.setDepartment(department);
+					hrJobBase.setDepartReportTo(departReportTo);
+					hrJobBase.setDepartUnderCount(departUnderCount);
+					hrJobBase.setDescription(description);
+					hrJobBase.setType(type);
+					hrJobBase.setSalary(salary);
+					hrJobBase.setStatus(status);
+					hrJobBase.setFromDate(fromDates);
+					hrJobBase.setEndDate(endDates);
+					hrJobBase.setCreater(creater);
+					hrJobBase.setUpdater(updater);
+				}
+			}
+		} else {
+			returnUser.setId(-100L);
+			return returnUser;
+		}
+
+		return returnUser;
+	}
+
+	public boolean addUserLoginlog(String userId) throws Exception {
+
+		boolean issuccess = false;
+
+		TUserLoginlog log = new TUserLoginlog();
+
+		log.setUserId(Long.parseLong(userId));
+
+		log.setLoginTime(new Date());
+
+		issuccess = userLoginlogDao.addLoginLog(log);
+
+		return issuccess;
+	}
+
+	@SuppressWarnings("deprecation")
+	public UserInfo checkUserAccount(String username, String password, int type) {
+		TUserAccount userAccount = new TUserAccount();
+		userAccount.setAccount(username);
+		List<TUserAccount> resultList = userAccountDao
+				.findByExample(userAccount);
+		UserInfo returnUser = new UserInfo();
+
+		if (null != resultList && 0 < resultList.size()) {
+			for (TUserAccount t : resultList) {
+				if (t.getAccount().equalsIgnoreCase(username)
+						&& t.getPassword().equals(password)
+						&& t.getType() == type) {
+					returnUser.setType(String.valueOf(t.getType()));
+					returnUser.setUserId(String.valueOf(t.getId()));
+					returnUser.setUsername(t.getAccount());
+					returnUser.setIsMailVerified(t.getIsMailVerified());
+					returnUser.setIsPhoneVerified(t.getIsPhoneVerified());
+					returnUser.setStatus(t.getStatus());
+					returnUser.setPhoneNumber(t.getPhone());
+					returnUser.setEmail(t.getEmail());
+					
+					if (t.getType().equals(Constants.ACCOUNT_TYPE_HR)) {
+						THrAccount search = new THrAccount();
+						search.setHrAccountId(t.getId());
+						List<THrAccount> searchResult = hrDao
+								.findByExample(search);
+						if (searchResult != null && searchResult.size() > 0) {
+							THrAccount theHr = searchResult.get(0);
+							if (theHr != null) {
+								returnUser.setHrInfo(BeanTrans.getHrInfoFromT(theHr));
+								
+								THrCompany tCom = hrCompanyDao.findById(theHr
+										.getCompanyId());
+								if(tCom!=null){
+									HrCompanyInfo theReturnCom=BeanTrans.getFromTCompany(tCom);
+									THrCompanyStart startSearch=new THrCompanyStart();
+									startSearch.setCompanyId(theHr.getCompanyId());
+									List<THrCompanyStart> theStartList=startDao.findByExample(startSearch);
+									if(null!=theStartList&&0<theStartList.size()){
+										theReturnCom.setLeader(theStartList.get(0).getLeader());
+										theReturnCom.setLeaderPic(theStartList.get(0).getLeaderPic());
+										theReturnCom.setLeaderDesc(theStartList.get(0).getLeaderDesc());
+										theReturnCom.setLeaderPosition(theStartList.get(0).getLeaderPosition());
+										theReturnCom.setMoneyFrom(theStartList.get(0).getMoneyFrom());
+									}
+									List<MediaInfo> theMIlist=new ArrayList<MediaInfo>();
+									THrCompanyMedias mSear=new THrCompanyMedias();
+									mSear.setCompanyId(tCom.getId());
+									for(THrCompanyMedias inm:mediasDao.findByExample(mSear)){
+										theMIlist.add(BeanTrans.getFromTCompanyMedias(inm));
+									}
+									theReturnCom.setMedias(theMIlist);
+									returnUser.setCompanyInfo(theReturnCom);
+									
+									
+									List<HrCompanyAreasInfo> areasList=new ArrayList<HrCompanyAreasInfo>();
+									THrCompanyAreas aSear=new THrCompanyAreas();
+									aSear.setCompanyId(tCom.getId());
+									for(THrCompanyAreas tca:areasDao.findByExample(aSear)){
+										areasList.add(BeanTrans.getFromTCompanyAreas(tca));
+									}
+									theReturnCom.setAreas(areasList);
+								}
+							}else{
+								returnUser.setCompanyInfo(new HrCompanyInfo());
+							}
+						}else{
+							returnUser.setCompanyInfo(new HrCompanyInfo());
+						}
+					}else{
+						TUserBizcard searchBean = new TUserBizcard();
+						searchBean.setAccountId(t.getId());
+						List<TUserBizcard> bizList = userBizcardDao
+								.findByExample(searchBean);
+						if (null != bizList && 0 < bizList.size()) {
+							TUserBizcard bizCard=bizList.get(0);
+							returnUser.setRealName(bizCard.getRealName());
+							if(bizCard.getBirthday()!=null){
+								Calendar theCal=GregorianCalendar.getInstance();
+								theCal.setTime(bizCard.getBirthday());
+								returnUser.setBirthYear(String.valueOf(theCal.get(Calendar.YEAR)));
+							}
+							BizInfo bizInfo=BeanTrans.getFromTBizCard(bizCard);
+							queryUserIntends(bizInfo);
+							returnUser.setBizInfo(bizInfo);
+						}
+					}
+					
+					//最后登录时间
+					t.setLastlogin(new Date());
+					userAccountDao.updateObject(t);
+				}
+			}
+		}
+
+		return returnUser;
+	}
+
+	private void queryUserIntends(BizInfo returnBean) {
+		TUserProfileIntends search=new TUserProfileIntends();
+		search.setUserId(returnBean.getAccountId());
+		List<TUserProfileIntends> userIntends=intentDao.findByExample(search);
+		StringBuffer intendArea=new StringBuffer();
+		StringBuffer intendAreaRoot=new StringBuffer();
+		StringBuffer intendWork=new StringBuffer();
+		StringBuffer intendWorkRoot=new StringBuffer();
+		StringBuffer intendWorkSub=new StringBuffer();
+		StringBuffer intentLocation=new StringBuffer();
+		StringBuffer intentLocationRoot=new StringBuffer();
+		StringBuffer intentLocationSub=new StringBuffer();
+		
+		CommonInfo intendAreaItems=new CommonInfo();
+		intendAreaItems.setConfigName(String.valueOf(Constants.INTENT_TYPE_AREA));
+		List<CommonItem> intendAreaItemsList=new ArrayList<CommonItem>();
+		intendAreaItems.setItems(intendAreaItemsList);
+		
+		CommonInfo intendWorkItems=new CommonInfo();
+		intendWorkItems.setConfigName(String.valueOf(Constants.INTENT_TYPE_WORK));
+		List<CommonItem> intendWorkItemsList=new ArrayList<CommonItem>();
+		intendWorkItems.setItems(intendWorkItemsList);
+		
+		CommonInfo intendLocationItems=new CommonInfo();
+		intendLocationItems.setConfigName(String.valueOf(Constants.INTENT_TYPE_LOCATION));
+		List<CommonItem> intendLocationItemsList=new ArrayList<CommonItem>();
+		intendLocationItems.setItems(intendLocationItemsList);
+		
+		
+		for(TUserProfileIntends one:userIntends){
+			if(one.getType()==Constants.INTENT_TYPE_AREA){
+				intendArea.append(one.getCommonName()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				intendAreaRoot.append(one.getCommonNameRoot()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				CommonItem item=new CommonItem();
+				item.setName(one.getCommonName());
+				intendAreaItemsList.add(item);
+			}else if(one.getType()==Constants.INTENT_TYPE_WORK){
+				intendWork.append(one.getCommonName()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				intendWorkRoot.append(one.getCommonNameRoot()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				intendWorkSub.append(one.getCommonNameSub()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				CommonItem item=new CommonItem();
+				item.setName(one.getCommonName());
+				intendWorkItemsList.add(item);
+			}else if(one.getType()==Constants.INTENT_TYPE_LOCATION){
+				intentLocation.append(one.getCommonName()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				intentLocationRoot.append(one.getCommonNameRoot()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				intentLocationSub.append(one.getCommonNameSub()).append(Constants.ITEM_STR_SEPERATER_SPACE);
+				CommonItem item=new CommonItem();
+				item.setName(one.getCommonName());
+				intendLocationItemsList.add(item);				
+			}
+		}
+		returnBean.setIntendAreaItems(intendAreaItems);
+		returnBean.setIntendWorkItems(intendWorkItems);
+		returnBean.setIntendLocationItems(intendLocationItems);
+
+		returnBean.setIntentArea(intendArea.toString().trim());
+		returnBean.setIntentAreaRoot(intendAreaRoot.toString().trim());
+		returnBean.setIntentWork(intendWork.toString().trim());
+		returnBean.setIntentWorkRoot(intendWorkRoot.toString().trim());
+		returnBean.setIntentWorkSub(intendWorkSub.toString().trim());
+		returnBean.setIntentLocation(intentLocation.toString().trim());
+		returnBean.setIntentLocationRoot(intentLocationRoot.toString().trim());
+		returnBean.setIntentLocationSub(intentLocationSub.toString().trim());
+	}
+
+	public void addUserLogoutlog(String userId) {
+		try {
+			TUserLoginlog search = new TUserLoginlog();
+			search.setUserId(Long.valueOf(userId));
+			List<TUserLoginlog> searchList = userLoginlogDao
+					.findByExample(search);
+			if (null != searchList && 0 < searchList.size()) {
+				TUserLoginlog theLatestLogin = searchList.get(0);
+				if (theLatestLogin != null) {
+					theLatestLogin.setLogoutTime(new Date());
+
+					userLoginlogDao.updateObject(theLatestLogin);
+				}
+			}
+		} catch (Exception e) {
+
+		}
+	}
+
+	public boolean updateProfileBlockOne(String userId, String realName,
+			String curcarrier,String volunteerNumber,String headImage) {
+		boolean result=false;
+		try{
+			TUserBizcard search=new TUserBizcard();
+			search.setAccountId(Long.valueOf(userId));
+			List<TUserBizcard> tubList=userBizcardDao.findByExample(search);
+			if(tubList!=null&&tubList.size()>0){
+				TUserBizcard theProfile=tubList.get(0);
+				if(theProfile!=null){
+					theProfile.setRealName(realName);
+					theProfile.setCurcarrier(curcarrier);
+					theProfile.setHeadImage(headImage);
+					theProfile.setVolunteerNumber(volunteerNumber);
+					theProfile.setUpdateDate(new Date());
+					userBizcardDao.updateObject(theProfile);
+				}
+			}else{
+				search.setRealName(realName);
+				search.setCurcarrier(curcarrier);
+				search.setVolunteerNumber(volunteerNumber);
+				search.setHeadImage(headImage);
+				search.setCreateDate(new Date());
+				search.setUpdateDate(new Date());
+				userBizcardDao.persist(search);
+			}
+			result=true;
+		}catch(Exception e){
+			
+		}
+		
+		return result;
+	}
+	
+	public List<ProfileInfo> searchProfile(ProfileSearch theSearch) {
+		List<ProfileInfo> resultList=new ArrayList<ProfileInfo>();
+		
+		if(theSearch.getSearchBy()!=null&&!"".equals(theSearch.getSearchBy().trim())){
+			
+			List<BigInteger> searchList = userBizcardDao.searchByProfileSearch(theSearch);
+			for(BigInteger one: searchList){
+				if(one!=null){
+					int percent = getProfilePercent(one.toString());
+					if(percent>=60){
+					ProfileInfo pi=new ProfileInfo();
+					pi.setBizInfo(BeanTrans.getFromTBizCard(userBizcardDao.findByAccountId(one.longValue())));
+					UserInfo user=BeanTrans.getFromTUserAccount(userAccountDao.findById(one.longValue()));
+					pi.setUser(user);
+					resultList.add(pi);
+				}
+				}
+			}
+			
+			THrSearchlog hrSerT=new THrSearchlog();
+			hrSerT.setUserId(Long.valueOf(theSearch.getSearchBy()));
+			hrSerT.setSearchContent(theSearch.toString());
+			hrSerT.setCreateDate(new Date());
+			hrSerT.setUpdateDate(new Date());
+			hrSearchDao.persist(hrSerT);
+		}
+		return resultList;
+	}
+	public int searchProfileTotalCount(ProfileSearch theSearch) {
+			return userBizcardDao.searchByProfileSearchTotal(theSearch);
+	}
+
+	
+	public THrAccountDao getHrDao() {
+		return hrDao;
+	}
+
+	public void setHrDao(THrAccountDao hrDao) {
+		this.hrDao = hrDao;
+	}
+
+	public THrCompanyDao getHrCompanyDao() {
+		return hrCompanyDao;
+	}
+
+	public void setHrCompanyDao(THrCompanyDao hrCompanyDao) {
+		this.hrCompanyDao = hrCompanyDao;
+	}
+
+	public THrCompanyMediasDao getMediasDao() {
+		return mediasDao;
+	}
+
+	public void setMediasDao(THrCompanyMediasDao mediasDao) {
+		this.mediasDao = mediasDao;
+	}
+
+	public ProfileInfo updateProfileBlockTwo(String userId, int sex,
+			String curLocation, String huKou, String phoneNumber, String email,
+			String birthday, float height, float weight, String nation,
+			String idCard, String nationalOutlook, String personalHomepage,
+			String zipAddress, String zipCode) {
+		ProfileInfo result=new ProfileInfo();
+		
+		Date theBirthDate = DateUtil.start2Date(birthday, "yyyy-MM-dd");
+
+		TUserAccount accountBean = userAccountDao.findById(Long.valueOf(userId));// accountId是否存在TUserAccount表内
+
+		if (null != accountBean) {
+
+
+			TUserBizcard userBizcard=userBizcardDao.findByAccountId(Long.valueOf(userId));
+			if (null != userBizcard&&null!=userBizcard.getId()&&0<userBizcard.getId()) {
+				userBizcard.setBirthday(theBirthDate);
+				userBizcard.setSex(sex);
+				userBizcard.setPhoneNumber(phoneNumber);
+				userBizcard.setEmailAddress(email);
+				userBizcard.setUpdateDate(new Date());
+				userBizcardDao.updateObject(userBizcard);
+				result.setBizInfo(BeanTrans.getFromTBizCard(userBizcard));
+			} else {
+				userBizcard = new TUserBizcard();
+				userBizcard.setBirthday(theBirthDate);
+				userBizcard.setSex(sex);
+				userBizcard.setPhoneNumber(phoneNumber);
+				userBizcard.setEmailAddress(email);
+				userBizcard.setCreateDate(new Date());
+				userBizcard.setUpdateDate(new Date());
+				userBizcardDao.saveObject(userBizcard);
+				result.setBizInfo(BeanTrans.getFromTBizCard(userBizcard));
+			}
+			
+			if(accountBean!=null){//增加修改手机号码需要重新验证
+				if(phoneNumber!=null&&!phoneNumber.equals(accountBean.getPhone())){
+					accountBean.setPhone(phoneNumber);
+					accountBean.setIsPhoneVerified(0);
+				}
+				if(email!=null&&!email.equals(accountBean.getEmail())){
+					accountBean.setEmail(email);
+					accountBean.setIsMailVerified(0);
+				}
+				userAccountDao.updateObject(accountBean);
+				UserInfo user=new UserInfo();
+				user.setIsMailVerified(accountBean.getIsMailVerified());
+				user.setEmail(accountBean.getEmail());
+				user.setIsPhoneVerified(accountBean.getIsPhoneVerified());
+				user.setPhoneNumber(accountBean.getPhone());
+				result.setUser(user);
+			}			
+
+			TUserProfileBasic userProfileBasic = userProfileBasicDao.findByAccountId(Long.valueOf(userId));
+			if (null != userProfileBasic && null!=userProfileBasic.getId()&&0 < userProfileBasic.getId()) {
+				userProfileBasic.setHeight(height);
+				userProfileBasic.setWeight(weight);
+				userProfileBasic.setNation(nation);
+				userProfileBasic.setCurLocation(curLocation);
+				userProfileBasic.setHuKou(huKou);
+				userProfileBasic.setIdCard(idCard);
+				userProfileBasic.setNationalOutlook(nationalOutlook);
+				userProfileBasic.setPersonalHomepage(personalHomepage);
+				userProfileBasic.setZipAddress(zipAddress);
+				userProfileBasic.setZipCode(zipCode);
+				userProfileBasic.setUpdateDate(new Date());
+				userProfileBasicDao.updateObject(userProfileBasic);
+				result.setBase(BeanTrans.getUserBaseInfoFromT(userProfileBasic));
+			} else {
+				userProfileBasic.setAccountId(Long.valueOf(userId));
+				userProfileBasic.setHeight(height);
+				userProfileBasic.setWeight(weight);
+				userProfileBasic.setNation(nation);
+				userProfileBasic.setCurLocation(curLocation);
+				userProfileBasic.setHuKou(huKou);
+				userProfileBasic.setIdCard(idCard);
+				userProfileBasic.setNationalOutlook(nationalOutlook);
+				userProfileBasic.setPersonalHomepage(personalHomepage);
+				userProfileBasic.setZipAddress(zipAddress);
+				userProfileBasic.setZipCode(zipCode);
+				userProfileBasic.setCreateDate(new Date());
+				userProfileBasic.setUpdateDate(new Date());
+				userProfileBasicDao.saveObject(userProfileBasic);
+				result.setBase(BeanTrans.getUserBaseInfoFromT(userProfileBasic));
+			}			
+		}
+
+		return result;
+	}
+
+	public ProfileInfo updateProfileBlockThree(String userId, String description) {
+		ProfileInfo result=new ProfileInfo();
+		TUserAccount accountBean = userAccountDao.findById(Long.valueOf(userId));// accountId是否存在TUserAccount表内
+
+		if (null != accountBean) {
+			TUserProfileBasic userProfileBasic = userProfileBasicDao.findByAccountId(Long.valueOf(userId));
+			if (null != userProfileBasic && null!=userProfileBasic.getId()&&0 < userProfileBasic.getId()) {
+				userProfileBasic.setDescription(description);
+				userProfileBasic.setUpdateDate(new Date());
+				userProfileBasicDao.updateObject(userProfileBasic);
+			} else {
+				userProfileBasic.setAccountId(Long.valueOf(userId));
+				userProfileBasic.setDescription(description);
+				userProfileBasic.setCreateDate(new Date());
+				userProfileBasic.setUpdateDate(new Date());
+				userProfileBasicDao.saveObject(userProfileBasic);
+			}
+			result.setBase(BeanTrans.getUserBaseInfoFromT(userProfileBasic));
+		}
+		return result;
+	}
+
+	
+	public ProfileInfo wholeProfileById(String userId, String company, Long hrId) {
+		ProfileInfo theProfile=new ProfileInfo();
+		theProfile.setUser(BeanTrans.getFromTUserAccount(userAccountDao.findById(Long.valueOf(userId))));
+		BizInfo bizInfo=BeanTrans.getFromTBizCard(userBizcardDao.findByAccountId(Long.valueOf(userId)));
+		queryUserIntends(bizInfo);
+		theProfile.setBizInfo(bizInfo);
+
+		TUserProfileBasic tbase=userProfileBasicDao.findByAccountId(Long.valueOf(userId));
+		if(tbase!=null&&tbase.getId()!=null&&tbase.getId()>0){
+			theProfile.setBase(BeanTrans.getUserBaseInfoFromT(tbase));
+		}
+		
+		TUserProfileEducation eduSearch=new TUserProfileEducation();
+		eduSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileEducation> tEduList=userProfileEducationDao.findByExample(eduSearch);
+		if(tEduList!=null&&tEduList.size()>0){
+			theProfile.setEduList(BeanTrans.getEduInfoListFromTList(tEduList));
+		}
+		
+		TUserProfileExperience expSearch=new TUserProfileExperience();
+		expSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileExperience> tExpList=userProfileExperienceDao.findByExample(expSearch);
+		if(tExpList!=null&&tExpList.size()>0){
+			theProfile.setExpList(BeanTrans.getExpInfoListFromTList(tExpList));
+		}
+		
+		TUserProfileAward awardSearch= new TUserProfileAward();
+		awardSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileAward> tAwardList=userProfileAwardDao.findByExample(awardSearch);
+		if(tAwardList!=null&&tAwardList.size()>0){
+			theProfile.setAwardList(BeanTrans.getAwardInfoListFromTList(tAwardList));
+		}
+		
+		TUserProfileLanguages LanSearch=new TUserProfileLanguages();
+		LanSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileLanguages> tLanList=userProfileLanguagesDao.findByExample(LanSearch);
+		if(tLanList!=null&&tLanList.size()>0){
+			theProfile.setLanList(BeanTrans.getLanInfoListFromTList(tLanList));
+		}
+		
+		TUserProfileCertificate cerSearch=new TUserProfileCertificate();
+		cerSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileCertificate> tCerList=userProfileCertificateDao.findByExample(cerSearch);
+		if(tCerList!=null&&tCerList.size()>0){
+			theProfile.setCerList(BeanTrans.getCerInfoListFromTList(tCerList));
+		}
+		
+		TUserProfileSkill skillSearch=new TUserProfileSkill();
+		skillSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileSkill> tSkillList=userProfileSkillDao.findByExample(skillSearch);
+		if(tSkillList!=null&&tSkillList.size()>0){
+			theProfile.setSkillList(BeanTrans.getSkillInfoListFromTList(tSkillList));
+		}
+		
+		
+		
+		
+		if(hrId!=null&&hrId>0){
+			THrViewuserlog viewLog=new THrViewuserlog();
+			viewLog.setCompanyId(Long.valueOf(company));
+			viewLog.setCreateDate(new Date());
+			viewLog.setHrId(hrId);
+			viewLog.setUserId(Long.valueOf(userId));
+			viewLog.setUpdateDate(new Date());
+			hrViewDao.persist(viewLog);
+		}
+		
+		return theProfile;
+	}
+	
+
+	public ProfileInfo updateProfileBlockFour(String userId, String eduFrom,
+			String eduTo, String eduDegree, String eduSchool,
+			String eduSchoolRoot, String eduMajor, String eduMajorRoot,
+			String eduMajorSub) {
+		ProfileInfo theProfile=new ProfileInfo();
+		
+		userProfileEducationDao.deleteByAccountId(Long.valueOf(userId));
+
+		String [] froms=eduFrom.split(Constants.ITEM_STR_SEPERATER);
+		String [] tos=eduTo.split(Constants.ITEM_STR_SEPERATER);
+		
+		String [] degrees=eduDegree.split(Constants.ITEM_STR_SEPERATER);
+		
+		String [] schools=eduSchool.split(Constants.ITEM_STR_SEPERATER);
+		String [] schoolRoots=eduSchoolRoot.split(Constants.ITEM_STR_SEPERATER);
+		
+		String [] majors=eduMajor.split(Constants.ITEM_STR_SEPERATER);
+		String [] majorRoots=eduMajorRoot.split(Constants.ITEM_STR_SEPERATER);
+		String [] majorSubs=eduMajorSub.split(Constants.ITEM_STR_SEPERATER);
+		
+		Date highEduDate=null;
+		TUserProfileEducation highEdu=null;
+		for(int i=0;i<degrees.length;i++){
+			TUserProfileEducation oneEdu=new TUserProfileEducation();
+			oneEdu.setAccountId(Long.valueOf(userId));
+			if(i<froms.length){
+				oneEdu.setFromDate(DateUtil.start2Date(froms[i], "yyyy-MM-dd"));
+				if(highEduDate==null||highEduDate.before(oneEdu.getFromDate())){
+					highEduDate =oneEdu.getFromDate();
+					highEdu=oneEdu;
+				}
+			}
+			if(i<tos.length){
+				oneEdu.setEndDate(DateUtil.start2Date(tos[i], "yyyy-MM-dd"));
+			}
+			oneEdu.setDegree(degrees[i]);
+			oneEdu.setSchool(schools[i]);
+			oneEdu.setSchoolRoot(schoolRoots[i]);
+			oneEdu.setMajor(majors[i]);
+			oneEdu.setMajorRoot(majorRoots[i]);
+			oneEdu.setMajorSub(majorSubs[i]);
+			oneEdu.setCreateDate(new Date());
+			oneEdu.setUpdateDate(new Date());
+			userProfileEducationDao.persist(oneEdu);
+		}		
+		
+		if(highEdu!=null){
+			TUserBizcard userBizcard=userBizcardDao.findByAccountId(Long.valueOf(userId));
+			userBizcard.setDegree(highEdu.getDegree());
+			userBizcard.setSchoolName(highEdu.getSchool());
+			userBizcard.setSchoolNameRoot(highEdu.getSchoolRoot());
+			userBizcard.setMajor(highEdu.getMajor());
+			userBizcard.setMajorRoot(highEdu.getMajorRoot());
+			userBizcard.setMajorSub(highEdu.getMajorSub());
+			userBizcardDao.updateObject(userBizcard);
+			BizInfo theEduBiz=new BizInfo();
+			theEduBiz.setDegree(highEdu.getDegree());
+			theEduBiz.setSchoolName(highEdu.getSchool());
+			theEduBiz.setSchoolNameRoot(highEdu.getSchoolRoot());
+			theEduBiz.setMajor(highEdu.getMajor());
+			theEduBiz.setMajorRoot(highEdu.getMajorRoot());
+			theEduBiz.setMajorSub(highEdu.getMajorSub());
+			theProfile.setBizInfo(theEduBiz);
+		}
+		
+		return theProfile;
+	}
+	
+	public ProfileInfo updateProfileBlockFive(String userId, String type,
+			String fromDate, String endDate,
+			String company, String depart, String jobDescription) {
+		
+		ProfileInfo theProfile=new ProfileInfo();	
+		userProfileExperienceDao.deleteByAccountId(Long.valueOf(userId),type);
+		
+		int t = Integer.parseInt(type);
+		if(t==1){	
+		String [] froms=fromDate.split(Constants.ITEM_STR_SEPERATER);
+		String [] ends=endDate.split(Constants.ITEM_STR_SEPERATER);	
+		String [] companys=company.split(Constants.ITEM_STR_SEPERATER);	
+		String [] jobDescriptions=jobDescription.split(Constants.ITEM_STR_SEPERATER);
+		
+		for(int i=0;i<companys.length;i++){
+			TUserProfileExperience oneExp=new TUserProfileExperience();
+			oneExp.setAccountId(Long.valueOf(userId));
+			if(i<froms.length){
+				oneExp.setFromDate(DateUtil.start2Date(froms[i], "yyyy-MM-dd"));
+			}
+			if(i<ends.length){
+				oneExp.setEndDate(DateUtil.start2Date(ends[i], "yyyy-MM-dd"));
+			}
+			oneExp.setType(type);
+			oneExp.setCompany(companys[i]);
+			oneExp.setJobDescription(jobDescriptions[i]);
+			oneExp.setCreateDate(new Date());
+			oneExp.setUpdateDate(new Date());
+			userProfileExperienceDao.persist(oneExp);
+		}
+		}else{
+			String [] froms=fromDate.split(Constants.ITEM_STR_SEPERATER);
+			String [] ends=endDate.split(Constants.ITEM_STR_SEPERATER);
+			String [] departs=depart.split(Constants.ITEM_STR_SEPERATER);
+			String [] companys=company.split(Constants.ITEM_STR_SEPERATER);			
+			String [] jobDescriptions=jobDescription.split(Constants.ITEM_STR_SEPERATER);
+			for(int i=0;i<companys.length;i++){
+				TUserProfileExperience oneExp=new TUserProfileExperience();
+				oneExp.setAccountId(Long.valueOf(userId));
+				if(i<froms.length){
+					oneExp.setFromDate(DateUtil.start2Date(froms[i], "yyyy-MM-dd"));
+				}
+				if(i<ends.length){
+					oneExp.setEndDate(DateUtil.start2Date(ends[i], "yyyy-MM-dd"));
+				}
+				oneExp.setType(type);
+				oneExp.setCompany(companys[i]);
+				oneExp.setDepart(departs[i]);
+				oneExp.setJobDescription(jobDescriptions[i]);
+				oneExp.setCreateDate(new Date());
+				oneExp.setUpdateDate(new Date());
+				userProfileExperienceDao.persist(oneExp);
+			
+		}	
+		}
+		
+		return theProfile;
+	}
+	
+	public ProfileInfo updateProfileBlockSix(String userId, String time,
+		String awardProportion1, String awardProportion2) {
+		ProfileInfo theProfile=new ProfileInfo();
+		userProfileAwardDao.deleteByAccountId(Long.valueOf(userId));
+		String [] times=time.split(Constants.ITEM_STR_SEPERATER);
+		
+		String [] awardProportion1s=awardProportion1.split(Constants.ITEM_STR_SEPERATER);
+		String [] awardProportion2s=awardProportion2.split(Constants.ITEM_STR_SEPERATER);
+		
+		for(int i=0;i<awardProportion1s.length;i++){
+			TUserProfileAward oneExp=new TUserProfileAward();
+			oneExp.setAccountId(Long.valueOf(userId));
+			if(i<times.length){
+				oneExp.setTime(DateUtil.start2Date(times[i], "yyyy-MM-dd"));
+			}
+			oneExp.setAwardProportion1(awardProportion1s[i]);
+			oneExp.setAwardProportion2(awardProportion2s[i]);
+			oneExp.setCreateDate(new Date());
+			oneExp.setUpdateDate(new Date());
+			userProfileAwardDao.persist(oneExp);
+		}		
+		
+		return theProfile;
+	}
+	
+	public ProfileInfo updateProfileBlockSeven(String userId, String languageType,
+			String languageOracy, String languageScore, String languageExplain) {
+		ProfileInfo theProfile=new ProfileInfo();
+		userProfileLanguagesDao.deleteByAccountId(Long.valueOf(userId));
+		String [] languageTypes=languageType.split(Constants.ITEM_STR_SEPERATER);
+		
+		String [] languageOracys=languageOracy.split(Constants.ITEM_STR_SEPERATER);
+		String [] languageScores=languageScore.split(Constants.ITEM_STR_SEPERATER);
+		String [] languageExplains=languageExplain.split(Constants.ITEM_STR_SEPERATER);
+		
+		for(int i=0;i<languageTypes.length;i++){
+			TUserProfileLanguages oneExp=new TUserProfileLanguages();
+			oneExp.setAccountId(Long.valueOf(userId));
+			oneExp.setLanguageType(languageTypes[i]);
+			oneExp.setLanguageOracy(languageOracys[i]);
+			oneExp.setLanguageScore(languageScores[i]);
+			oneExp.setLanguageExplain(languageExplains[i]);
+			oneExp.setCreateDate(new Date());
+			oneExp.setUpdateDate(new Date());
+			userProfileLanguagesDao.persist(oneExp);
+		}		
+		
+		return theProfile;
+	}
+	
+	public ProfileInfo updateProfileBlockAight(String userId, String certificateTime,
+			String certificateType, String certificateResult, String certificateDescription) {
+		ProfileInfo theProfile=new ProfileInfo();
+		userProfileCertificateDao.deleteByAccountId(Long.valueOf(userId));
+		String [] certificateTimes=certificateTime.split(Constants.ITEM_STR_SEPERATER);
+		
+		String [] certificateTypes=certificateType.split(Constants.ITEM_STR_SEPERATER);
+		String [] certificateResults=certificateResult.split(Constants.ITEM_STR_SEPERATER);
+		String [] certificateDescriptions=certificateDescription.split(Constants.ITEM_STR_SEPERATER);
+		
+		for(int i=0;i<certificateTypes.length;i++){
+			TUserProfileCertificate oneExp=new TUserProfileCertificate();
+			oneExp.setAccountId(Long.valueOf(userId));
+			oneExp.setCertificateType(certificateTypes[i]);
+			if(i<certificateTimes.length){
+				oneExp.setCertificateTime(DateUtil.start2Date(certificateTimes[i], "yyyy-MM-dd"));
+			}
+			oneExp.setCertificateResult(certificateResults[i]);
+			oneExp.setCertificateDescription(certificateDescriptions[i]);
+			oneExp.setCreateDate(new Date());
+			oneExp.setUpdateDate(new Date());
+			userProfileCertificateDao.persist(oneExp);
+		}		
+		
+		return theProfile;
+	}
+	
+	public ProfileInfo updateProfileBlockNine(String userId, String skillName,
+			String skillTime, String proficiency) {
+		ProfileInfo theProfile=new ProfileInfo();
+		userProfileSkillDao.deleteByAccountId(Long.valueOf(userId));
+		String [] skillNames=skillName.split(Constants.ITEM_STR_SEPERATER);	
+		String [] skillTimes=skillTime.split(Constants.ITEM_STR_SEPERATER);
+		String [] proficiencys=proficiency.split(Constants.ITEM_STR_SEPERATER);
+		
+		for(int i=0;i<skillNames.length;i++){
+			TUserProfileSkill oneExp=new TUserProfileSkill();
+			oneExp.setAccountId(Long.valueOf(userId));
+			oneExp.setSkillName(skillNames[i]);
+			oneExp.setSkillTime(skillTimes[i]);
+			oneExp.setProficiency(proficiencys[i]);
+			oneExp.setCreateDate(new Date());
+			oneExp.setUpdateDate(new Date());
+			userProfileSkillDao.persist(oneExp);
+		}		
+		
+		return theProfile;
+	}
+	
+	public ProfileInfo updateProfileBlockTwenty(String userId,
+			String intendArea, String intendAreaRoot, String intendWork,
+			String intendWorkRoot, String intendWorkSub, String intendLocation,
+			String intendLocationRoot, String intendLocationSub) {
+		ProfileInfo theProfile=new ProfileInfo();
+		BizInfo bizInfo=new BizInfo();
+		bizInfo.setAccountId(Long.valueOf(userId));
+		bizInfo.setIntentArea(intendArea);
+		bizInfo.setIntentAreaRoot(intendAreaRoot);
+		bizInfo.setIntentWork(intendWork);
+		bizInfo.setIntentWorkRoot(intendWorkRoot);
+		bizInfo.setIntentWorkSub(intendWorkSub);
+		bizInfo.setIntentLocation(intendLocation);
+		bizInfo.setIntentLocationRoot(intendLocationRoot);
+		bizInfo.setIntentLocationSub(intendLocationSub);
+		theProfile.setBizInfo(bizInfo);
+		saveUserIntents(bizInfo);
+		return theProfile;
+	}
+
+	public THrCompanyAreasDao getAreasDao() {
+		return areasDao;
+	}
+
+	public void setAreasDao(THrCompanyAreasDao areasDao) {
+		this.areasDao = areasDao;
+	}
+
+	public void changePwd(String userId, String password, String newpwd) {
+		TUserAccount ta=userAccountDao.findById(Long.valueOf(userId));
+		ta.setPassword(newpwd);
+		ta.setUpdateDate(new Date());
+		userAccountDao.updateObject(ta);
+	}
+
+	public boolean changeEmail(Long accountId, String email) {
+		
+		boolean result = false;
+		try{
+		if(null!=email){
+		TUserAccount ta=userAccountDao.findById(accountId);
+		ta.setEmail(email);
+		ta.setIsMailVerified(0);
+		ta.setUpdateDate(new Date());
+		userAccountDao.updateObject(ta);
+		TUserBizcard tu=userBizcardDao.findByAccountId(accountId);
+		tu.setEmailAddress(email);
+		tu.setUpdateDate(new Date());
+		userBizcardDao.updateObject(tu);
+		
+		result = true;
+		}
+		}catch(Exception e){			
+		}
+		return result;
+	}
+	
+	public void checkMailPass(UserInfo userInfo, String username) {
+		TUserAccount user=userAccountDao.findById(Long.valueOf(userInfo.getUserId()));
+		if(user!=null){
+			user.setIsMailVerified(1);
+			user.setEmail(username);
+			userAccountDao.updateObject(user);
+			
+			if(user.getType()==1||user.getType()==3){
+				TUserBizcard tub=userBizcardDao.findByAccountId(user.getId());
+				tub.setEmailAddress(username);
+				userBizcardDao.updateObject(tub);
+			}else if(user.getType()==2){
+				THrAccount theHr=hrDao.findByAccountId(user.getId());
+				theHr.setEmail(username);
+				hrDao.updateObject(theHr);
+			}
+		}
+	}
+
+	public void checkMobilePass(UserInfo userInfo, String mobile) {
+		TUserAccount user=userAccountDao.findById(Long.valueOf(userInfo.getUserId()));
+		if(user!=null){
+			user.setIsPhoneVerified(1);
+			user.setPhone(mobile);
+			userAccountDao.updateObject(user);
+			
+			if(user.getType()==1||user.getType()==3){
+				TUserBizcard tub=userBizcardDao.findByAccountId(user.getId());
+				tub.setPhoneNumber(mobile);
+				userBizcardDao.updateObject(tub);
+				
+				TAgentAccountUser taau=new TAgentAccountUser();
+				taau.setRegUserId(user.getId());
+				List<TAgentAccountUser> theList=agentAccountUserDao.findByExample(taau);
+				if(theList!=null&&theList.size()>0){
+					taau=theList.get(0);
+				}
+
+				if(taau.getRedPkg1()==null||taau.getRedPkg1()<1){
+					if(taau.getCreateDate()==null){
+						taau.setCreateDate(new Date());
+					}
+					taau.setUpdateDate(new Date());
+					
+					if(Boolean.valueOf(SystemPropties.getProperties("cfg.red_pkg_one_enable"))){
+						taau.setRedPkg1(1);//获得红包
+						taau.setPkg1Date(new Date());
+					}else{
+						taau.setRedPkg1(0);//具备获得红包的条件，但如果系统关闭该红包，将无法获得红包
+					}
+					agentAccountUserDao.persist(taau);
+				}				
+				
+			}else if(user.getType()==2){
+				THrAccount theHr=hrDao.findByAccountId(user.getId());
+				theHr.setPhone(mobile);
+				hrDao.updateObject(theHr);
+			}
+		}
+	}
+	
+	public List<UserInfo> listCompanyAllHrUsers(Long companyId) {
+		List<UserInfo> resultList=new ArrayList<UserInfo>();
+		THrAccount hrSearch=new THrAccount();
+		hrSearch.setCompanyId(companyId);
+		for(THrAccount oneHr:hrDao.findByExample(hrSearch)){
+			UserInfo theHrUser=new UserInfo();
+			TUserAccount user=userAccountDao.findById(oneHr.getHrAccountId());
+			if(user!=null){
+				theHrUser=BeanTrans.getFromTUserAccount(user);
+			}
+			theHrUser.setHrInfo(BeanTrans.getHrInfoFromT(oneHr));
+			resultList.add(theHrUser);
+		}
+		return resultList;
+	}
+
+	public UserInfo addHrUserAccount(String username, String password,
+			Long companyId) {
+		UserInfo returnUser = new UserInfo();
+
+		TUserAccount searchUserAccount = new TUserAccount();
+		searchUserAccount.setAccount(username);
+		List<TUserAccount> resultList = userAccountDao
+				.findByExample(searchUserAccount);
+		if (null != resultList && 0 < resultList.size()) {
+			returnUser.setUserId("-100");
+			returnUser.setType(resultList.get(0).getType().toString());
+			return returnUser;
+		} else {
+			TUserAccount userAccount = new TUserAccount();
+			userAccount.setAccount(username);
+			userAccount.setPassword(password);
+			userAccount.setType(2);
+			if (ValidateTool.isEmail(username)) {
+				userAccount.setEmail(username);
+			}
+			userAccount.setIsMailVerified(0);
+			userAccount.setIsPhoneVerified(0);
+			userAccount.setCreateDate(new Date());
+			userAccount.setUpdateDate(new Date());
+			userAccountDao.persist(userAccount);
+
+			THrAccount hrT=new THrAccount();
+			hrT.setCompanyId(companyId);
+			hrT.setHrAccountId(userAccount.getId());
+			hrT.setIsMain(0);//非主张号
+			hrT.setCreateDate(new Date());
+			hrT.setUpdateDate(new Date());
+			hrDao.persist(hrT);
+			
+			if (0 < userAccount.getId()) {
+				returnUser.setType(String.valueOf(userAccount.getType()));
+				returnUser.setUserId(String.valueOf(userAccount.getId()));
+				returnUser.setUsername(username);
+				if (ValidateTool.isMobile(username)) {
+					returnUser.setPhoneNumber(username);
+				}
+				if (ValidateTool.isEmail(username)) {
+					returnUser.setEmail(username);
+				}
+			}
+
+		}
+
+		return returnUser;
+	}
+
+	public UserInfo updateHrUserAccount(String username, String password,
+			Long companyId) {
+		UserInfo returnUser = new UserInfo();
+
+		TUserAccount searchUserAccount = new TUserAccount();
+		searchUserAccount.setAccount(username);
+		List<TUserAccount> resultList = userAccountDao
+				.findByExample(searchUserAccount);
+		if (null != resultList && 0 < resultList.size()) {
+			TUserAccount accT=resultList.get(0);
+			
+			THrAccount tha=hrDao.findByAccountId(accT.getId());
+			if(tha!=null&&companyId.equals(tha.getCompanyId())){
+				accT.setPassword(password);
+				userAccountDao.updateObject(accT);
+				returnUser.setType(String.valueOf(accT.getType()));
+				returnUser.setUserId(String.valueOf(accT.getId()));
+				returnUser.setUsername(username);				
+			}
+		}
+		
+		return returnUser;
+	}
+
+	public UserInfo deleteHrUserAccount(String username, Long companyId) {
+		UserInfo returnUser = new UserInfo();
+
+		TUserAccount searchUserAccount = new TUserAccount();
+		searchUserAccount.setAccount(username);
+		List<TUserAccount> resultList = userAccountDao
+				.findByExample(searchUserAccount);
+		if (null != resultList && 0 < resultList.size()) {
+			TUserAccount accT=resultList.get(0);
+			
+			THrAccount tha=hrDao.findByAccountId(accT.getId());
+			if(tha!=null&&tha.getCompanyId()==companyId){
+				returnUser.setType(String.valueOf(accT.getType()));
+				returnUser.setUserId(String.valueOf(accT.getId()));
+				returnUser.setUsername(username);
+				hrDao.delete(tha);
+				userAccountDao.delete(accT);
+			}
+		}
+		
+		return returnUser;
+	}
+
+	public THrViewuserlogDao getHrViewDao() {
+		return hrViewDao;
+	}
+
+	public void setHrViewDao(THrViewuserlogDao hrViewDao) {
+		this.hrViewDao = hrViewDao;
+	}
+
+	public List<HrCompanyInfo> beVisitBy(String userId,int pageNumber,int pageSize) {
+		List<HrCompanyInfo> resultList=new ArrayList<HrCompanyInfo>();
+		List<Object> coms=hrViewDao.searchBeVisitCompany(Long.valueOf(userId),pageNumber,pageSize);
+		for(Object com:coms){
+			resultList.add(BeanTrans.getFromTCompany(hrCompanyDao.findById(Long.valueOf(com.toString()))));
+		}
+		return resultList;
+	}
+
+	public int beVisitByTotal(String userId) {
+		List<Object> coms=hrViewDao.searchBeVisitCompanyTotalCount(Long.valueOf(userId));
+		return coms.size();
+	}
+	
+	public int getProfilePercent(String userId) {
+		ProfileInfo theProfile=new ProfileInfo();
+		theProfile.setUser(BeanTrans.getFromTUserAccount(userAccountDao.findById(Long.valueOf(userId))));
+		BizInfo bizInfo=BeanTrans.getFromTBizCard(userBizcardDao.findByAccountId(Long.valueOf(userId)));
+		queryUserIntends(bizInfo);
+		theProfile.setBizInfo(bizInfo);
+
+		TUserProfileBasic tbase=userProfileBasicDao.findByAccountId(Long.valueOf(userId));
+		if(tbase!=null&&tbase.getId()!=null&&tbase.getId()>0){
+			theProfile.setBase(BeanTrans.getUserBaseInfoFromT(tbase));
+		}
+		
+		TUserProfileEducation eduSearch=new TUserProfileEducation();
+		eduSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileEducation> tEduList=userProfileEducationDao.findByExample(eduSearch);
+		if(tEduList!=null&&tEduList.size()>0){
+			theProfile.setEduList(BeanTrans.getEduInfoListFromTList(tEduList));
+		}
+		
+		int percent=0;
+		int basicInfoPercent=0;//基本信息分
+		int intentPercent=0;//求职意向分
+		int selfDescPercent=0;//个人意向分
+		int eduPercent=0;
+		int exp1Percent=0;
+		int exp2Percent=0;
+		int awardPercent=0;
+		int langPercent=0;
+		int certPercent=0;
+		int skillPercent=0;
+		
+		if(basicInfoPercent==0){//计算基本信息分
+			if(bizInfo.getUsername()!=null){
+				basicInfoPercent+=2;
+			}
+
+			if(bizInfo.getCurcarrier()!=null){
+				basicInfoPercent+=2;
+			}
+			
+			if(bizInfo.getHeadImage()!=null){
+				basicInfoPercent+=2;
+			}
+			
+			if(bizInfo.getBirthday()!=null){
+				basicInfoPercent+=2;
+			}
+			
+			if(bizInfo.getSex()>=0){
+				basicInfoPercent+=2;
+			}
+			
+			if(tbase.getHuKou()!=null){
+				basicInfoPercent+=2;
+			}
+			
+			if(bizInfo.getEmailAddress()!=null){
+				basicInfoPercent+=2;
+			}
+			
+			if(bizInfo.getPhoneNumber()!=null){
+				basicInfoPercent+=2;
+			}
+
+			if(tbase.getCurLocation()!=null&&!"".equals(tbase.getCurLocation())){
+				basicInfoPercent+=2;
+			}
+
+			if(tbase.getHeight()!=null&&tbase.getHeight()>0){
+				basicInfoPercent+=1;
+			}
+			if(tbase.getWeight()!=null&&tbase.getWeight()>0){
+				basicInfoPercent+=1;
+			}
+			if(tbase.getNation()!=null&&!"".equals(tbase.getNation())){
+				basicInfoPercent+=1;
+			}
+			if(tbase.getNationalOutlook()!=null&&!"".equals(tbase.getNationalOutlook())){
+				basicInfoPercent+=1;
+			}
+			if(tbase.getIdCard()!=null&&!"".equals(tbase.getIdCard())){
+				basicInfoPercent+=1;
+			}
+			if(tbase.getPersonalHomepage()!=null&&!"".equals(tbase.getPersonalHomepage())){
+				basicInfoPercent+=1;
+			}
+			if(tbase.getZipCode()!=null&&!"".equals(tbase.getZipCode())){
+				basicInfoPercent+=1;
+			}
+			if(tbase.getZipAddress()!=null&&!"".equals(tbase.getZipAddress())){
+				basicInfoPercent+=1;
+			}
+			
+			if(basicInfoPercent>25){//超过25分算25分
+				basicInfoPercent=25;
+			}
+		}
+		
+		if(selfDescPercent==0){//自我评价分
+			if(tbase.getDescription()!=null&&!"".equals(tbase.getDescription().trim())){
+				selfDescPercent+=15;
+			}
+		}
+		
+		if(intentPercent==0){//求职意向分
+			if(bizInfo.getIntendAreaItems()!=null&&bizInfo.getIntendAreaItems().getItems().size()>0){
+				intentPercent+=5;
+			}
+			if(bizInfo.getIntendWorkItems()!=null&&bizInfo.getIntendWorkItems().getItems().size()>0){
+				intentPercent+=5;
+			}
+			if(bizInfo.getIntendLocationItems()!=null&&bizInfo.getIntendLocationItems().getItems().size()>0){
+				intentPercent+=5;
+			}
+		}
+
+		if(eduPercent==0){
+			if(bizInfo.getDegree()!=null){
+				eduPercent+=4;
+			}
+			if(bizInfo.getSchoolName()!=null){
+				eduPercent+=4;
+			}
+			if(bizInfo.getMajor()!=null){
+				eduPercent+=4;
+			}
+			
+			if(tEduList!=null&&tEduList.size()>0){
+				eduPercent+=3;
+			}
+		}
+		
+		TUserProfileExperience expSearch=new TUserProfileExperience();
+		expSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileExperience> expList=userProfileExperienceDao.findByExample(expSearch);
+		
+		if(expList!=null&&expList.size()>0){
+			for(TUserProfileExperience oneExp:expList){
+				if("1".equals(oneExp.getType())){
+					if(oneExp.getFromDate()!=null){
+						exp1Percent=5;
+					}
+				}else if("2".equals(oneExp.getType())){
+					if(oneExp.getFromDate()!=null){
+						exp2Percent=5;
+					}
+				}
+			}
+		}
+		
+		TUserProfileAward awaSearch=new TUserProfileAward();
+		awaSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileAward> awaList=userProfileAwardDao.findByExample(awaSearch);
+		if(awaList!=null&&awaList.size()>0){
+			boolean addPercent=false;
+			for(TUserProfileAward theAw:awaList){
+				if(theAw.getTime()!=null){
+					addPercent=true;
+				}
+			}
+			if(addPercent){
+				awardPercent+=5;
+			}
+		}
+		
+		TUserProfileLanguages lanSearch=new TUserProfileLanguages();
+		lanSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileLanguages> lanList = userProfileLanguagesDao.findByExample(lanSearch);
+		if(lanList!=null&&lanList.size()>0){
+			boolean addPercent=false;
+			for(TUserProfileLanguages theLan:lanList){
+				if(theLan.getLanguageType()!=null&&!"".equals(theLan.getLanguageType())){
+					addPercent=true;
+				}
+			}
+			if(addPercent){
+				langPercent+=5;
+			}
+		}
+		
+		TUserProfileCertificate cerSearch=new TUserProfileCertificate();
+		cerSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileCertificate> cerList = userProfileCertificateDao.findByExample(cerSearch);
+		if(cerList!=null&&cerList.size()>0){
+			boolean addPercent=false;
+			for(TUserProfileCertificate theCert:cerList){
+				if(theCert.getCertificateTime()!=null){
+					addPercent=true;
+				}
+			}
+			if(addPercent){
+				certPercent+=5;
+			}
+		}
+		
+		TUserProfileSkill skillSearch=new TUserProfileSkill();
+		skillSearch.setAccountId(Long.valueOf(userId));
+		List<TUserProfileSkill> skillList = userProfileSkillDao.findByExample(skillSearch);
+		if(skillList!=null&&skillList.size()>0){
+			boolean addPercent=false;
+			for(TUserProfileSkill theSkill:skillList){
+				if(theSkill.getSkillName()!=null&&!"".equals(theSkill.getSkillName())){
+					addPercent=true;
+				}
+			}
+			if(addPercent){
+				skillPercent+=5;
+			}
+		}
+		percent=basicInfoPercent+selfDescPercent+intentPercent+eduPercent+exp1Percent+exp2Percent+awardPercent+langPercent+certPercent+skillPercent;
+		return percent;
+	}
+
+	public void modifyUserStatus(String userId, String status) {
+		TUserAccount tua=userAccountDao.findById(Long.valueOf(userId));
+		tua.setStatus(Integer.valueOf(status));
+		tua.setUpdateDate(new Date());
+		userAccountDao.saveObject(tua);
+	}
+
+	public int listSearchTotal(Long companyId, Long hrAccountId) {
+		THrSearchlog searchUser=new THrSearchlog();
+		searchUser.setUserId(hrAccountId);
+		return hrSearchDao.findByExample(searchUser).size();
+	}
+	
+	public int listCheckoneTotal(Long hrId) {
+		List<Long> user1=hrViewDao.searchBeVisitUser(hrId);
+		THrAccount account = hrDao.findByAccountId(hrId);
+		List<Long> user2=resumesDao.searchBeVisitUser(account.getCompanyId());
+		int count = 0;
+		for(int i=0;i<user1.size();i++){
+			for(int j=0;j<user2.size();j++){
+				if(user1.get(i).intValue()==user2.get(j).intValue()){
+					count++;
+				}
+			}
+		}
+		int ruselt = user1.size()-count;
+		return ruselt;
+	}
+	
+	public int listChecktwoTotal(Long hrId) {
+		THrAccount account = hrDao.findByAccountId(hrId);
+		List<Long> user2=resumesDao.searchBeVisitUser(account.getCompanyId());
+		int ruselt = user2.size();
+		return ruselt;
+	}
+
+	public UserInfo checkUserAccountAndEmail(String username, String email) {
+		UserInfo theUser=new UserInfo();
+		TUserAccount search=new TUserAccount();
+		search.setAccount(username);
+		List<TUserAccount> userList=userAccountDao.findByExample(search);
+		if(userList!=null&&userList.size()>0){
+			String userTEmail="";
+			TUserAccount userT=userList.get(0);
+			if(userT.getEmail()!=null){
+				userTEmail=userT.getEmail();
+			}else{
+				if(userT.getType()==2){
+					THrAccount hr=hrDao.findByAccountId(userT.getId());
+					if(hr!=null&&hr.getEmail()!=null){
+						userTEmail=hr.getEmail();
+					}
+				}else{
+					TUserBizcard tub=userBizcardDao.findByAccountId(userT.getId());
+					if(tub!=null&&tub.getEmailAddress()!=null){
+						userTEmail=tub.getEmailAddress();
+					}
+				}
+				
+			}
+			if(userTEmail!=null&&!"".equals(userTEmail)){
+				if(userTEmail.trim().equals(email)){
+					theUser=BeanTrans.getFromTUserAccount(userT);
+					theUser.setPhoneNumber(userT.getPassword());
+				}else{
+					theUser.setUserId("-80");//邮箱不匹配
+				}
+			}else{
+				theUser.setUserId("-90");//帐号未设置邮箱
+			}
+			
+		}else{//User not exists
+			theUser.setUserId("-100");
+		}
+		return theUser;
+	}
+
+	public int fetchMaxSmsRecordId() {
+		return smsDao.getMaxId()+1;
+	}
+
+	public void saveSmsRecords(Long accountId, String mobile,
+			String smsContent, String url, String smsResultStr) {
+		TSystemSmslog theSmsLog=new TSystemSmslog();
+		theSmsLog.setMobile(mobile);
+		theSmsLog.setCreateDate(new Date());
+		theSmsLog.setSms(smsContent);
+		theSmsLog.setUpdateDate(new Date());
+		theSmsLog.setUrl(url);
+		theSmsLog.setUrlOutput(smsResultStr);
+		theSmsLog.setUserId(accountId);
+		smsDao.persist(theSmsLog);
+	}
+	
+	//显示合作单位
+	public List<ShowCooperativeUnitInfo> querybyUnit(){
+		List<ShowCooperativeUnitInfo> returnList = new ArrayList<ShowCooperativeUnitInfo>();
+		TShowCooperativeUnit search = new TShowCooperativeUnit();
+		
+		List<TShowCooperativeUnit> UnitList = showCooperativeUnitDao.searchByCriteria(search);
+		for(TShowCooperativeUnit toa:UnitList){
+			
+			returnList.add(BeanTrans.getFromUnit(toa));
+		}
+		return returnList;
+	}
+
+	public UserInfo checkSSO(String companyName) {
+		UserInfo returnUser=new UserInfo();
+		THrCompany seaCom=new THrCompany();
+		seaCom.setName(companyName);
+		seaCom.setStatus(1);
+		List<THrCompany> comList=hrCompanyDao.findByExample(seaCom);
+		if(comList==null||comList.size()==0){
+			return null;
+		}
+		
+		seaCom=comList.get(0);
+		
+		THrAccount hrSearch=new THrAccount();
+		hrSearch.setCompanyId(seaCom.getId());
+		hrSearch.setIsMain(1);
+		List<THrAccount> hrList=hrDao.findByExample(hrSearch);
+		if(hrList==null||hrList.size()==0){
+			return null;
+		}
+		
+		hrSearch=hrList.get(0);
+		
+		TUserAccount theHrUser=userAccountDao.findById(hrSearch.getHrAccountId());
+		
+		returnUser.setType(String.valueOf(theHrUser.getType()));
+		returnUser.setUserId(String.valueOf(theHrUser.getId()));
+		returnUser.setUsername(theHrUser.getAccount());
+		returnUser.setIsMailVerified(theHrUser.getIsMailVerified());
+		returnUser.setIsPhoneVerified(theHrUser.getIsPhoneVerified());
+		returnUser.setStatus(theHrUser.getStatus());
+		if (ValidateTool.isMobile(theHrUser.getAccount())) {
+			returnUser.setPhoneNumber(theHrUser.getAccount());
+		}
+		if (ValidateTool.isEmail(theHrUser.getAccount())) {
+			returnUser.setEmail(theHrUser.getAccount());
+		}
+
+		
+		if (hrSearch != null) {
+			returnUser.setHrInfo(BeanTrans.getHrInfoFromT(hrSearch));
+			
+			if(seaCom!=null){
+				HrCompanyInfo theReturnCom=BeanTrans.getFromTCompany(seaCom);
+				THrCompanyStart startSearch=new THrCompanyStart();
+				startSearch.setCompanyId(hrSearch.getCompanyId());
+				List<THrCompanyStart> theStartList=startDao.findByExample(startSearch);
+				if(null!=theStartList&&0<theStartList.size()){
+					theReturnCom.setLeader(theStartList.get(0).getLeader());
+					theReturnCom.setLeaderPic(theStartList.get(0).getLeaderPic());
+					theReturnCom.setLeaderDesc(theStartList.get(0).getLeaderDesc());
+					theReturnCom.setLeaderPosition(theStartList.get(0).getLeaderPosition());
+					theReturnCom.setMoneyFrom(theStartList.get(0).getMoneyFrom());
+				}
+				List<MediaInfo> theMIlist=new ArrayList<MediaInfo>();
+				THrCompanyMedias mSear=new THrCompanyMedias();
+				mSear.setCompanyId(seaCom.getId());
+				for(THrCompanyMedias inm:mediasDao.findByExample(mSear)){
+					theMIlist.add(BeanTrans.getFromTCompanyMedias(inm));
+				}
+				theReturnCom.setMedias(theMIlist);
+				returnUser.setCompanyInfo(theReturnCom);
+				
+				
+				List<HrCompanyAreasInfo> areasList=new ArrayList<HrCompanyAreasInfo>();
+				THrCompanyAreas aSear=new THrCompanyAreas();
+				aSear.setCompanyId(seaCom.getId());
+				for(THrCompanyAreas tca:areasDao.findByExample(aSear)){
+					areasList.add(BeanTrans.getFromTCompanyAreas(tca));
+				}
+				theReturnCom.setAreas(areasList);
+			}
+		}		
+		return returnUser;
+	}
+	
+	public boolean isEmailBeOccupied(Long userId,String emailAddress){
+		boolean result=false;
+		List<TUserAccount> existAccounts=userAccountDao.searchEmailOrAccount(emailAddress);
+		if(existAccounts!=null&&existAccounts.size()>0){
+			for(TUserAccount existAccount:existAccounts){
+				if(emailAddress.equals(existAccount.getAccount())){
+					if(!userId.equals(existAccount.getId())){
+						result=true;
+					}
+				}else{
+					if(existAccount.getIsMailVerified()!=null&&existAccount.getIsMailVerified()>0){
+						if(!userId.equals(existAccount.getId())){
+							result=true;
+						}
+					}
+				}				
+			}
+		}
+		return result;
+	}
+	
+	public boolean isPhoneBeOccupied(Long userId,String phone){
+		boolean result=false;
+		List<TUserAccount> existAccounts=userAccountDao.searchPhoneOrAccount(phone);
+		if(existAccounts!=null&&existAccounts.size()>0){
+			for(TUserAccount existAccount:existAccounts){
+				if(phone.equals(existAccount.getAccount())){
+					if(!userId.equals(existAccount.getId())){
+						result=true;
+					}
+				}else{
+					if(existAccount.getIsPhoneVerified()!=null&&existAccount.getIsPhoneVerified()>0){
+						if(!userId.equals(existAccount.getId())){
+							result=true;
+						}
+					}
+				}				
+			}
+		}		
+		return result;
+	}
+	
+	public String[] checkInviteCode(String invitecode) {
+		String[] result=new String[]{"404",""};
+		TAgentAccount sear=new TAgentAccount();
+		sear.setInviteCode(invitecode);
+		List<TAgentAccount> codeResult=agentAccountDao.findByExample(sear);
+		if(codeResult!=null&&codeResult.size()>0){
+			sear=codeResult.get(0);
+			if(sear.getStatus()==null||"1".equals(sear.getStatus())){
+				if(sear.getType()!=null&&Integer.parseInt(sear.getType())>1){
+					result[0]="200";
+					result[1]=sear.getAccount();
+				}else{
+					result[0]="240";
+				}
+			}else{
+				result[0]="230";
+			}
+		}
+		return result;
+	}
+	
+	public boolean setResumeRedPkg(String userId){
+		boolean result=false;
+		
+		TAgentAccountUser taau=new TAgentAccountUser();
+		taau.setRegUserId(Long.valueOf(userId));
+		List<TAgentAccountUser> theList=agentAccountUserDao.findByExample(taau);
+		if(theList!=null&&theList.size()>0){
+			taau=theList.get(0);
+		}
+
+		if(taau.getRedPkg2()==null||taau.getRedPkg2()<1){
+			if(taau.getCreateDate()==null){
+				taau.setCreateDate(new Date());
+			}
+			taau.setUpdateDate(new Date());
+			
+			if(Boolean.valueOf(SystemPropties.getProperties("cfg.red_pkg_two_enable"))){
+				taau.setRedPkg2(1);//获得红包
+				taau.setPkg2Date(new Date());
+				result=true;
+			}else{
+				taau.setRedPkg2(0);//具备获得红包的条件，但如果系统关闭该红包，将无法获得红包
+			}
+			agentAccountUserDao.persist(taau);
+		}
+		
+		return result;
+	}
+
+	public List<RedpkgInfo> queryRedPkgListByUserId(String userId) {
+		List<RedpkgInfo> result=new ArrayList<RedpkgInfo>();
+		TAgentAccountUser taau=new TAgentAccountUser();
+		taau.setRegUserId(Long.valueOf(userId));
+		List<TAgentAccountUser> theList=agentAccountUserDao.findByExample(taau);
+		if(theList!=null&&theList.size()>0){
+			taau=theList.get(0);
+		}
+		if(taau.getId()!=null){
+			if(taau.getRedPkg1()!=null){
+				RedpkgInfo pkg1=new RedpkgInfo();
+				pkg1.setName("red_pkg_one_enable");
+				pkg1.setStatus(taau.getRedPkg1());
+				pkg1.setSendDate(taau.getPkg1Date());
+				pkg1.setOpenDate(taau.getPkg1OpenDate());
+				result.add(pkg1);
+			}			
+			if(taau.getRedPkg2()!=null){
+				RedpkgInfo pkg2=new RedpkgInfo();
+				pkg2.setName("red_pkg_two_enable");
+				pkg2.setStatus(taau.getRedPkg2());
+				pkg2.setSendDate(taau.getPkg2Date());
+				pkg2.setOpenDate(taau.getPkg2OpenDate());
+				result.add(pkg2);
+			}			
+			if(taau.getRedPkg3()!=null){
+				RedpkgInfo pkg3=new RedpkgInfo();
+				pkg3.setName("red_pkg_one_enable");
+				pkg3.setStatus(taau.getRedPkg3());
+				pkg3.setSendDate(taau.getPkg3Date());
+				pkg3.setOpenDate(taau.getPkg3OpenDate());
+				result.add(pkg3);
+			}			
+		}
+
+		return result;
+	}
+
+	public int openRedPkg(String userId, String pkgName) {
+		int result=404;
+		TUserAccount accountBean = userAccountDao.findById(Long.valueOf(userId));// accountId是否存在TUserAccount表内
+		if(null!=accountBean){
+			if(accountBean.getIsPhoneVerified()!=null&&accountBean.getIsPhoneVerified()==1){
+				if(pkgName!=null&&!pkgName.equals("")){
+					if(pkgName.equals("red_pkg_one_enable")||pkgName.equals("red_pkg_two_enable")||pkgName.equals("red_pkg_three_enable")){
+						TAgentAccountUser taau=new TAgentAccountUser();
+						taau.setRegUserId(Long.valueOf(userId));
+						List<TAgentAccountUser> theList=agentAccountUserDao.findByExample(taau);
+						if(theList!=null&&theList.size()>0){
+							taau=theList.get(0);
+						}
+						if(taau.getId()!=null){
+							VerificationCodeUtil vcu = VerificationCodeUtil.Instance();
+							String cmd="send";
+							String format="json";
+							String eprId=SystemPropties.getProperties("cfg.sms_epr_id");
+							String sUserId=SystemPropties.getProperties("cfg.sms_user_id");
+							String sPwd=SystemPropties.getProperties("cfg.sms_password");
+							String mobile=accountBean.getPhone();
+							Long timeStamp=System.currentTimeMillis();
+							int smsId=fetchMaxSmsRecordId();
+							String url="http://client.sms10000.com/api/webservice";
+								
+							if(pkgName.equals("red_pkg_one_enable")){
+								if(taau.getRedPkg1()!=null&&taau.getRedPkg1()==1){
+									TRedPkgPwd search=new TRedPkgPwd();
+									search.setType(1);
+									search.setStatus(1);
+									List<TRedPkgPwd> pwdList=redPkgPwdDao.searchByCriteria(1, 10, search);
+									
+									if(pwdList!=null&&pwdList.size()>0){
+										taau.setRedPkg1(2);
+										taau.setPkg1OpenDate(new Date());
+										taau.setPkg1Recevier(mobile);
+										agentAccountUserDao.persist(taau);
+										
+										TRedPkgPwd usedPwd=pwdList.get(0);
+										String smsContent="【易工作】你通过易工作网获得新用户注册红包一个，"
+												+ "小易悄悄献上三网通兑"+usedPwd.getUnitm()+"M流量包一个。"
+												+ "卡号： "+usedPwd.getCardNum()
+												+ "密码："+usedPwd.getCardPwd()
+												+ "。流量红包使用方式：1、关注微信公众号“流量江湖”（zglljh)；2、进入“玩转流量”—“兑换流量”—“流量+”菜单；3、输入手机号码及充值密码，兑换流量。具体使用规则详见流量充值页面说明。";				
+										String params="cmd="+cmd+"&eprId="+eprId+"&userId="+sUserId+"&key="+vcu.getMD5Str(eprId+sUserId+sPwd+timeStamp)
+												+"&timestamp="+timeStamp+"&format="+format+"&mobile="+mobile+"&msgId="+smsId+"&content="+smsContent;								
+
+										String smsResultStr="not send yet";
+										if("1".equals(SystemPropties.getProperties("cfg.sms_env").toString())){
+											smsResultStr=vcu.sendPost(url, params);
+										}											
+										saveSmsRecords(Long.valueOf(userId),mobile,smsContent,url+"?"+params,smsResultStr);
+										
+										usedPwd.setStatus(2);
+										usedPwd.setSentTo(mobile);
+										
+										redPkgPwdDao.persist(usedPwd);
+										
+										result=200;										
+									}else{
+										result=201;//红包已用完，请等待系统准备新的红包;
+									}
+								}else{
+									result=204;//无此红包
+								}
+							}else if(pkgName.equals("red_pkg_two_enable")){
+								if(taau.getRedPkg2()!=null&&taau.getRedPkg2()==1){
+									TRedPkgPwd search=new TRedPkgPwd();
+									search.setType(2);
+									search.setStatus(1);
+									List<TRedPkgPwd> pwdList=redPkgPwdDao.searchByCriteria(1, 10, search);
+									
+									if(pwdList!=null&&pwdList.size()>0){
+										taau.setRedPkg2(2);
+										taau.setPkg2OpenDate(new Date());
+										taau.setPkg2Recevier(mobile);
+										agentAccountUserDao.persist(taau);
+	
+										TRedPkgPwd usedPwd=pwdList.get(0);
+										String smsContent="【易工作】你通过易工作网获得完善简历红包一个，"
+												+ "小易悄悄献上三网通兑"+usedPwd.getUnitm()+"M流量包一个。"
+												+ "卡号： "+usedPwd.getCardNum()
+												+ "密码："+usedPwd.getCardPwd()
+												+ "。流量红包使用方式：1、关注微信公众号“流量江湖”（zglljh)；2、进入“玩转流量”—“兑换流量”—“流量+”菜单；3、输入手机号码及充值密码，兑换流量。具体使用规则详见流量充值页面说明。";				
+										String params="cmd="+cmd+"&eprId="+eprId+"&userId="+sUserId+"&key="+vcu.getMD5Str(eprId+sUserId+sPwd+timeStamp)
+												+"&timestamp="+timeStamp+"&format="+format+"&mobile="+mobile+"&msgId="+smsId+"&content="+smsContent;								
+										String smsResultStr="not send yet";
+										if("1".equals(SystemPropties.getProperties("cfg.sms_env").toString())){
+											smsResultStr=vcu.sendPost(url, params);
+										}											
+										saveSmsRecords(Long.valueOf(userId),mobile,smsContent,url+"?"+params,smsResultStr);
+										
+										usedPwd.setStatus(2);
+										usedPwd.setSentTo(mobile);
+										redPkgPwdDao.persist(usedPwd);
+										
+										result=200;
+									}else{
+										result=201;//红包已用完，请等待系统准备新的红包;
+									}
+								}else{
+									result=204;//无此红包
+								}								
+							}else if(pkgName.equals("red_pkg_three_enable")){
+								if(taau.getRedPkg3()!=null&&taau.getRedPkg3()==1){
+									TRedPkgPwd search=new TRedPkgPwd();
+									search.setType(2);
+									search.setStatus(1);
+									List<TRedPkgPwd> pwdList=redPkgPwdDao.searchByCriteria(1, 10, search);
+									
+									if(pwdList!=null&&pwdList.size()>0){
+										taau.setRedPkg3(2);
+										taau.setPkg3OpenDate(new Date());
+										taau.setPkg3Recevier(mobile);
+										agentAccountUserDao.merge(taau);
+
+										TRedPkgPwd usedPwd=pwdList.get(0);
+										String smsContent="【易工作】你通过易工作网获得投递简历红包一个，"
+												+ "小易悄悄献上三网通兑XXM流量包一个。"
+												+ "卡号：A00013442 "
+												+ "密码：8gzbm766casb"
+												+ "。流量红包使用方式：1、关注微信公众号“流量江湖”（zglljh)；2、进入“玩转流量”—“兑换流量”—“流量+”菜单；3、输入手机号码及充值密码，兑换流量。具体使用规则详见流量充值页面说明。";				
+										String params="cmd="+cmd+"&eprId="+eprId+"&userId="+sUserId+"&key="+vcu.getMD5Str(eprId+sUserId+sPwd+timeStamp)
+												+"&timestamp="+timeStamp+"&format="+format+"&mobile="+mobile+"&msgId="+smsId+"&content="+smsContent;								
+										String smsResultStr="not send yet";
+										if("1".equals(SystemPropties.getProperties("cfg.sms_env").toString())){
+											smsResultStr=vcu.sendPost(url, params);
+										}	
+										saveSmsRecords(Long.valueOf(userId),mobile,smsContent,url+"?"+params,smsResultStr);
+										
+										usedPwd.setStatus(2);
+										usedPwd.setSentTo(mobile);
+										redPkgPwdDao.persist(usedPwd);
+										
+										result=200;
+									}else{
+										result=201;//红包已用完，请等待系统准备新的红包;
+									}
+								}else{
+									result=204;//无此红包
+								}								
+							}							
+						}else{
+							result=304;//红包未找到					
+						}
+					}else{
+						result=304;//红包未找到					
+					}
+				}else{
+					result=304;//红包未找到					
+				}
+			}else{
+				result=400;//用户手机未验证，无法发送短信
+			}
+		}else{
+			result=404;//无此用户
+		}
+		
+		return result;
+	}
+}

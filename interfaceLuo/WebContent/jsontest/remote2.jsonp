@@ -1,0 +1,17 @@
+//alert('我是远程文件');
+
+/*  //远程调用本地函数
+localHandler123({"result":"我是远程js带来的数据"});
+*/
+
+
+//远程调用本地函数，远程回调函数名称必须与本地的函数名称保持一致！
+//flightHandler({
+//flightHandler([{
+
+//远程调用本地函数，并传入JSON格式的实参
+flightHandler({
+	"code": "CA1998",
+    "price": 1780,
+    "tickets": 5
+});

@@ -1,0 +1,113 @@
+package com.jite.hibgen.dao;
+
+import static org.hibernate.criterion.Example.create;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+
+import com.jite.hibgen.model.THrJobRequire;
+
+/**
+ * Home object for domain model class THrJobRequire.
+ * @see com.jite.hibgen.dao.THrJobRequire
+ * @author Hibernate Tools
+ */
+public class THrJobRequireDao extends BaseDao<THrJobRequire>{
+
+	private static final Log log = LogFactory.getLog(THrJobRequireDao.class);
+
+
+	public void persist(THrJobRequire transientInstance) {
+		log.debug("persisting THrJobRequire instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(THrJobRequire instance) {
+		log.debug("attaching dirty THrJobRequire instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(THrJobRequire instance) {
+		log.debug("attaching clean THrJobRequire instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(THrJobRequire persistentInstance) {
+		log.debug("deleting THrJobRequire instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public THrJobRequire merge(THrJobRequire detachedInstance) {
+		log.debug("merging THrJobRequire instance");
+		try {
+			THrJobRequire result = (THrJobRequire) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public THrJobRequire findById(java.lang.Long id) {
+		log.debug("getting THrJobRequire instance with id: " + id);
+		try {
+			THrJobRequire instance = (THrJobRequire) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.THrJobRequire", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<THrJobRequire> findByExample(THrJobRequire instance) {
+		log.debug("finding THrJobRequire instance by example");
+		try {
+			List<THrJobRequire> results = (List<THrJobRequire>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.THrJobRequire")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}

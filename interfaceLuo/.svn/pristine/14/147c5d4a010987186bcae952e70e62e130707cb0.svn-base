@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-6-4 14:43:20 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserProfileCertificate" table="t_user_profile_certificate" catalog="qch">
+        <id name="id" type="long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="certificateDescription" type="string">
+            <column name="c_description" />
+        </property>
+        <property name="certificateResult" type="string">
+            <column name="c_result" length="50" />
+        </property>
+        <property name="certificateType" type="string">
+            <column name="c_type" length="100" />
+        </property>
+        <property name="certificateTime" type="timestamp">
+            <column name="c_time" length="19" />
+        </property>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+    </class>
+</hibernate-mapping>

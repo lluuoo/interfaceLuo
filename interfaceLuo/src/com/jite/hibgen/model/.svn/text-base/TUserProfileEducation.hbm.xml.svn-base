@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-6-4 14:43:20 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserProfileEducation" table="t_user_profile_education" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="fromDate" type="timestamp">
+            <column name="from_date" length="19" />
+        </property>
+        <property name="endDate" type="timestamp">
+            <column name="end_date" length="19" />
+        </property>
+        <property name="degree" type="string">
+            <column name="degree" length="20" />
+        </property>
+        <property name="school" type="string">
+            <column name="school" length="50" />
+        </property>
+        <property name="schoolRoot" type="string">
+            <column name="school_root" length="50" />
+        </property>
+        <property name="major" type="string">
+            <column name="major" length="50" />
+        </property>
+        <property name="majorRoot" type="string">
+            <column name="major_root" length="50" />
+        </property>
+        <property name="majorSub" type="string">
+            <column name="major_sub" length="50" />
+        </property>
+        <property name="description" type="string">
+            <column name="description" length="200" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+    </class>
+</hibernate-mapping>

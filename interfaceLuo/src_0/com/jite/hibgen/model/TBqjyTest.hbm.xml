@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TBqjyTest" table="t_bqjy_test" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+        <property name="link" type="string">
+            <column name="link" length="100" />
+        </property>
+        <property name="uniqueId" type="string">
+            <column name="unique_id" length="100" />
+        </property>
+        <property name="username" type="string">
+            <column name="username" length="100" />
+        </property>
+        <property name="password" type="string">
+            <column name="password" length="100" />
+        </property>
+        <property name="status" type="string">
+            <column name="status" length="100" />
+        </property>
+        <property name="amcatId" type="string">
+            <column name="amcat_id" length="100" />
+        </property>
+        <property name="firstName" type="string">
+            <column name="first_name" length="100" />
+        </property>
+        <property name="logical" type="string">
+            <column name="logical" length="100" />
+        </property>
+        <property name="personality" type="string">
+            <column name="personality" length="100" />
+        </property>
+        <property name="comprehension" type="string">
+            <column name="comprehension" length="100" />
+        </property>
+        <property name="competency" type="string">
+            <column name="competency" length="100" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

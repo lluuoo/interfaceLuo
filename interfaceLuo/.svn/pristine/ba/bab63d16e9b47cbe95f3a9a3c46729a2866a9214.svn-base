@@ -1,0 +1,47 @@
+package com.jite.struts.bean;
+
+import java.util.Date;
+
+public class UserProfileLanguagesInfo {
+	
+	private String userId;
+	private String languageType;
+	private String languageOracy;
+	private String languageScore;
+	private String languageExplain;
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getLanguageType() {
+		return languageType;
+	}
+	public void setLanguageType(String languageType) {
+		this.languageType = languageType;
+	}
+	public String getLanguageOracy() {
+		return languageOracy;
+	}
+	public void setLanguageOracy(String languageOracy) {
+		this.languageOracy = languageOracy;
+	}
+	public String getLanguageScore() {
+		return languageScore;
+	}
+	public void setLanguageScore(String languageScore) {
+		this.languageScore = languageScore;
+	}
+	public String getLanguageExplain() {
+		return languageExplain;
+	}
+	public void setLanguageExplain(String languageExplain) {
+		this.languageExplain = languageExplain;
+	}
+	
+	
+	
+	
+
+}

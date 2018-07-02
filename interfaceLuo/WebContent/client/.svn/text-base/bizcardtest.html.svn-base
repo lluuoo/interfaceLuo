@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<form action="http://localhost:8082/interface/mybiz.do"
+		method="POST">
+		
+	<br>
+	
+	<br> accountId
+	<br>
+		<input type="text" name="accountId" />
+		
+	<br> name
+	<br>
+		<input type="text" name="username" />
+
+
+	<br> birthday
+	<br>
+		<input type="text" name="birthday" />
+			
+	<br> sex
+	<br>
+		<input type="text" name="sex" />
+		
+	<br> school_name
+	<br>
+		<input type="text" name="schoolName" />
+		
+	
+	<br> degree
+	<br>
+		<input type="text" name="degree" />
+		
+	<br> major
+	<br>
+		<input type="text" name="major" />
+		
+	<br> phone_number
+	<br>
+		<input type="text" name="phoneNumber" />
+		
+	<br> email_address
+	<br>
+		<input type="text" name="emailAddress" />
+		
+		<br> <input type="Submit" value="Regist"> <br>
+	</form>
+
+</body>
+</html>

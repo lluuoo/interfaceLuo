@@ -1,0 +1,29 @@
+package com.jite.struts.bean;
+
+import java.util.Date;
+
+public class LoginInfo {
+	private String userId;
+	private Date loginTime;
+	private Date logoutTime;
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public Date getUsername() {
+		return loginTime;
+	}
+	public void setLoginTime(Date loginTime) {
+		this.loginTime = loginTime;
+	}
+	public Date getType() {
+		return logoutTime;
+	}
+	public void setLogoutTime(Date logoutTime) {
+		this.logoutTime = logoutTime;
+	}
+	
+
+}

@@ -1,0 +1,156 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.TUserAccount;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserAccount.
+ * @see com.jite.hibgen.model.TUserAccount
+ * @author Hibernate Tools
+ */
+public class TUserAccountDao extends BaseDao<TUserAccount>{
+
+	private static final Log log = LogFactory.getLog(TUserAccountDao.class);
+
+
+
+	public void persist(TUserAccount transientInstance) {
+		log.debug("persisting TUserAccount instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserAccount instance) {
+		log.debug("attaching dirty TUserAccount instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserAccount instance) {
+		log.debug("attaching clean TUserAccount instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserAccount persistentInstance) {
+		log.debug("deleting TUserAccount instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserAccount merge(TUserAccount detachedInstance) {
+		log.debug("merging TUserAccount instance");
+		try {
+			TUserAccount result = (TUserAccount) getHibernateTemplate().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	/**
+	 * 根据ID搜索UserAccount
+	 * @param id
+	 * @return
+	 */
+	public TUserAccount findById(java.lang.Long id) {
+		log.debug("getting TUserAccount instance with id: " + id);
+		try {
+			TUserAccount instance = (TUserAccount) getHibernateTemplate().get(
+							"com.jite.hibgen.model.TUserAccount", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserAccount> findByExample(TUserAccount instance) {
+		log.debug("finding TUserAccount instance by example");
+		try {
+			List<TUserAccount> results = (List<TUserAccount>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserAccount")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserAccount> searchEmailOrAccount(String emailAddress) {
+
+		Criteria criteria=getHibernateTemplate()
+		.getSessionFactory().getCurrentSession()
+		.createCriteria(TUserAccount.class);
+		
+		Disjunction dis=Restrictions.disjunction();
+		dis.add(Restrictions.eq("account", emailAddress));
+		dis.add(Restrictions.eq("email", emailAddress));
+		
+		criteria.add(dis);
+		
+		List<TUserAccount> results = criteria.list();
+
+		return results;
+	}
+
+	public List<TUserAccount> searchPhoneOrAccount(String phone) {
+		Criteria criteria=getHibernateTemplate()
+		.getSessionFactory().getCurrentSession()
+		.createCriteria(TUserAccount.class);
+		
+		Disjunction dis=Restrictions.disjunction();
+		dis.add(Restrictions.eq("account", phone));
+		dis.add(Restrictions.eq("phone", phone));
+		
+		criteria.add(dis);
+		
+		List<TUserAccount> results = criteria.list();
+
+		return results;
+	}
+}

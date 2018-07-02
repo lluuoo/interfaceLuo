@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TSystemDepartment" table="t_system_department" catalog="qch" optimistic-lock="version">
+        <id name="departmentId" type="java.lang.Long">
+            <column name="department_id" />
+            <generator class="identity" />
+        </id>
+        <property name="departmentName" type="string">
+            <column name="department_name" length="100" />
+        </property>
+        <property name="fullName" type="string">
+            <column name="full_name" length="200" />
+        </property>
+        <property name="departmentCode" type="string">
+            <column name="department_code" length="50" />
+        </property>
+        <property name="parentDepartmentId" type="java.lang.Long">
+            <column name="parent_department_id" />
+        </property>
+        <property name="creator" type="string">
+            <column name="creator" length="20" />
+        </property>
+        <property name="creatorId" type="java.lang.Long">
+            <column name="creator_id" />
+        </property>
+        <property name="createDeptId" type="java.lang.Long">
+            <column name="create_dept_id" />
+        </property>
+        <property name="createDeptName" type="string">
+            <column name="create_dept_name" length="100" />
+        </property>
+        <property name="createDeptCode" type="string">
+            <column name="create_dept_code" length="50" />
+        </property>
+        <property name="memo" type="string">
+            <column name="memo" length="500" />
+        </property>
+        <property name="departmentType" type="java.lang.Integer">
+            <column name="department_type" />
+        </property>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+    </class>
+</hibernate-mapping>

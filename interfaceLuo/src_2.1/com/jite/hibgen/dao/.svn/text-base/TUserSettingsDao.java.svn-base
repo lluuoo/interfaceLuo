@@ -1,0 +1,125 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+import javax.naming.InitialContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserSettings.
+ * @see com.jite.hibgen.dao.TUserSettings
+ * @author Hibernate Tools
+ */
+public class TUserSettingsDao {
+
+	private static final Log log = LogFactory.getLog(TUserSettingsDao.class);
+
+	private final SessionFactory sessionFactory = getSessionFactory();
+
+	protected SessionFactory getSessionFactory() {
+		try {
+			return (SessionFactory) new InitialContext()
+					.lookup("SessionFactory");
+		} catch (Exception e) {
+			log.error("Could not locate SessionFactory in JNDI", e);
+			throw new IllegalStateException(
+					"Could not locate SessionFactory in JNDI");
+		}
+	}
+
+	public void persist(TUserSettings transientInstance) {
+		log.debug("persisting TUserSettings instance");
+		try {
+			sessionFactory.getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserSettings instance) {
+		log.debug("attaching dirty TUserSettings instance");
+		try {
+			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserSettings instance) {
+		log.debug("attaching clean TUserSettings instance");
+		try {
+			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserSettings persistentInstance) {
+		log.debug("deleting TUserSettings instance");
+		try {
+			sessionFactory.getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserSettings merge(TUserSettings detachedInstance) {
+		log.debug("merging TUserSettings instance");
+		try {
+			TUserSettings result = (TUserSettings) sessionFactory
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserSettings findById(java.lang.Long id) {
+		log.debug("getting TUserSettings instance with id: " + id);
+		try {
+			TUserSettings instance = (TUserSettings) sessionFactory
+					.getCurrentSession().get(
+							"com.jite.hibgen.dao.TUserSettings", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserSettings> findByExample(TUserSettings instance) {
+		log.debug("finding TUserSettings instance by example");
+		try {
+			List<TUserSettings> results = (List<TUserSettings>) sessionFactory
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.dao.TUserSettings")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}

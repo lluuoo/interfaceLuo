@@ -1,0 +1,34 @@
+package com.jite.utils;
+/**
+ */
+public enum FileAbsolutePathEnum{
+	/** 图片*/
+	HEAD_IMAGE("cfg.head_image_path"),
+	/** 头像，缩略图*/
+	ICON_PATH("cfg.com_icon_path"),
+	/** 营业执照*/
+	CERT_PATH("cfg.com_cert_path"),
+	/** CEO*/
+	LEADER_PATH("cfg.com_leader_path"),
+	/** uploadfile_path */
+	UPLOADFILE_PATH("cfg.common_upload_path"),
+	/** 资源 */
+	RESOURCE_PATH("resource_path"),
+	/** cache_address */
+	CACHE_ADDRESS("cache_address"),
+	/**faceImage**/
+	FACEIMAGE_PATH("faceImage_path"),
+	/**shaerImage**/
+	SHAREIMAGE_PATH("shareImage_path"),
+	/**图片的网络路径**/
+	HTTP_PATH("http_path");
+	 
+	
+	private String value;
+	private FileAbsolutePathEnum(String value) {
+		this.value = value;
+	}
+	public String getValue(){
+		return this.value;
+	}
+}

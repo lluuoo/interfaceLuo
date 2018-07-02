@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+	<br>
+	<br> add
+	<form action="http://localhost:8089/interface/HrCompany-add.do"
+		method="POST">
+		name<input type="text" name="name" />
+		short_name<input type="text" name="short_name" />
+		logo<input type="text" name="logo" />
+		scale_type<input type="text" name="scale_type" />
+		type<input type="text" name="type" />
+		province<input type="text" name="province" />
+		address<input type="text" name="address" />
+		telephone<input type="text" name="telephone" />	
+		short_desc<input type="text" name="short_desc" />	
+		description<input type="text" name="description" />	
+		<br> <input type="Submit" value="Add"> <br>
+	</form>
+	<br> query
+	<br>
+	<form action="http://localhost:8089/interface/HrCompany-query.do"
+		method="POST">
+		name<input type="text" name="name" />
+		short_name<input type="text" name="short_name" />
+		logo<input type="text" name="logo" />
+		scale_type<input type="text" name="scale_type" />
+		type<input type="text" name="type" />
+		province<input type="text" name="province" />
+		address<input type="text" name="address" />
+		telephone<input type="text" name="telephone" />	
+		short_desc<input type="text" name="short_desc" />	
+		description<input type="text" name="description" />		
+		<br> <input type="Submit" value="Query"> <br>
+	</form>	
+	<br> Modify
+	<br>
+	<form action="http://localhost:8089/interface/HrCompany-modify.do"
+		method="POST">
+		name<input type="text" name="name" />
+		short_name<input type="text" name="short_name" />
+		logo<input type="text" name="logo" />
+		scale_type<input type="text" name="scale_type" />
+		type<input type="text" name="type" />
+		province<input type="text" name="province" />
+		address<input type="text" name="address" />
+		telephone<input type="text" name="telephone" />	
+		short_desc<input type="text" name="short_desc" />	
+		description<input type="text" name="description" />	 	
+		<br> <input type="Submit" value="Modify"> <br>
+	</form>
+</body>
+</html>
+

@@ -1,0 +1,250 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TCommonDictionaryDao;
+import com.jite.hibgen.dao.TProCityDao;
+import com.jite.hibgen.dao.TShowHomeareasDao;
+import com.jite.hibgen.dao.TShowHomeworktypesDao;
+import com.jite.hibgen.model.TCommonDictionary;
+import com.jite.hibgen.model.TShowHomeareas;
+import com.jite.hibgen.model.TShowHomeworktypes;
+import com.jite.struts.bean.CommonInfo;
+import com.jite.struts.bean.CommonItem;
+
+public class CommonService {
+	@Resource
+	private TCommonDictionaryDao commonDao;
+
+	@Resource
+	private TProCityDao proCityDao;
+
+	@Resource
+	private TShowHomeareasDao homeAreasDao;
+
+	@Resource
+	private TShowHomeworktypesDao homeWorkTypesDao;
+
+	public TCommonDictionaryDao getCommonDao() {
+		return commonDao;
+	}
+
+	public void setCommonDao(TCommonDictionaryDao commonDao) {
+		this.commonDao = commonDao;
+	}
+	
+	public TProCityDao getProCityDao() {
+		return proCityDao;
+	}
+
+	public void setProCityDao(TProCityDao proCityDao) {
+		this.proCityDao = proCityDao;
+	}
+
+	public TShowHomeareasDao getHomeAreasDao() {
+		return homeAreasDao;
+	}
+
+	public void setHomeAreasDao(TShowHomeareasDao homeAreasDao) {
+		this.homeAreasDao = homeAreasDao;
+	}
+
+	public TShowHomeworktypesDao getHomeWorkTypesDao() {
+		return homeWorkTypesDao;
+	}
+
+	public void setHomeWorkTypesDao(TShowHomeworktypesDao homeWorkTypesDao) {
+		this.homeWorkTypesDao = homeWorkTypesDao;
+	}
+
+	public CommonInfo queryConfig(String configName){
+		CommonInfo result=new CommonInfo();
+		result.setConfigName(configName);
+		List<CommonItem> items=new ArrayList<CommonItem>();
+		TCommonDictionary search=new TCommonDictionary();
+		search.setDictType(configName);
+		search.setParentId(0L);
+		List<TCommonDictionary> searchResult=commonDao.findByExample(search);
+		for(TCommonDictionary one:searchResult){
+			CommonItem item=new CommonItem();
+			item.setId(one.getValueName());
+			item.setName(one.getValueCode());
+			
+			List<CommonItem> subItems=new ArrayList<CommonItem>();
+			TCommonDictionary subSearch=new TCommonDictionary();
+			subSearch.setParentId(one.getDictId());
+			List<TCommonDictionary> subResult=commonDao.findByExample(subSearch);
+			for(TCommonDictionary subOne:subResult){
+				CommonItem subitem=new CommonItem();
+				subitem.setId(subOne.getValueName());
+				subitem.setName(subOne.getValueCode());
+				
+				List<CommonItem> thirdItems=new ArrayList<CommonItem>();
+				TCommonDictionary thirdSearch=new TCommonDictionary();
+				thirdSearch.setParentId(subOne.getDictId());
+				List<TCommonDictionary> thirdResult=commonDao.findByExample(thirdSearch);
+				for(TCommonDictionary thirdOne:thirdResult){
+					CommonItem thirditem=new CommonItem();
+					thirditem.setId(thirdOne.getValueName());
+					thirditem.setName(thirdOne.getValueCode());
+					thirdItems.add(thirditem);
+				}
+				subitem.setSubItems(thirdItems);
+				subItems.add(subitem);
+				
+			}
+			item.setSubItems(subItems);
+			items.add(item);
+		}
+		result.setItems(items);
+		return result;
+	}
+
+	public CommonInfo queryConfigRoot(String configName){
+		CommonInfo result=new CommonInfo();
+		result.setConfigName(configName);
+		List<CommonItem> items=new ArrayList<CommonItem>();
+		TCommonDictionary search=new TCommonDictionary();
+		search.setDictType(configName);
+		search.setParentId(0L);
+		List<TCommonDictionary> searchResult=commonDao.findByExample(search);
+		for(TCommonDictionary one:searchResult){
+			CommonItem item=new CommonItem();
+			item.setId(one.getValueName());
+			item.setName(one.getValueCode());
+			items.add(item);
+		}
+		result.setItems(items);
+		return result;
+	}	
+	public List<CommonItem> queryAllCities() {
+		List<CommonItem> result=new ArrayList<CommonItem>();
+		
+		for(Object oneRoot:proCityDao.queryAllRoot()){
+			CommonItem rootItem=new CommonItem();
+			Object[] rootList=(Object[])oneRoot;
+			rootItem.setId(rootList[0].toString());
+			rootItem.setName(rootList[1].toString());
+
+			
+			List<CommonItem> subItems=new ArrayList<CommonItem>();
+			for(Object oneSub:proCityDao.querySubname(rootItem.getId())){
+				CommonItem subItem=new CommonItem();
+				Object[] subList=(Object[])oneSub;
+				subItem.setId(subList[0].toString());
+				subItem.setName(subList[1].toString());
+				
+				List<CommonItem> thirdItems=new ArrayList<CommonItem>();
+				for(Object oneThird:proCityDao.querySubname(subItem.getId())){
+					CommonItem thirdItem=new CommonItem();
+					Object[] thirdList=(Object[])oneThird;
+					thirdItem.setId(thirdList[0].toString());
+					thirdItem.setName(thirdList[1].toString());
+					thirdItems.add(thirdItem);
+				}
+				
+				subItems.add(subItem);
+				
+				subItem.setSubItems(thirdItems);
+			}
+			
+			rootItem.setSubItems(subItems);
+			result.add(rootItem);
+		}
+		
+		return result;
+	}
+
+	public List<CommonItem> queryHomeAreas() {
+		List<CommonItem> result=new ArrayList<CommonItem>();
+		
+		TShowHomeareas rootSearch=new TShowHomeareas();
+		rootSearch.setFather(0L);
+		rootSearch.setType(1);
+		for(TShowHomeareas oneRoot:homeAreasDao.searchByRank(1, 6, rootSearch)){
+			CommonItem rootItem=new CommonItem();
+
+			rootItem.setId(oneRoot.getTheId().toString());
+			rootItem.setName(oneRoot.getName());
+
+			
+			List<CommonItem> subItems=new ArrayList<CommonItem>();
+			TShowHomeareas subSearch=new TShowHomeareas();
+			subSearch.setFather(oneRoot.getId());
+			
+			for(TShowHomeareas oneSub:homeAreasDao.searchByRank(1, 2, subSearch)){
+				CommonItem subItem=new CommonItem();
+				subItem.setId(oneSub.getTheId().toString());
+				subItem.setName(oneSub.getName());
+				subItems.add(subItem);
+			}
+			
+			rootItem.setSubItems(subItems);
+			result.add(rootItem);
+		}
+		
+		return result;
+		
+	}
+
+	public List<CommonItem> queryMqAreas(int pageNumber,int pageSize) {
+		List<CommonItem> result=new ArrayList<CommonItem>();
+		
+		TShowHomeareas rootSearch=new TShowHomeareas();
+		rootSearch.setFather(0L);
+		rootSearch.setType(3);
+		for(TShowHomeareas oneRoot:homeAreasDao.searchByRank(pageNumber, pageSize, rootSearch)){
+			CommonItem rootItem=new CommonItem();
+			rootItem.setId(oneRoot.getTheId().toString());
+			rootItem.setName(oneRoot.getName());
+			result.add(rootItem);
+		}
+		
+		return result;
+		
+	}
+
+	
+	public List<CommonItem> queryHomeWorkTypes() {
+		List<CommonItem> result=new ArrayList<CommonItem>();
+		
+		TShowHomeworktypes rootSearch=new TShowHomeworktypes();
+		rootSearch.setFather(0L);
+		for(TShowHomeworktypes oneRoot:homeWorkTypesDao.searchByRank(1, 6, rootSearch)){
+			CommonItem rootItem=new CommonItem();
+
+			rootItem.setId(oneRoot.getTheId().toString());
+			rootItem.setName(oneRoot.getName());
+
+			
+			List<CommonItem> subItems=new ArrayList<CommonItem>();
+			TShowHomeworktypes subSearch=new TShowHomeworktypes();
+			subSearch.setFather(oneRoot.getId());
+			
+			for(TShowHomeworktypes oneSub:homeWorkTypesDao.searchByRank(1, 5, subSearch)){
+				CommonItem subItem=new CommonItem();
+				subItem.setId(oneSub.getTheId().toString());
+				subItem.setName(oneSub.getName());
+				subItems.add(subItem);
+			}
+			
+			rootItem.setSubItems(subItems);
+			result.add(rootItem);
+		}
+		
+		return result;
+	}
+
+	public int queryMqAreasTotal() {
+		TShowHomeareas rootSearch=new TShowHomeareas();
+		rootSearch.setFather(0L);
+		rootSearch.setType(3);
+		return homeAreasDao.searchByRankTotal(rootSearch);
+	}
+	
+	
+	
+}

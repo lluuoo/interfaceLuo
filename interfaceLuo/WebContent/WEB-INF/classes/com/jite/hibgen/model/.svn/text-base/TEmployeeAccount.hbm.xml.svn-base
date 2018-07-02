@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-4-12 12:49:13 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TEmployeeAccount" table="t_employee_account" catalog="qch">
+        <id name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+            <generator class="identity" />
+        </id>
+        <property name="account" type="string">
+            <column name="account" length="50" />
+        </property>
+        <property name="password" type="string">
+            <column name="password" length="50" />
+        </property>
+        <property name="paidState" type="string">
+            <column name="paid_state" length="2" />
+        </property>
+        <property name="accountState" type="string">
+            <column name="account_state" length="2" />
+        </property>
+        <property name="accountEffectDate" type="timestamp">
+            <column name="account_effect_date" length="19" />
+        </property>
+        <property name="accountEffectDeadline" type="big_decimal">
+            <column name="account_effect_deadline" precision="7" />
+        </property>
+        <property name="employeeId" type="java.lang.Long">
+            <column name="employee_id" />
+        </property>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+        <property name="accountInvalidDate" type="timestamp">
+            <column name="account_invalid_date" length="19" />
+        </property>
+        <property name="state" type="string">
+            <column name="state" length="2" />
+        </property>
+        <property name="accountCompanyname" type="string">
+            <column name="account_companyname" length="200" />
+        </property>
+        <property name="accountRegion" type="string">
+            <column name="account_region" length="200" />
+        </property>
+        <property name="accountProvincename" type="string">
+            <column name="account_provincename" length="200" />
+        </property>
+        <property name="accountWar" type="string">
+            <column name="account_war" length="100" />
+        </property>
+        <property name="recordLostTime" type="timestamp">
+            <column name="record_lost_time" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

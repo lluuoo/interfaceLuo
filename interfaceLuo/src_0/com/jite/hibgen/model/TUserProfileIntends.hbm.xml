@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserProfileIntends" table="t_user_profile_intends" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="userId" type="java.lang.Long">
+            <column name="user_id" />
+        </property>
+        <property name="type" type="java.lang.Integer">
+            <column name="type">
+                <comment>1--&#208;&#208;&#210;&#181; 2--&#214;&#176;&#196;&#220; 3--&#181;&#216;&#181;&#227;</comment>
+            </column>
+        </property>
+        <property name="commonId" type="string">
+            <column name="common_id" length="50" />
+        </property>
+        <property name="commonName" type="string">
+            <column name="common_name" length="120" />
+        </property>
+        <property name="commonNameRoot" type="string">
+            <column name="common_name_root" length="120" />
+        </property>
+        <property name="commonNameSub" type="string">
+            <column name="common_name_sub" length="120" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

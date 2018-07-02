@@ -1,0 +1,129 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+
+import static org.hibernate.criterion.Example.create;
+
+public class TUserProfileAwardDao extends BaseDao<TUserProfileAward>{
+	
+	private static final Log log = LogFactory.getLog(TUserProfileAwardDao.class);
+
+	public TUserProfileAwardDao(){
+		super(TUserProfileAward.class);
+	}
+	public TUserProfileAwardDao(TUserProfileAward po){
+		super(po.getClass());
+	}
+	public void persist(TUserProfileAward transientInstance) {
+		log.debug("persisting TUserProfileAward instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserProfileAward instance) {
+		log.debug("attaching dirty TUserProfileAward instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserProfileAward instance) {
+		log.debug("attaching clean TUserProfileAward instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserProfileAward persistentInstance) {
+		log.debug("deleting TUserProfileAward instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileAward merge(TUserProfileAward detachedInstance) {
+		log.debug("merging TUserProfileAward instance");
+		try {
+			TUserProfileAward result = (TUserProfileAward) getHibernateTemplate().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileAward findById(java.lang.Long id) {
+		log.debug("getting TUserProfileAward instance with id: " + id);
+		try {
+			TUserProfileAward instance = (TUserProfileAward) getHibernateTemplate().get(
+							"com.jite.hibgen.model.TUserProfileAward", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserProfileAward> findByExample(
+			TUserProfileAward instance) {
+		log.debug("finding TUserProfileAward instance by example");
+		try {
+			List<TUserProfileAward> results = (List<TUserProfileAward>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserProfileAward")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public void deleteByAccountId(Long accountId) {
+		log.debug("delte TUserProfileAward by userId");
+		try {
+			String hql = "delete TUserProfileAward as tupi where tupi.accountId=?";
+			Query query = getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().createQuery(hql);
+			query.setLong(0, accountId);
+			query.executeUpdate();
+		} catch (Exception re) {
+			log.error("Delete failed", re);
+		}
+	}
+}

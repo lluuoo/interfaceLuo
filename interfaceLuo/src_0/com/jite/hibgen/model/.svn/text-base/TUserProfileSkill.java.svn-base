@@ -1,0 +1,85 @@
+package com.jite.hibgen.model;
+
+import java.util.Date;
+
+public class TUserProfileSkill implements java.io.Serializable {
+
+	private Long id;
+	private Long accountId;
+	private String skillName;
+	private String skillTime;
+	private String proficiency;
+	private Date createDate;
+	private Date updateDate;
+
+	public TUserProfileSkill() {
+	}
+
+	public TUserProfileSkill(Long accountId, String skillName, 
+			String skillTime, String proficiency, Date createDate, Date updateDate) {
+		this.accountId = accountId;
+		this.skillName = skillName;
+		this.skillTime = skillTime;
+		this.proficiency = proficiency;
+		this.createDate = createDate;
+		this.updateDate = updateDate;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getSkillName() {
+		return skillName;
+	}
+
+	public void setSkillName(String skillName) {
+		this.skillName = skillName;
+	}
+
+	public String getSkillTime() {
+		return skillTime;
+	}
+
+	public void setSkillTime(String skillTime) {
+		this.skillTime = skillTime;
+	}
+
+	public String getProficiency() {
+		return proficiency;
+	}
+
+	public void setProficiency(String proficiency) {
+		this.proficiency = proficiency;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+	
+	
+}

@@ -1,0 +1,59 @@
+package com.jite.struts.bean;
+
+public class ProfileSearch extends PageInfo{
+	private String searchKey;
+	private String searchSchool;
+	private String searchMajor;
+	private String searchLocation;
+	private String searchBy;
+	private String searchDegree;
+
+	//TODO 查找对应的简历
+	public String getSearchKey() {
+		return searchKey;
+	}
+	public void setSearchKey(String searchKey) {
+		this.searchKey = searchKey;
+	}
+	public String getSearchSchool() {
+		return searchSchool;
+	}
+	public void setSearchSchool(String searchSchool) {
+		this.searchSchool = searchSchool;
+	}
+	public String getSearchMajor() {
+		return searchMajor;
+	}
+	public void setSearchMajor(String searchMajor) {
+		this.searchMajor = searchMajor;
+	}
+	public String getSearchLocation() {
+		return searchLocation;
+	}
+	public void setSearchLocation(String searchLocation) {
+		this.searchLocation = searchLocation;
+	}
+	public String getSearchBy() {
+		return searchBy;
+	}
+	public void setSearchBy(String searchBy) {
+		this.searchBy = searchBy;
+	}
+	
+	
+	public String getSearchDegree() {
+		return searchDegree;
+	}
+	public void setSearchDegree(String searchDegree) {
+		this.searchDegree = searchDegree;
+	}
+	@Override
+	public String toString() {
+		return "ProfileSearch [searchKey=" + searchKey + ", searchSchool="
+				+ searchSchool + ", searchMajor=" + searchMajor
+				+ ", searchLocation=" + searchLocation + ", searchBy="
+				+ searchBy +", searchDegree="+searchDegree+",pageNumber=" + getPageNumber()
+				+", pageSize=" + getPageSize() + "]";
+	}
+	
+}

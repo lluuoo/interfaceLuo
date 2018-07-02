@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserBizcard" table="t_user_bizcard" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+        <property name="volunteerNumber" type="string">
+            <column name="volunteer_number" length="50" />
+        </property>
+        <property name="realName" type="string">
+            <column name="real_name" length="50" />
+        </property>
+        <property name="birthday" type="date">
+            <column name="birthday" length="10" />
+        </property>
+        <property name="sex" type="java.lang.Integer">
+            <column name="sex">
+                <comment>1--&#177;&#237;&#202;&#190;&#196;&#208;; 2&#177;&#237;&#202;&#190;&#197;&#174;</comment>
+            </column>
+        </property>
+        <property name="schoolName" type="string">
+            <column name="school_name" length="100" />
+        </property>
+        <property name="schoolNameRoot" type="string">
+            <column name="school_name_root" length="50" />
+        </property>
+        <property name="degree" type="string">
+            <column name="degree" length="50" />
+        </property>
+        <property name="curcarrier" type="string">
+            <column name="curcarrier" length="100" />
+        </property>
+        <property name="major" type="string">
+            <column name="major" length="50" />
+        </property>
+        <property name="majorRoot" type="string">
+            <column name="major_root" length="100" />
+        </property>
+        <property name="majorSub" type="string">
+            <column name="major_sub" length="100" />
+        </property>
+        <property name="phoneNumber" type="string">
+            <column name="phone_number" length="50" />
+        </property>
+        <property name="emailAddress" type="string">
+            <column name="email_address" length="50" />
+        </property>
+        <property name="headImage" type="string">
+            <column name="head_image" length="100" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+        <property name="tuaStatus" type="java.lang.Integer">
+            <column name="tua_status">
+                <comment>1-&#191;&#170;&#183;&#197;&#188;&#242;&#192;&#250; 2-&#178;&#187;&#191;&#170;&#183;&#197;&#188;&#242;&#192;&#250;</comment>
+            </column>
+        </property>
+        <property name="tuaEmailVerified" type="java.lang.Integer">
+            <column name="tua_email_verified" />
+        </property>
+        <property name="tuaPhoneVerified" type="java.lang.Integer">
+            <column name="tua_phone_verified" />
+        </property>
+        <property name="tuaLastlogin" type="timestamp">
+            <column name="tua_lastlogin" length="19" />
+        </property>
+        <property name="tupbLocation" type="string">
+            <column name="tupb_location" length="200" />
+        </property>
+        <property name="tupbDescription" type="string">
+            <column name="tupb_description" length="65535" />
+        </property>
+        <property name="tupiAllintends" type="string">
+            <column name="tupi_allintends" length="500" />
+        </property>
+        <property name="taauSixty" type="java.lang.Integer">
+            <column name="taau_sixty" />
+        </property>
+    </class>
+</hibernate-mapping>

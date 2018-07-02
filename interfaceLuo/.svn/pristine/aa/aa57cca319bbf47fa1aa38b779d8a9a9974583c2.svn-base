@@ -1,0 +1,88 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TOrgWestplanDao;
+import com.jite.hibgen.dao.TUserBizcardDao;
+import com.jite.hibgen.dao.TUserMessagesDao;
+import com.jite.hibgen.model.TOrgWestplan;
+import com.jite.hibgen.model.TUserBizcard;
+import com.jite.hibgen.model.TUserMessages;
+import com.jite.struts.bean.WestplanInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.Constants;
+import com.jite.utils.SystemPropties;
+
+public class WestplanService {
+	@Resource
+	private TOrgWestplanDao westplanDao;
+
+	public TOrgWestplanDao getWestplanDao() {
+		return westplanDao;
+	}
+
+
+	public void setWestplanDao(TOrgWestplanDao westplanDao) {
+		this.westplanDao = westplanDao;
+	}
+
+
+	
+
+	public List<WestplanInfo> queryPublishedActivities(int pageNumber,int pageSize) {
+		List<WestplanInfo> returnList=new ArrayList<WestplanInfo>();
+		TOrgWestplan actSea=new TOrgWestplan();
+		if(pageNumber==0){
+			pageNumber=1;
+		}
+		if(pageSize==0){
+			pageSize=Integer.parseInt(SystemPropties.getProperties("cfg.common_page_size"));
+		}
+		List<TOrgWestplan> allt=westplanDao.searchByCriteria(pageNumber,pageSize,actSea);
+		for(TOrgWestplan toa:allt){
+			returnList.add(BeanTrans.getFromTOrgWestplan(toa));
+		}
+		return returnList;
+	}
+
+
+	public WestplanInfo queryById(String westplanId,String userId) {
+		WestplanInfo result=BeanTrans.getFromTOrgWestplan(westplanDao.findById(Long.valueOf(westplanId)));
+
+		return result;
+	}
+
+
+	public WestplanInfo greatById(String westplanId) {
+		TOrgWestplan toa=westplanDao.findById(Long.valueOf(westplanId));
+		toa.setGreatSum((toa.getGreatSum()==null?0:toa.getGreatSum())+1);
+		westplanDao.updateObject(toa);
+		return BeanTrans.getFromTOrgWestplan(toa);
+	}
+
+
+	public List<WestplanInfo> queryPublishedActivitiesWithJionList(int pageNumber,int pageSize) {
+		List<WestplanInfo> returnList=new ArrayList<WestplanInfo>();
+		
+		TOrgWestplan actSea=new TOrgWestplan();
+		List<TOrgWestplan> allt=westplanDao.searchByCriteria(pageNumber,pageSize,actSea);
+
+		for(TOrgWestplan toa:allt){
+			WestplanInfo theAct=BeanTrans.getFromTOrgWestplan(toa);
+
+			returnList.add(theAct);
+		}
+		return returnList;
+	}
+	
+	public int queryPublishedActivitiesTotal(){
+		TOrgWestplan search=new TOrgWestplan();
+		return westplanDao.searchByCriteriaTotal(search);
+	}
+
+}

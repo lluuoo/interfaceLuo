@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.1.dtd" >
+<struts>
+
+	<!-- 是否显示详细错误信息 -->
+	<constant name="struts.devMode" value="true" />
+	<!-- 编码 -->
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<!-- 后缀 -->
+	<constant name="struts.action.extension" value="do" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" />
+	<constant name="struts.configuration.xml.reload" value="true" />
+	<constant name="struts.multipart.maxSize" value="1048577600" />
+
+	<package name="basic-funtion" extends="struts-default" namespace="/">
+		<action name="*-*" class="com.jite.struts.action.{1}Action"  method="{2}">
+		</action>
+	</package>
+	
+	<package name="randomImage"  extends="struts-default" namespace="/">
+	    <action name="*-*" class="com.jite.struts.action.{1}Action" method="{2}">
+		    <result type="stream">
+		               <param name="contentType">image/jpeg</param>
+		               <param name="inputName">inputStream</param>
+		   </result>
+	    </action>
+	</package>
+		
+	<!-- 	<package name="my-funtion" extends="struts-default" namespace="/">
+	
+
+
+	<package name="my-funtion" extends="struts-default" namespace="/">
+		<action name="mybiz" class="com.jite.struts.action.BizAction"  method="preservation">
+			<result name="success" type="dispatcher">moo.jsp</result>
+		</action>
+	</package> -->
+</struts>

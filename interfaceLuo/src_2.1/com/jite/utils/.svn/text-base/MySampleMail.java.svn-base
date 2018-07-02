@@ -1,0 +1,27 @@
+package com.jite.utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
+import com.jite.struts.bean.MailInfo;
+
+public class MySampleMail {
+
+	public static void main(String[] args) throws AddressException, MessagingException {
+		MailSimpleSender sms = MailSenderFactory.getSender(
+				"shenjite@soarsky.com", "Welcome1JT");
+		List<String> recipients = new ArrayList<String>();
+		recipients.add("20830862@qq.com");
+		MailInfo theMail=new MailInfo();
+		theMail.setSubject("测试邮件发送");
+		theMail.setContent("测试邮件发送");
+		for (String recipient : recipients) {
+			sms.send(recipient, theMail);
+		}
+
+	}
+
+}

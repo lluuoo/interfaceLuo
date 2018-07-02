@@ -1,0 +1,113 @@
+package com.jite.hibgen.dao;
+
+import static org.hibernate.criterion.Example.create;
+
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+
+import com.jite.hibgen.model.TUserFavoriteJob;
+
+/**
+ * Home object for domain model class TUserFavoriteJob.
+ * @see com.jite.hibgen.dao.TUserFavoriteJob
+ * @author Hibernate Tools
+ */
+public class TUserFavoriteJobDao extends BaseDao<TUserFavoriteJob>{
+
+	private static final Log log = LogFactory.getLog(TUserFavoriteJobDao.class);
+
+
+	public void persist(TUserFavoriteJob transientInstance) {
+		log.debug("persisting TUserFavoriteJob instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserFavoriteJob instance) {
+		log.debug("attaching dirty TUserFavoriteJob instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserFavoriteJob instance) {
+		log.debug("attaching clean TUserFavoriteJob instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserFavoriteJob persistentInstance) {
+		log.debug("deleting TUserFavoriteJob instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserFavoriteJob merge(TUserFavoriteJob detachedInstance) {
+		log.debug("merging TUserFavoriteJob instance");
+		try {
+			TUserFavoriteJob result = (TUserFavoriteJob) getHibernateTemplate().getSessionFactory().getCurrentSession()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserFavoriteJob findById(java.lang.Long id) {
+		log.debug("getting TUserFavoriteJob instance with id: " + id);
+		try {
+			TUserFavoriteJob instance = (TUserFavoriteJob) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get("com.jite.hibgen.model.TUserFavoriteJob",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserFavoriteJob> findByExample(TUserFavoriteJob instance) {
+		log.debug("finding TUserFavoriteJob instance by example");
+		try {
+			List<TUserFavoriteJob> results = (List<TUserFavoriteJob>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserFavoriteJob")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}

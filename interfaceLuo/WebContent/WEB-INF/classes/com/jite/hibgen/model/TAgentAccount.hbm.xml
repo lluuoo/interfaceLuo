@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-11-26 21:27:05 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TAgentAccount" table="t_agent_account" catalog="qch" optimistic-lock="version">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="district" type="string">
+            <column name="district" length="1" />
+        </property>
+        <property name="province" type="string">
+            <column name="province" length="100" />
+        </property>
+        <property name="city" type="string">
+            <column name="city" length="100" />
+        </property>
+        <property name="school" type="string">
+            <column name="school" length="300" />
+        </property>
+        <property name="type" type="string">
+            <column name="type" length="1">
+                <comment>1-&#210;&#187;&#188;&#182;&#180;&#250;&#192;&#237;
+                2-&#182;&#254;&#188;&#182;&#180;&#250;&#194;&#235;&#187;&#242;&#200;&#253;&#203;&#196;&#188;&#182;</comment>
+            </column>
+        </property>
+        <property name="contactName" type="string">
+            <column name="contact_name" length="100" />
+        </property>
+        <property name="contactPhone" type="string">
+            <column name="contact_phone" length="50" />
+        </property>
+        <property name="account" type="string">
+            <column name="account" length="50" />
+        </property>
+        <property name="location" type="string">
+            <column name="location" length="100" />
+        </property>
+        <property name="cardNumber" type="string">
+            <column name="card_number" length="50" />
+        </property>
+        <property name="parentCode" type="string">
+            <column name="parent_code" length="10" />
+        </property>
+        <property name="inviteCode" type="string">
+            <column name="invite_code" length="10" />
+        </property>
+        <property name="status" type="string">
+            <column name="status" length="1">
+                <comment>0 &#205;&#163;&#211;&#195; 1 &#188;&#164;&#187;&#238;</comment>
+            </column>
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

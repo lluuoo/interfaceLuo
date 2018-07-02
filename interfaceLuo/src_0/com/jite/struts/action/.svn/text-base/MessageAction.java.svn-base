@@ -1,0 +1,253 @@
+package com.jite.struts.action;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.UserJobService;
+import com.jite.struts.bean.JobInfo;
+import com.jite.struts.bean.MessageInfo;
+import com.jite.struts.bean.UserJobInfo;
+import com.jite.utils.SystemPropties;
+
+public class MessageAction extends BaseAction{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4768083376835578317L;
+
+	@Resource
+	@Autowired
+	UserJobService userJobService;
+
+	public UserJobService getUserJobService() {
+		return userJobService;
+	}
+
+	public void setUserJobService(UserJobService userJobService) {
+		this.userJobService = userJobService;
+	}
+	
+	
+
+	public void queryByUserId() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		List<MessageInfo> mList=userJobService.queryUsersMessage(userId,userType,status,pageNumber,pageSize);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("messageList", mList);
+		returnJson.put("totalCount", userJobService.queryUsersMessageTotal(userId,userType,status));
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryMeetMessageByUserJobId() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		MessageInfo message=userJobService.queryMeetMessageByUserJobId(userId,jobId);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("message", message);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+		
+
+	public void readIds() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		userJobService.readMessageIds(readMessageIds);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void sendMessageToHr() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		userJobService.sentMessageToCompany(userId,jobId,companyId,sendMessage);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void replyUserMessage() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		userJobService.replyUserMessage(hrId,readMessageIds,sendMessage);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void sendMessageToMentor() {
+		returnJson=new JSONObject();
+		if(userJobService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userJobService=(UserJobService)ac.getBean("userJobService");
+		}
+		
+		userJobService.sentMessageToMentor(userId,mentorId,sendMessage);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+
+		returnJsonStr(returnJson.toString());
+	}	
+	private String userId;
+	private String jobId;
+	private String companyId;
+	private String status;
+	private int userType;
+	private int pageNumber;
+	private int pageSize;
+	
+	private String hrId;
+	private String hrStatus;
+	private String sendMessage;
+	private String readMessageIds;
+	private int messageType;
+	private String mentorId;
+	
+	public String getMentorId() {
+		return mentorId;
+	}
+
+	public void setMentorId(String mentorId) {
+		this.mentorId = mentorId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getJobId() {
+		return jobId;
+	}
+
+	public void setJobId(String jobId) {
+		this.jobId = jobId;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public int getUserType() {
+		return userType;
+	}
+
+	public void setUserType(int userType) {
+		this.userType = userType;
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public String getHrId() {
+		return hrId;
+	}
+
+	public void setHrId(String hrId) {
+		this.hrId = hrId;
+	}
+
+	public String getHrStatus() {
+		return hrStatus;
+	}
+
+	public void setHrStatus(String hrStatus) {
+		this.hrStatus = hrStatus;
+	}
+
+	public String getSendMessage() {
+		return sendMessage;
+	}
+
+	public void setSendMessage(String sendMessage) {
+		this.sendMessage = sendMessage;
+	}
+
+	public int getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(int messageType) {
+		this.messageType = messageType;
+	}
+
+	public String getReadMessageIds() {
+		return readMessageIds;
+	}
+
+	public void setReadMessageIds(String readMessageIds) {
+		this.readMessageIds = readMessageIds;
+	}
+
+}

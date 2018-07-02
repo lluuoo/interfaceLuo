@@ -1,0 +1,148 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TShowCompanyFamous.
+ * @see com.jite.hibgen.dao.TShowCompanyFamous
+ * @author Hibernate Tools
+ */
+public class TShowCompanyFamousDao extends BaseDao<TShowCompanyFamous>{
+
+	private static final Log log = LogFactory.getLog(TShowCompanyFamousDao.class);
+
+
+	public void persist(TShowCompanyFamous transientInstance) {
+		log.debug("persisting TShowCompanyFamous instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TShowCompanyFamous instance) {
+		log.debug("attaching dirty TShowCompanyFamous instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TShowCompanyFamous instance) {
+		log.debug("attaching clean TShowCompanyFamous instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TShowCompanyFamous persistentInstance) {
+		log.debug("deleting TShowCompanyFamous instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TShowCompanyFamous merge(TShowCompanyFamous detachedInstance) {
+		log.debug("merging TShowCompanyFamous instance");
+		try {
+			TShowCompanyFamous result = (TShowCompanyFamous) getHibernateTemplate()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TShowCompanyFamous findById(java.lang.Long id) {
+		log.debug("getting TShowCompanyFamous instance with id: " + id);
+		try {
+			TShowCompanyFamous instance = (TShowCompanyFamous) getHibernateTemplate()
+					.get("com.jite.hibgen.model.TShowCompanyFamous",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TShowCompanyFamous> findByExample(TShowCompanyFamous instance) {
+		log.debug("finding TShowCompanyFamous instance by example");
+		try {
+			List<TShowCompanyFamous> results = (List<TShowCompanyFamous>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TShowCompanyFamous")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public List<TShowCompanyFamous> searchByCriteria(int pageNo, int pageSize,TShowCompanyFamous search){
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TShowCompanyFamous.class);
+			
+			//setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.asc("rank"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<TShowCompanyFamous>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+
+	public int searchByCriteriaTotal(TShowCompanyFamous search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TShowCompanyFamous.class);
+		
+		//setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-5-18 14:12:22 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserProfileExperience" table="t_user_profile_exp" catalog="qch">
+         <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+        <property name="type" type="string">
+            <column name="type">
+                <comment>1,&#209;&#167;&#208;&#163;&#196;&#218;&#178;&#191;&#163;&#187;2&#163;&#172;&#198;&#243;&#210;&#181;&#188;&#230;&#214;&#176;</comment>
+            </column>
+        </property>
+        
+        <property name="company" type="string">
+            <column name="company" length="50" />
+        </property>
+        
+        <property name="depart" type="string">
+            <column name="depart" length="50" />
+        </property>
+        <property name="fromDate" type="timestamp">
+            <column name="from_date" length="19" />
+        </property>
+        <property name="jobDescription" type="string">
+            <column name="job_description" length="200" />
+        </property>
+        <property name="endDate" type="timestamp">
+            <column name="end_date" length="19" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<form action="http://localhost:8082/interface/JobBase-add.do"
+		method="POST">
+	<br>
+	<br> company_id
+	<br>
+		<input type="text" name="companyId" />
+	<br>
+	<br> name
+	<br>
+	<input type="text" name="name" />
+	<br>
+	<br> location
+	<br>
+		<input type="text" maxlength="30" name="location" />
+	<br>
+	<br> department
+	<br>
+		<input type="text" name="department" />
+	<br>
+	<br> depart_report_to
+	<br>
+		<br> <input type="text" name="departReportTo" />
+		<br>
+	<br> depart_under_count
+	<br>
+		<br> <input type="text" name="departUnderCount" />
+			<br>
+	<br> type
+	<br>
+		<br> <input type="text" name="departReportTo" />
+			<br>
+	<br> depart_report_to
+	<br>
+		<br> <input type="text" name="type" />
+			<br>
+	<br> salary
+	<br>
+	<br> <input type="text" name="salary" />
+	<br> status
+	<br>
+	<br> <input type="text" name="status" />
+	<br> from_date
+	<br>
+	<br> <input type="text" name="fromDate" />
+	<br> end_date
+	<br>
+	<br> <input type="text" name="endDate" />
+	<br> creater
+	<br>
+	<br> <input type="text" name="creater" />
+	<br> updater
+	<br>
+	<br> <input type="text" name="updater" />
+	
+	<br> <input type="Submit" value="infrom"> <br><!-- 既有添加又有修改 的功能-->
+	</form>
+
+
+	<form action="http://localhost:8082/interface/JobBase-select.do"
+		method="POST">
+		<br>
+		Please input you want to find status:
+		<input type="text" name="status" />
+		<br>
+		Please input you want to find name:
+		<input type="text" name="name" />
+		<br>
+		Please input you want to find department:
+		<input type="text" name="department" />
+		<br>
+		Please input you want to find salary:
+		<input type="text" name="salary" />
+		<br>
+		Please input you want to find type:
+		<input type="text" name="type" />
+		<br>
+		Please input you want to find location:
+		<input type="text" name="location" />
+
+		<br> <input type="Submit" value="select"> <br>
+	</form>
+	
+		<form action="http://localhost:8082/interface/JobBase-delect.do"
+		method="POST">
+		<br>
+		Please input you want to delete the job_id:
+		<input type="text" name="id" />
+
+		<br> <input type="Submit" value="select"> <br>
+	</form>
+
+
+</body>
+</html>

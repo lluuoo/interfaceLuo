@@ -1,0 +1,137 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserProfileBasic.
+ * @see com.jite.hibgen.dao.TUserProfileBasic
+ * @author Hibernate Tools
+ */
+public class TUserProfileBasicDao extends BaseDao<TUserProfileBasic>{
+
+	private static final Log log = LogFactory.getLog(TUserProfileBasicDao.class);
+	
+	public TUserProfileBasicDao(){
+		super(TUserProfileBasic.class);
+	}
+	public TUserProfileBasicDao(TUserProfileBasic po){
+		super(po.getClass());
+	}
+	
+	public void persist(TUserProfileBasic transientInstance) {
+		log.debug("persisting TUserProfileBasic instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserProfileBasic instance) {
+		log.debug("attaching dirty TUserProfileBasic instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserProfileBasic instance) {
+		log.debug("attaching clean TUserProfileBasic instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserProfileBasic persistentInstance) {
+		log.debug("deleting TUserProfileBasic instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileBasic merge(TUserProfileBasic detachedInstance) {
+		log.debug("merging TUserProfileBasic instance");
+		try {
+			TUserProfileBasic result = (TUserProfileBasic) getHibernateTemplate().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserProfileBasic findById(java.lang.Long id) {
+		log.debug("getting TUserProfileBasic instance with id: " + id);
+		try {
+			TUserProfileBasic instance = (TUserProfileBasic) getHibernateTemplate().get(
+							"com.jite.hibgen.model.TUserProfileBasic", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserProfileBasic> findByExample(TUserProfileBasic instance) {
+		log.debug("finding TUserProfileBasic instance by example");
+		try {
+			List<TUserProfileBasic> results = (List<TUserProfileBasic>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserProfileBasic")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	public TUserProfileBasic findByAccountId(Long accountId) {
+		log.debug("finding TUserProfileBasic instance by accountId");
+		try {
+			List<TUserProfileBasic> results = (List<TUserProfileBasic>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserProfileBasic")
+					.add(Restrictions.eq("accountId", accountId)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results.size()>0?results.get(0):new TUserProfileBasic();
+		} catch (RuntimeException re) {
+			log.error("find by accountId failed", re);
+			throw re;
+		}
+	}
+
+}

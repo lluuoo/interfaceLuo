@@ -1,0 +1,852 @@
+package com.jite.utils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
+
+import com.jite.struts.bean.*;
+import com.luo.hibgen.model.TGameFingerguess;
+import com.luo.struts.bean.GameFingerguessInfo;
+import com.jite.hibgen.model.*;
+
+/**
+ * 下面的import中，注释的都是原代码先有的 *
+ */
+// import com.luo.hibgen.model.TCountry;
+// import com.luo.hibgen.model.TGameFingerguess;
+// import com.luo.struts.bean.CountryInfo;
+// import com.luo.struts.bean.GameFingerGuessInfo;
+
+public class BeanTrans {
+
+	/**
+	 * 将THrAccount实体数据 复制到 HrAccountInfo页面实体
+	 * 
+	 * @param theHr
+	 * @return
+	 */
+	public static HrAccountInfo getHrInfoFromT(THrAccount theHr) {
+		HrAccountInfo theInfo = new HrAccountInfo();
+		try {
+			PropertyUtils.copyProperties(theInfo, theHr);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return theInfo;
+	}
+
+	/**
+	 * 将THrCompany实体数据 复制到 HrCompanyInfo页面实体
+	 * 
+	 * @param tCom
+	 * @return
+	 */
+	public static HrCompanyInfo getFromTCompany(THrCompany tCom) {
+		HrCompanyInfo comInfo = new HrCompanyInfo();
+		try {
+			BeanUtils.copyProperty(comInfo, "companyId", tCom.getId());
+			BeanUtils.copyProperty(comInfo, "name", tCom.getName());
+			BeanUtils.copyProperty(comInfo, "type", tCom.getType());
+			BeanUtils.copyProperty(comInfo, "logo", tCom.getLogo());
+			BeanUtils.copyProperty(comInfo, "short_name", tCom.getShortName());
+			BeanUtils.copyProperty(comInfo, "scale_type", tCom.getScaleType());
+			BeanUtils.copyProperty(comInfo, "province", tCom.getProvince());
+			BeanUtils.copyProperty(comInfo, "tags", tCom.getTags());
+			BeanUtils.copyProperty(comInfo, "address", tCom.getAddress());
+			BeanUtils.copyProperty(comInfo, "homepage", tCom.getHomepage());
+			BeanUtils.copyProperty(comInfo, "province", tCom.getProvince());
+			BeanUtils.copyProperty(comInfo, "telephone", tCom.getTelephone());
+			BeanUtils.copyProperty(comInfo, "traffic", tCom.getTraffic());
+			BeanUtils.copyProperty(comInfo, "short_desc", tCom.getShortDesc());
+			BeanUtils.copyProperty(comInfo, "description", tCom.getDescription());
+			BeanUtils.copyProperty(comInfo, "isStart", tCom.getIsStart().toString());
+			BeanUtils.copyProperty(comInfo, "status", tCom.getStatus());
+			BeanUtils.copyProperty(comInfo, "certificateFile", tCom.getCertificateFile());
+
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return comInfo;
+	}
+
+	public static MediaInfo getFromTCompanyMedias(THrCompanyMedias theMt) {
+		MediaInfo theMI = new MediaInfo();
+		try {
+			PropertyUtils.copyProperties(theMI, theMt);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		return theMI;
+	}
+
+	public static HrCompanyAreasInfo getFromTCompanyAreas(THrCompanyAreas tca) {
+		HrCompanyAreasInfo theInfo = new HrCompanyAreasInfo();
+		try {
+			if (tca.getAreaName() != null) {
+				BeanUtils.copyProperty(theInfo, "areaName", tca.getAreaName());
+			}
+			if (tca.getAreaName() != null) {
+				BeanUtils.copyProperty(theInfo, "areaNameRoot", tca.getAreaNameRoot());
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return theInfo;
+	}
+
+	public static BizInfo getFromTBizCard(TUserBizcard tb) {
+		BizInfo bizInfo = new BizInfo();
+
+		try {
+			if (tb != null) {
+				BeanUtils.copyProperty(bizInfo, "accountId", tb.getAccountId());
+				BeanUtils.copyProperty(bizInfo, "username", tb.getRealName());
+				BeanUtils.copyProperty(bizInfo, "sex", tb.getSex());
+				BeanUtils.copyProperty(bizInfo, "birthday", tb.getBirthday());
+				BeanUtils.copyProperty(bizInfo, "degree", tb.getDegree());
+				BeanUtils.copyProperty(bizInfo, "curcarrier", tb.getCurcarrier());
+				BeanUtils.copyProperty(bizInfo, "volunteerNumber", tb.getVolunteerNumber());
+				BeanUtils.copyProperty(bizInfo, "schoolName", tb.getSchoolName());
+				BeanUtils.copyProperty(bizInfo, "schoolNameRoot", tb.getSchoolNameRoot());
+				BeanUtils.copyProperty(bizInfo, "major", tb.getMajor());
+				BeanUtils.copyProperty(bizInfo, "majorRoot", tb.getMajorRoot());
+				BeanUtils.copyProperty(bizInfo, "majorSub", tb.getMajorSub());
+				BeanUtils.copyProperty(bizInfo, "headImage", tb.getHeadImage());
+				BeanUtils.copyProperty(bizInfo, "phoneNumber", tb.getPhoneNumber());
+				BeanUtils.copyProperty(bizInfo, "emailAddress", tb.getEmailAddress());
+				if (tb.getCreateDate() != null) {
+					BeanUtils.copyProperty(bizInfo, "createDate", tb.getCreateDate());
+				}
+				if (tb.getUpdateDate() != null) {
+					BeanUtils.copyProperty(bizInfo, "updateDate", tb.getUpdateDate());
+				}
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		return bizInfo;
+	}
+
+	/**
+	 * 将TOrgActive实体数据 复制到 ActivityInfo页面实体
+	 * 
+	 * @param toa
+	 * @return
+	 */
+	public static ActivityInfo getFromTOrgActive(TOrgActive toa,int pageNumber,int pageSize) {
+		ActivityInfo activityInfo = new ActivityInfo();
+		try {
+			PropertyUtils.copyProperties(activityInfo, toa);
+			activityInfo.setPageNumber(pageNumber);
+			activityInfo.setPageSize(pageSize);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return activityInfo;
+	}
+
+	public static GameFingerguessInfo getFromTGameFingerguess(TGameFingerguess tg) {
+		GameFingerguessInfo gameFingerguessInfo = new GameFingerguessInfo();
+		try {
+			PropertyUtils.copyProperties(gameFingerguessInfo, tg);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return gameFingerguessInfo;
+	}
+
+	
+	/**
+	 * ---------------后面全部是注释，不用往下看了--------------
+	 */
+	// public static HrCompanyInfo getFromTCompanyAndStart(THrCompany tCom,
+	// THrCompanyStart tCs) {
+	// HrCompanyInfo comInfo = new HrCompanyInfo();
+	// try {
+	// if (tCom != null) {
+	// BeanUtils.copyProperty(comInfo, "companyId", tCom.getId());
+	// BeanUtils.copyProperty(comInfo, "name", tCom.getName());
+	// BeanUtils.copyProperty(comInfo, "type", tCom.getType());
+	// BeanUtils.copyProperty(comInfo, "logo", tCom.getLogo());
+	// BeanUtils.copyProperty(comInfo, "short_name", tCom.getShortName());
+	// BeanUtils.copyProperty(comInfo, "scale_type", tCom.getScaleType());
+	// BeanUtils.copyProperty(comInfo, "province", tCom.getProvince());
+	// BeanUtils.copyProperty(comInfo, "tags", tCom.getTags());
+	// BeanUtils.copyProperty(comInfo, "address", tCom.getAddress());
+	// BeanUtils.copyProperty(comInfo, "homepage", tCom.getHomepage());
+	// BeanUtils.copyProperty(comInfo, "province", tCom.getProvince());
+	// BeanUtils.copyProperty(comInfo, "telephone", tCom.getTelephone());
+	// BeanUtils.copyProperty(comInfo, "traffic", tCom.getTraffic());
+	// BeanUtils.copyProperty(comInfo, "short_desc", tCom.getShortDesc());
+	// BeanUtils.copyProperty(comInfo, "description", tCom.getDescription());
+	// }
+	// if (tCs != null) {
+	// BeanUtils.copyProperty(comInfo, "leader", tCs.getLeader());
+	// BeanUtils.copyProperty(comInfo, "leaderPic", tCs.getLeaderPic());
+	// BeanUtils.copyProperty(comInfo, "leaderPosition",
+	// tCs.getLeaderPosition());
+	// BeanUtils.copyProperty(comInfo, "leaderDesc", tCs.getLeaderDesc());
+	// BeanUtils.copyProperty(comInfo, "moneyFrom", tCs.getMoneyFrom());
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	// return comInfo;
+	// }
+	//
+	// public static THrCompany getTCompanyFromInfo(HrCompanyInfo hrcompanyinfo)
+	// {
+	// THrCompany tCom = new THrCompany();
+	// try {
+	// BeanUtils.copyProperty(tCom, "id", hrcompanyinfo.getCompanyId());
+	// BeanUtils.copyProperty(tCom, "name", hrcompanyinfo.getName());
+	// BeanUtils.copyProperty(tCom, "type", hrcompanyinfo.getType());
+	// BeanUtils.copyProperty(tCom, "logo", hrcompanyinfo.getLogo());
+	// BeanUtils.copyProperty(tCom, "shortName", hrcompanyinfo.getShort_name());
+	// BeanUtils.copyProperty(tCom, "scaleType", hrcompanyinfo.getScale_type());
+	// BeanUtils.copyProperty(tCom, "province", hrcompanyinfo.getProvince());
+	// BeanUtils.copyProperty(tCom, "tags", hrcompanyinfo.getTags());
+	// BeanUtils.copyProperty(tCom, "address", hrcompanyinfo.getAddress());
+	// BeanUtils.copyProperty(tCom, "homepage", hrcompanyinfo.getHomepage());
+	// BeanUtils.copyProperty(tCom, "telephone", hrcompanyinfo.getTelephone());
+	// BeanUtils.copyProperty(tCom, "shortDesc", hrcompanyinfo.getShort_desc());
+	// BeanUtils.copyProperty(tCom, "traffic", hrcompanyinfo.getTraffic());
+	// BeanUtils.copyProperty(tCom, "description",
+	// hrcompanyinfo.getDescription());
+	// BeanUtils.copyProperty(tCom, "isStart",
+	// Integer.valueOf(hrcompanyinfo.getIsStart()));
+	// BeanUtils.copyProperty(tCom, "status", hrcompanyinfo.getStatus());
+	// BeanUtils.copyProperty(tCom, "certificateFile",
+	// hrcompanyinfo.getCertificateFile());
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	// return tCom;
+	// }
+	//
+	// public static THrCompany getTCompanyFromInfoWithoutId(HrCompanyInfo
+	// hrcompanyinfo) {
+	// THrCompany tCom = new THrCompany();
+	// try {
+	// BeanUtils.copyProperty(tCom, "name", hrcompanyinfo.getName());
+	// BeanUtils.copyProperty(tCom, "type", hrcompanyinfo.getType());
+	// BeanUtils.copyProperty(tCom, "logo", hrcompanyinfo.getLogo());
+	// BeanUtils.copyProperty(tCom, "shortName", hrcompanyinfo.getShort_name());
+	// BeanUtils.copyProperty(tCom, "scaleType", hrcompanyinfo.getScale_type());
+	// BeanUtils.copyProperty(tCom, "province", hrcompanyinfo.getProvince());
+	// BeanUtils.copyProperty(tCom, "tags", hrcompanyinfo.getTags());
+	// BeanUtils.copyProperty(tCom, "address", hrcompanyinfo.getAddress());
+	// BeanUtils.copyProperty(tCom, "homepage", hrcompanyinfo.getHomepage());
+	// BeanUtils.copyProperty(tCom, "traffic", hrcompanyinfo.getTraffic());
+	// BeanUtils.copyProperty(tCom, "telephone", hrcompanyinfo.getTelephone());
+	// BeanUtils.copyProperty(tCom, "shortDesc", hrcompanyinfo.getShort_desc());
+	// BeanUtils.copyProperty(tCom, "description",
+	// hrcompanyinfo.getDescription());
+	// if (hrcompanyinfo.getIsStart() != null) {
+	// BeanUtils.copyProperty(tCom, "isStart",
+	// Integer.valueOf(hrcompanyinfo.getIsStart()));
+	// } else {
+	// BeanUtils.copyProperty(tCom, "isStart", 0);
+	// }
+	// BeanUtils.copyProperty(tCom, "certificateFile",
+	// hrcompanyinfo.getCertificateFile());
+	// BeanUtils.copyProperty(tCom, "status", hrcompanyinfo.getStatus());
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	// return tCom;
+	// }
+	//
+	// public static void overwriteTCompanyWithInfoWithoutId(THrCompany tCom,
+	// HrCompanyInfo hrcompanyinfo) {
+	// try {
+	// if (null != hrcompanyinfo.getName() &&
+	// !"".equals(hrcompanyinfo.getName())) {
+	// BeanUtils.copyProperty(tCom, "name", hrcompanyinfo.getName());
+	// }
+	// if (null != hrcompanyinfo.getType() &&
+	// !"".equals(hrcompanyinfo.getType())) {
+	// BeanUtils.copyProperty(tCom, "type", hrcompanyinfo.getType());
+	// }
+	// if (null != hrcompanyinfo.getLogo() &&
+	// !"".equals(hrcompanyinfo.getLogo())) {
+	// BeanUtils.copyProperty(tCom, "logo", hrcompanyinfo.getLogo());
+	// }
+	// if (null != hrcompanyinfo.getShort_name() &&
+	// !"".equals(hrcompanyinfo.getShort_name())) {
+	// BeanUtils.copyProperty(tCom, "shortName", hrcompanyinfo.getShort_name());
+	// }
+	// if (null != hrcompanyinfo.getScale_type() &&
+	// !"".equals(hrcompanyinfo.getScale_type())) {
+	// BeanUtils.copyProperty(tCom, "scaleType", hrcompanyinfo.getScale_type());
+	// }
+	// if (null != hrcompanyinfo.getProvince() &&
+	// !"".equals(hrcompanyinfo.getProvince())) {
+	// BeanUtils.copyProperty(tCom, "province", hrcompanyinfo.getProvince());
+	// }
+	// if (null != hrcompanyinfo.getTags() &&
+	// !"".equals(hrcompanyinfo.getTags())) {
+	// BeanUtils.copyProperty(tCom, "tags", hrcompanyinfo.getTags());
+	// }
+	// if (null != hrcompanyinfo.getAddress() &&
+	// !"".equals(hrcompanyinfo.getAddress())) {
+	// BeanUtils.copyProperty(tCom, "address", hrcompanyinfo.getAddress());
+	// }
+	// if (null != hrcompanyinfo.getTraffic() &&
+	// !"".equals(hrcompanyinfo.getTraffic())) {
+	// BeanUtils.copyProperty(tCom, "traffic", hrcompanyinfo.getTraffic());
+	// }
+	// if (null != hrcompanyinfo.getHomepage() &&
+	// !"".equals(hrcompanyinfo.getHomepage())) {
+	// BeanUtils.copyProperty(tCom, "homepage", hrcompanyinfo.getHomepage());
+	// }
+	// if (null != hrcompanyinfo.getTelephone() &&
+	// !"".equals(hrcompanyinfo.getTelephone())) {
+	// BeanUtils.copyProperty(tCom, "telephone", hrcompanyinfo.getTelephone());
+	// }
+	// if (null != hrcompanyinfo.getShort_desc() &&
+	// !"".equals(hrcompanyinfo.getShort_desc())) {
+	// BeanUtils.copyProperty(tCom, "shortDesc", hrcompanyinfo.getShort_desc());
+	// }
+	// if (null != hrcompanyinfo.getDescription() &&
+	// !"".equals(hrcompanyinfo.getDescription())) {
+	// BeanUtils.copyProperty(tCom, "description",
+	// hrcompanyinfo.getDescription());
+	// }
+	// if (null != hrcompanyinfo.getIsStart() &&
+	// !"".equals(hrcompanyinfo.getIsStart())) {
+	// BeanUtils.copyProperty(tCom, "isStart",
+	// Integer.valueOf(hrcompanyinfo.getIsStart()));
+	// }
+	// if (null != hrcompanyinfo.getStatus()) {
+	// BeanUtils.copyProperty(tCom, "status", hrcompanyinfo.getStatus());
+	// }
+	// if (null != hrcompanyinfo.getCertificateFile() &&
+	// !"".equals(hrcompanyinfo.getCertificateFile())) {
+	// BeanUtils.copyProperty(tCom, "certificateFile",
+	// hrcompanyinfo.getCertificateFile());
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// }
+	//
+	// public static THrJobBase getTJobBaseWithoutId(JobBaseInfo base) {
+	// THrJobBase tBase = new THrJobBase();
+	// try {
+	// PropertyUtils.copyProperties(tBase, base);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// return tBase;
+	// }
+	//
+	// public static THrJobRequire getTJobReqWithoutId(JobRequireInfo req) {
+	// THrJobRequire tBase = new THrJobRequire();
+	// try {
+	// BeanUtils.copyProperty(tBase, "degree", req.getDegree());
+	// BeanUtils.copyProperty(tBase, "sex", req.getSex());
+	// BeanUtils.copyProperty(tBase, "workYears", req.getWorkYears());
+	//
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// return tBase;
+	// }
+	//
+	// public static JobBaseInfo getJobInfoFromT(THrJobBase one) {
+	// JobBaseInfo baseInfo = new JobBaseInfo();
+	// try {
+	// PropertyUtils.copyProperties(baseInfo, one);
+	//
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// return baseInfo;
+	// }
+	//
+	// public static JobRequireInfo getJobReqFromT(THrJobRequire theReq) {
+	// JobRequireInfo tBase = new JobRequireInfo();
+	// try {
+	// BeanUtils.copyProperty(tBase, "id", theReq.getId());
+	// BeanUtils.copyProperty(tBase, "degree", theReq.getDegree());
+	// BeanUtils.copyProperty(tBase, "sex", theReq.getSex());
+	// BeanUtils.copyProperty(tBase, "workYears", theReq.getWorkYears());
+	//
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// return tBase;
+	// }
+	//
+	// public static void overwriteTJobBaseWithInfoWithoutId(THrJobBase tBase,
+	// JobBaseInfo base) {
+	//
+	// try {
+	// PropertyUtils.copyProperties(tBase, base);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// }
+	//
+	// public static void overwriteTJobReqWithInfoWithoutId(THrJobRequire tBase,
+	// JobRequireInfo theReq) {
+	// try {
+	// BeanUtils.copyProperty(tBase, "degree", theReq.getDegree());
+	// BeanUtils.copyProperty(tBase, "sex", theReq.getSex());
+	// BeanUtils.copyProperty(tBase, "workYears", theReq.getWorkYears());
+	//
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	// }
+	//
+	// public static BizInfo getUserBizInfoFromT(TUserBizcard tbz) {
+	// BizInfo bizInfo = new BizInfo();
+	// try {
+	// BeanUtils.copyProperty(bizInfo, "accountId", tbz.getAccountId());
+	// BeanUtils.copyProperty(bizInfo, "username", tbz.getRealName());
+	// BeanUtils.copyProperty(bizInfo, "birthday", tbz.getBirthday());
+	// BeanUtils.copyProperty(bizInfo, "sex", tbz.getSex());
+	// if (tbz.getCreateDate() != null) {
+	// BeanUtils.copyProperty(bizInfo, "createDate", tbz.getCreateDate());
+	// }
+	// if (tbz.getUpdateDate() != null) {
+	// BeanUtils.copyProperty(bizInfo, "updateDate", tbz.getUpdateDate());
+	// }
+	// BeanUtils.copyProperty(bizInfo, "curcarrier", tbz.getCurcarrier());
+	// BeanUtils.copyProperty(bizInfo, "degree", tbz.getDegree());
+	// BeanUtils.copyProperty(bizInfo, "emailAddress", tbz.getEmailAddress());
+	// BeanUtils.copyProperty(bizInfo, "major", tbz.getMajor());
+	// BeanUtils.copyProperty(bizInfo, "majorRoot", tbz.getMajorRoot());
+	// BeanUtils.copyProperty(bizInfo, "majorSub", tbz.getMajorSub());
+	// BeanUtils.copyProperty(bizInfo, "headImage", tbz.getHeadImage());
+	// BeanUtils.copyProperty(bizInfo, "phoneNumber", tbz.getPhoneNumber());
+	// BeanUtils.copyProperty(bizInfo, "schoolName", tbz.getSchoolName());
+	// BeanUtils.copyProperty(bizInfo, "schoolNameRoot",
+	// tbz.getSchoolNameRoot());
+	//
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// return bizInfo;
+	// }
+	//
+	// public static UserInfo getFromTUserAccount(TUserAccount ta) {
+	// UserInfo user = new UserInfo();
+	// try {
+	// if (ta.getLastlogin() != null) {
+	// BeanUtils.copyProperty(user, "lastLogin", ta.getLastlogin());
+	// }
+	// if (ta.getAccount() != null) {
+	// BeanUtils.copyProperty(user, "username", ta.getAccount());
+	// }
+	// if (ta.getCreateDate() != null) {
+	// // BeanUtils.copyProperty(user, "createDate",
+	// // ta.getCreateDate());
+	// }
+	// if (ta.getEmail() != null) {
+	// BeanUtils.copyProperty(user, "email", ta.getEmail());
+	// }
+	// if (ta.getId() != null) {
+	// BeanUtils.copyProperty(user, "userId", ta.getId().toString());
+	// }
+	// if (ta.getIsMailVerified() != null) {
+	// BeanUtils.copyProperty(user, "isMailVerified", ta.getIsMailVerified());
+	// }
+	// if (ta.getType() != null) {
+	// BeanUtils.copyProperty(user, "type", ta.getType().toString());
+	// }
+	//
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return user;
+	// }
+	//
+	// public static MessageInfo getMessageInfoFromT(TUserMessages m) {
+	// MessageInfo message = new MessageInfo();
+	// try {
+	// if (m.getCreateDate() != null) {
+	// BeanUtils.copyProperty(message, "sendDate", m.getCreateDate());
+	// }
+	// if (m.getUpdateDate() != null) {
+	// BeanUtils.copyProperty(message, "readDate", m.getUpdateDate());
+	// }
+	// BeanUtils.copyProperty(message, "content", m.getContent());
+	// UserInfo fromUser = new UserInfo();
+	// fromUser.setUserId(m.getFromAccountId().toString());
+	// BeanUtils.copyProperty(message, "fromUser", fromUser);
+	// UserInfo toUser = new UserInfo();
+	// toUser.setUserId(m.getFromAccountId().toString());
+	// BeanUtils.copyProperty(message, "toUser", toUser);
+	//
+	// BeanUtils.copyProperty(message, "readFlag", m.getReadFlag());
+	// BeanUtils.copyProperty(message, "messageType", m.getType());
+	//
+	// BeanUtils.copyProperty(message, "messageId", m.getId());
+	//
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return message;
+	// }
+	//
+	// public static WestplanInfo getFromTOrgWestplan(TOrgWestplan tow) {
+	// WestplanInfo westplanInfo = new WestplanInfo();
+	// try {
+	// PropertyUtils.copyProperties(westplanInfo, tow);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return westplanInfo;
+	// }
+	//
+	// public static MentorBaseInfo getFromMentorBase(TMentorBase tsm) {
+	// MentorBaseInfo mentorBase = new MentorBaseInfo();
+	// try {
+	// PropertyUtils.copyProperties(mentorBase, tsm);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return mentorBase;
+	// }
+	//
+	// public static UserSchoolInfo getFromUserSchool(TUserSchool tus) {
+	// UserSchoolInfo userSchool = new UserSchoolInfo();
+	// try {
+	// PropertyUtils.copyProperties(userSchool, tus);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return userSchool;
+	// }
+	//
+	//
+	// public static UserProfileBasicInfo getUserBaseInfoFromT(TUserProfileBasic
+	// theTb) {
+	// UserProfileBasicInfo theBase = new UserProfileBasicInfo();
+	// try {
+	// PropertyUtils.copyProperties(theBase, theTb);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return theBase;
+	// }
+	//
+	// public static List<UserProfileEducationInfo>
+	// getEduInfoListFromTList(List<TUserProfileEducation> theTeduList) {
+	// List<UserProfileEducationInfo> theEduList = new
+	// ArrayList<UserProfileEducationInfo>();
+	// try {
+	// for (TUserProfileEducation theEdu : theTeduList) {
+	// UserProfileEducationInfo eduInfo = new UserProfileEducationInfo();
+	// PropertyUtils.copyProperties(eduInfo, theEdu);
+	// theEduList.add(eduInfo);
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return theEduList;
+	// }
+	//
+	// public static List<UserProfileExperience>
+	// getExpInfoListFromTList(List<TUserProfileExperience> theTexpList) {
+	// List<UserProfileExperience> theExpList = new
+	// ArrayList<UserProfileExperience>();
+	// try {
+	// for (TUserProfileExperience theExp : theTexpList) {
+	// UserProfileExperience expInfo = new UserProfileExperience();
+	// PropertyUtils.copyProperties(expInfo, theExp);
+	// theExpList.add(expInfo);
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return theExpList;
+	// }
+	//
+	// public static List<UserProfileAwardInfo>
+	// getAwardInfoListFromTList(List<TUserProfileAward> theTawardList) {
+	// List<UserProfileAwardInfo> theAwardList = new
+	// ArrayList<UserProfileAwardInfo>();
+	// try {
+	// for (TUserProfileAward theAward : theTawardList) {
+	// UserProfileAwardInfo awardInfo = new UserProfileAwardInfo();
+	// PropertyUtils.copyProperties(awardInfo, theAward);
+	// theAwardList.add(awardInfo);
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return theAwardList;
+	// }
+	//
+	// public static List<UserProfileLanguagesInfo>
+	// getLanInfoListFromTList(List<TUserProfileLanguages> theTlanList) {
+	// List<UserProfileLanguagesInfo> theLanList = new
+	// ArrayList<UserProfileLanguagesInfo>();
+	// try {
+	// for (TUserProfileLanguages theLan : theTlanList) {
+	// UserProfileLanguagesInfo lanInfo = new UserProfileLanguagesInfo();
+	// PropertyUtils.copyProperties(lanInfo, theLan);
+	// theLanList.add(lanInfo);
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return theLanList;
+	// }
+	//
+	// public static List<UserProfileCertificateInfo>
+	// getCerInfoListFromTList(List<TUserProfileCertificate> theTcerList) {
+	// List<UserProfileCertificateInfo> theCerList = new
+	// ArrayList<UserProfileCertificateInfo>();
+	// try {
+	// for (TUserProfileCertificate theCer : theTcerList) {
+	// UserProfileCertificateInfo cerInfo = new UserProfileCertificateInfo();
+	// PropertyUtils.copyProperties(cerInfo, theCer);
+	// theCerList.add(cerInfo);
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return theCerList;
+	// }
+	//
+	// public static List<UserProfileSkillInfo>
+	// getSkillInfoListFromTList(List<TUserProfileSkill> theTskillList) {
+	// List<UserProfileSkillInfo> theSkillList = new
+	// ArrayList<UserProfileSkillInfo>();
+	// try {
+	// for (TUserProfileSkill theSkill : theTskillList) {
+	// UserProfileSkillInfo skillInfo = new UserProfileSkillInfo();
+	// PropertyUtils.copyProperties(skillInfo, theSkill);
+	// theSkillList.add(skillInfo);
+	// }
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return theSkillList;
+	// }
+	//
+	//
+	// public static ApproveLogInfo getApproveInfoFromT(TApproveLogs theT) {
+	// ApproveLogInfo theInfo = new ApproveLogInfo();
+	// try {
+	// PropertyUtils.copyProperties(theInfo, theT);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return theInfo;
+	// }
+	//
+	// public static ShowCooperativeUnitInfo getFromUnit(TShowCooperativeUnit
+	// toa) {
+	// ShowCooperativeUnitInfo unitInfo = new ShowCooperativeUnitInfo();
+	// try {
+	// PropertyUtils.copyProperties(unitInfo, toa);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (NoSuchMethodException e) {
+	// e.printStackTrace();
+	// }
+	// return unitInfo;
+	// }
+	//
+	// public static BannerInfo getBannerInfoFromHomeT(TShowHomebanner tb) {
+	// BannerInfo theInfo = new BannerInfo();
+	// try {
+	// PropertyUtils.copyProperties(theInfo, tb);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return theInfo;
+	// }
+	//
+	// public static BannerInfo getBannerInfoFromStartT(TShowStartbanner tb) {
+	// BannerInfo theInfo = new BannerInfo();
+	// try {
+	// PropertyUtils.copyProperties(theInfo, tb);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return theInfo;
+	// }
+	//
+	// public static BannerInfo getBannerInfoFromAppT(TShowAppbanner tb) {
+	// BannerInfo theInfo = new BannerInfo();
+	// try {
+	// PropertyUtils.copyProperties(theInfo, tb);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return theInfo;
+	// }
+	//
+	// public static BannerInfo getBannerInfoFromActivesT(TShowActivesbanner tb)
+	// {
+	// BannerInfo theInfo = new BannerInfo();
+	// try {
+	// PropertyUtils.copyProperties(theInfo, tb);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return theInfo;
+	// }
+	//
+	// public static TheInfo getFromTOrgInfo(TOrgInfo tb) {
+	// TheInfo theInfo = new TheInfo();
+	// try {
+	// PropertyUtils.copyProperties(theInfo, tb);
+	// } catch (IllegalAccessException e) {
+	// e.printStackTrace();
+	// } catch (InvocationTargetException e) {
+	// e.printStackTrace();
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// return theInfo;
+	// }
+	//
+
+}

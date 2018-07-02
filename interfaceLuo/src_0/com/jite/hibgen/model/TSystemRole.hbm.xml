@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 2018-3-26 10:06:46 by Hibernate Tools 4.3.1.Final -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TSystemRole" table="t_system_role" catalog="qch" optimistic-lock="version">
+        <id name="roleId" type="java.lang.Long">
+            <column name="role_id" />
+            <generator class="identity" />
+        </id>
+        <property name="roleName" type="string">
+            <column name="role_name" length="50" />
+        </property>
+        <property name="creator" type="string">
+            <column name="creator" length="20" />
+        </property>
+        <property name="creatorDeptId" type="java.lang.Long">
+            <column name="creator_dept_id" />
+        </property>
+        <property name="jbpmRole" type="string">
+            <column name="jbpm_role" length="2000" />
+        </property>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+    </class>
+</hibernate-mapping>

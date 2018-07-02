@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-5-11 22:07:57 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TOrgActiveUser" table="t_org_active_user" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="activeId" type="java.lang.Long">
+            <column name="active_id" />
+        </property>
+        <property name="accountId" type="java.lang.Long">
+            <column name="account_id" />
+        </property>
+        <property name="status" type="java.lang.Integer">
+            <column name="status">
+                <comment>
+                0&#206;&#180;&#193;&#170;&#207;&#181;&#200;&#183;&#200;&#207;,1&#210;&#209;&#193;&#170;&#207;&#181;&#200;&#183;&#200;&#207;&#178;&#206;&#188;&#211;,2&#210;&#209;&#193;&#170;&#207;&#181;&#178;&#187;&#178;&#206;&#188;&#211;,3&#186;&#197;&#194;&#235;&#180;&#237;&#206;&#243;</comment>
+            </column>
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

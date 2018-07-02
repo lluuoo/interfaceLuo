@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-4-12 12:49:13 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TSystemRoleMenu" table="t_system_role_menu" catalog="qch">
+        <id name="roleMenuId" type="java.lang.Long">
+            <column name="role_menu_id" />
+            <generator class="identity" />
+        </id>
+        <property name="roleId" type="java.lang.Long">
+            <column name="role_id" />
+        </property>
+        <property name="menuId" type="java.lang.Long">
+            <column name="menu_id" />
+        </property>
+    </class>
+</hibernate-mapping>

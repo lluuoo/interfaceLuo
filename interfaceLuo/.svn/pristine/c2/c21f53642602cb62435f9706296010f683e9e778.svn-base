@@ -1,0 +1,219 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.THrCompanyAreasDao;
+import com.jite.hibgen.dao.THrCompanyDao;
+import com.jite.hibgen.dao.THrJobBaseDao;
+import com.jite.hibgen.dao.TOrgInfoDao;
+import com.jite.hibgen.dao.TUserBizcardDao;
+import com.jite.hibgen.dao.TUserMessagesDao;
+import com.jite.hibgen.dao.TUserProfileIntendsDao;
+import com.jite.hibgen.model.THrCompany;
+import com.jite.hibgen.model.THrCompanyAreas;
+import com.jite.hibgen.model.THrJobBase;
+import com.jite.hibgen.model.TOrgInfo;
+import com.jite.hibgen.model.TUserProfileIntends;
+import com.jite.struts.bean.HrCompanyInfo;
+import com.jite.struts.bean.JobInfo;
+import com.jite.struts.bean.TheInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.Constants;
+import com.jite.utils.SystemPropties;
+
+public class InfoService {
+	@Resource
+	private TOrgInfoDao infoDao;
+	private TUserProfileIntendsDao intentDao;
+	private THrCompanyAreasDao areasDao;
+	private THrCompanyDao hrCompanyDao;
+	private THrJobBaseDao jobBaseDao;
+	
+	public TOrgInfoDao getInfoDao() {
+		return infoDao;
+	}
+
+	public void setInfoDao(TOrgInfoDao infoDao) {
+		this.infoDao = infoDao;
+	}
+
+	public TUserProfileIntendsDao getIntentDao() {
+		return intentDao;
+	}
+
+	public void setIntentDao(TUserProfileIntendsDao intentDao) {
+		this.intentDao = intentDao;
+	}
+
+	public THrCompanyAreasDao getAreasDao() {
+		return areasDao;
+	}
+
+	public void setAreasDao(THrCompanyAreasDao areasDao) {
+		this.areasDao = areasDao;
+	}
+
+	public THrCompanyDao getHrCompanyDao() {
+		return hrCompanyDao;
+	}
+
+	public void setHrCompanyDao(THrCompanyDao hrCompanyDao) {
+		this.hrCompanyDao = hrCompanyDao;
+	}
+
+	public THrJobBaseDao getJobBaseDao() {
+		return jobBaseDao;
+	}
+
+	public void setJobBaseDao(THrJobBaseDao jobBaseDao) {
+		this.jobBaseDao = jobBaseDao;
+	}
+
+	public List<TheInfo> queryTypeInfos(String type,String title,int pageNumber,int pageSize) {
+		List<TheInfo> returnList=new ArrayList<TheInfo>();
+		TOrgInfo actSea=new TOrgInfo();
+		if(pageNumber==0){
+			pageNumber=1;
+		}
+		if(pageSize==0){
+			pageSize=Integer.parseInt(SystemPropties.getProperties("cfg.common_page_size"));
+		}
+		actSea.setType(type);
+		actSea.setTitle(title);
+		List<TOrgInfo> allt=infoDao.searchByCriteria(pageNumber,pageSize,actSea);
+		for(TOrgInfo toa:allt){
+			returnList.add(BeanTrans.getFromTOrgInfo(toa));
+		}
+		return returnList;
+	}
+
+	public int queryTypeInfosTotal(String type,String title) {
+		TOrgInfo actSea=new TOrgInfo();
+		actSea.setType(type);
+		actSea.setTitle(title);		
+		return infoDao.searchByCriteriaTotal(actSea);
+	}
+	
+	public List<TheInfo> queryRecommendInfos(String userId,int pageNumber,int pageSize) {
+		List<TheInfo> returnList=new ArrayList<TheInfo>();
+		String[] areaTags=null;
+		String[] workTypeTags=null;
+
+		if(pageNumber==0){
+			pageNumber=1;
+		}
+		if(pageSize==0){
+			pageSize=Integer.parseInt(SystemPropties.getProperties("cfg.common_page_size"));
+		}
+		if(userId!=null&&!"".equals(userId)&&Long.valueOf(userId)>0){
+			TUserProfileIntends searInt=new TUserProfileIntends();
+			searInt.setUserId(Long.valueOf(userId));
+			searInt.setType(Constants.INTENT_TYPE_AREA);
+			List<TUserProfileIntends> intendAreas=intentDao.findByExample(searInt);
+			if(intendAreas!=null&&intendAreas.size()>0){
+				areaTags=new String[intendAreas.size()];
+				int theIndex=0;
+				for(TUserProfileIntends oneT:intendAreas){
+					areaTags[theIndex]=oneT.getCommonNameRoot();
+					theIndex++;
+				}
+			}
+			searInt.setType(Constants.INTENT_TYPE_WORK);
+			List<TUserProfileIntends> intendWorks=intentDao.findByExample(searInt);
+			if(intendWorks!=null&&intendWorks.size()>0){
+				workTypeTags=new String[intendWorks.size()];
+				int theIndex=0;
+				for(TUserProfileIntends oneT:intendWorks){
+					workTypeTags[theIndex]=oneT.getCommonNameRoot();
+					theIndex++;
+				}
+			}			
+		}
+
+		List<TOrgInfo> allt=infoDao.searchRecommends(pageNumber,pageSize,areaTags,workTypeTags);
+		for(TOrgInfo toa:allt){
+			returnList.add(BeanTrans.getFromTOrgInfo(toa));
+		}
+		return returnList;
+	}
+	
+
+	public TheInfo queryById(String infoId,String userId) {
+		TOrgInfo theTI=infoDao.findById(Long.valueOf(infoId));
+		TheInfo result=BeanTrans.getFromTOrgInfo(theTI);
+
+		if(theTI.getVisitSum()!=null){
+			theTI.setVisitSum(theTI.getVisitSum()+1);
+		}else{
+			theTI.setVisitSum(1);
+		}
+		infoDao.saveObject(theTI);
+		return result;
+	}
+
+	public List<HrCompanyInfo> queryCompanys(String userId, int pageNumber, int pageSize) {
+		List<HrCompanyInfo> returnList=new ArrayList<HrCompanyInfo>();
+		String[] areaTags=null;
+		String[] workTypeTags=null;
+
+		if(pageNumber==0){
+			pageNumber=1;
+		}
+		if(pageSize==0){
+			pageSize=Integer.parseInt(SystemPropties.getProperties("cfg.common_page_size"));
+		}
+		if(userId!=null&&!"".equals(userId)&&Long.valueOf(userId)>0){
+			TUserProfileIntends searInt=new TUserProfileIntends();
+			searInt.setUserId(Long.valueOf(userId));
+			searInt.setType(Constants.INTENT_TYPE_AREA);
+			List<TUserProfileIntends> intendAreas=intentDao.findByExample(searInt);
+			if(intendAreas!=null&&intendAreas.size()>0){
+				areaTags=new String[intendAreas.size()];
+				int theIndex=0;
+				for(TUserProfileIntends oneT:intendAreas){
+					areaTags[theIndex]=oneT.getCommonNameRoot();
+					theIndex++;
+				}
+			}
+			searInt.setType(Constants.INTENT_TYPE_WORK);
+			List<TUserProfileIntends> intendWorks=intentDao.findByExample(searInt);
+			if(intendWorks!=null&&intendWorks.size()>0){
+				workTypeTags=new String[intendWorks.size()];
+				int theIndex=0;
+				for(TUserProfileIntends oneT:intendWorks){
+					workTypeTags[theIndex]=oneT.getCommonNameRoot();
+					theIndex++;
+				}
+			}			
+		}
+
+		List<THrCompanyAreas> allt=areasDao.searchRecommends(pageNumber,pageSize,areaTags);
+		for(THrCompanyAreas toa:allt){
+			THrCompany tCom=hrCompanyDao.findById(toa.getCompanyId());
+			if(tCom!=null){
+				HrCompanyInfo theComInfo=BeanTrans.getFromTCompany(tCom);
+				
+				List<JobInfo> jobs=new ArrayList<JobInfo>();
+				THrJobBase searchJob=new THrJobBase();
+				searchJob.setCompanyId(tCom.getId());
+				List<THrJobBase> theComJobs=jobBaseDao.findByCriteria(searchJob, 1, 3);
+				for(THrJobBase theJ:theComJobs){
+					JobInfo oneJobInfo=new JobInfo();
+					oneJobInfo.setBase(BeanTrans.getJobInfoFromT(theJ));
+					jobs.add(oneJobInfo);
+				}
+				theComInfo.setJobs(jobs);
+				returnList.add(theComInfo);				
+			}
+		}
+		return returnList;
+	}
+
+
+
+
+
+}

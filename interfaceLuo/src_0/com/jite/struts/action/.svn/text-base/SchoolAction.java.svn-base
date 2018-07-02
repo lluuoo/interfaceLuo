@@ -1,0 +1,165 @@
+package com.jite.struts.action;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.MentorService;
+import com.jite.service.SchoolService;
+import com.jite.struts.bean.CommonItem;
+import com.jite.struts.bean.MentorBaseInfo;
+import com.jite.struts.bean.ShowSchoolInfo;
+import com.jite.struts.bean.UserSchoolInfo;
+import com.jite.utils.SystemPropties;
+
+public class SchoolAction extends BaseAction {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7944423709546354810L;
+
+	
+	private String schoolId;
+	private String provice;
+	private int pageNumber;
+	private int pageSize;
+	
+	@Resource
+	@Autowired
+	SchoolService schoolService;
+
+	public String getProvice() {
+		return provice;
+	}
+
+	public void setProvice(String provice) {
+		this.provice = provice;
+	}
+
+	public SchoolService getSchoolService() {
+		return schoolService;
+	}
+
+	public void setSchoolService(SchoolService schoolService) {
+		this.schoolService = schoolService;
+	}
+	
+	public void display(){
+		returnJson=new JSONObject();
+		if(schoolService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			schoolService=(SchoolService)ac.getBean("schoolService");
+		}
+		
+		List<ShowSchoolInfo> aList=schoolService.querySchoolInfo(pageNumber,pageSize);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("schoolList", aList);
+		returnJson.put("totalCount",schoolService.querySchoolInfoTotal());
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void viewById(){
+		returnJson=new JSONObject();
+		if(schoolService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			schoolService=(SchoolService)ac.getBean("schoolService");
+		}		
+		UserSchoolInfo aList=schoolService.viewById(schoolId);
+		
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("school", aList);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	
+	public void queryItems() {
+		returnJson=new JSONObject();
+		if(schoolService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			schoolService=(SchoolService)ac.getBean("schoolService");	
+		}
+		List<CommonItem> proSchools=schoolService.queryProvinceItems();
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("proItems", proSchools);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryProvinceItems() {
+		returnJson=new JSONObject();
+		if(schoolService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			schoolService=(SchoolService)ac.getBean("schoolService");	
+		}
+		List<CommonItem> proSchools=schoolService.queryProvinceSchoolItems(provice);
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("proSchools", proSchools);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryAllProSchools(){
+		returnJson=new JSONObject();
+		if(schoolService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			schoolService=(SchoolService)ac.getBean("schoolService");	
+		}
+		List<CommonItem> proSchools=schoolService.queryAllProSchools();
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("proItems", proSchools);
+
+		returnJsonStr(returnJson.toString());		
+	}
+	
+	public void queryAllMajors(){
+		returnJson=new JSONObject();
+		if(schoolService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			schoolService=(SchoolService)ac.getBean("schoolService");	
+		}
+		List<CommonItem> majors=schoolService.queryAllMajors();
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("majorItems", majors);
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public String getSchoolId() {
+		return schoolId;
+	}
+
+	public void setSchoolId(String schoolId) {
+		this.schoolId = schoolId;
+	}
+}

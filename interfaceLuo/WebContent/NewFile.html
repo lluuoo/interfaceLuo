@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="jquery-1.8.3.min.js"></script>
+<script src="jquery.jsonp.js"></script>
+<script src="jsontest/resource.js"></script>
+
+</head>
+<body>
+
+<form action="Check-login.do" method="GET">
+		用户名：<input type="text" name="username" /><br>
+		密码：<input type="text" name="userpwd"/><br>
+		<div style="margin:0px 0px 0px 0px;">
+                   <span id="text_verify_code" style="font-size:24px;background: url(images/verifybg.jpg)" onClick="getVerifyCode()"></span>&nbsp;&nbsp;
+                   <a id="refresh_verify_code" href="javascript:getVerifyCode();">&nbsp;<font color="black">换一张</font></a>
+				</div>
+ 				<input id="input_verify_code" name="input_verify_code" type="text" class="srk2" placeholder="验证码" required="required"/>
+				<img id="img_verify_code" src="" width="16" height="16" class="vimg" alt="求职者登录" />
+		<input type="Submit" value="OK" onClick="dologin()"> <br><!-- 既有添加又有修改 的功能-->
+</form>
+
+	<script type="text/javascript">
+	window.onload=function(){
+		getVerifyCode();
+	}
+	function getVerifyCode(){
+		$("#img_verify_code").attr("width","16px").attr("height","16px").attr("src","images/loading2.gif");
+		//*  使用jQuery插件jQuery-JSONP方式 JSONP 调用
+		$.jsonp({
+			url : system_config.interface_host_url + "Check-getVerifyCodeA.do",
+			callbackParameter : system_config.jsonp_callback,    //该参数与$.ajax()中的jsonp属性作用相同。缺省为"callback"。
+			callback : "_jqjsp01100",      //自定义的jsonp回调函数名称，也就是远程函数的名称。该参数与$.ajax()中的jsonpCallback属性作用相同。缺省为"_jqjsp"。
+			timeout : system_config.interface_timeout,
+			dataFilter : function(json) {
+				return json;
+			},
+			success : function(json, textStatus, xOptions) {
+				$("#img_verify_code").hide();				
+				$("#text_verify_code").text(json.theVerifyCode);
+			},
+			error : function(xOptions, textStatus) {
+				
+			},
+		});
+	}
+
+	</script>
+</body>
+</html>

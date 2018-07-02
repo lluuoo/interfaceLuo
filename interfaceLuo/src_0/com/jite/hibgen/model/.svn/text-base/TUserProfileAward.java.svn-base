@@ -1,0 +1,86 @@
+package com.jite.hibgen.model;
+
+import java.util.Date;
+
+public class TUserProfileAward implements java.io.Serializable {
+
+	private Long id;
+	private Long accountId;
+	private Date time;
+	private String awardProportion1;
+	private String awardProportion2;
+	private Date createDate;
+	private Date updateDate;
+
+	public TUserProfileAward() {
+	}
+
+	public TUserProfileAward(Long accountId, Date time,
+			String awardProportion1, String awardProportion2, Date createDate,
+			Date updateDate) {
+		this.accountId = accountId;
+		this.time = time;
+		this.awardProportion1 = awardProportion1;
+		this.awardProportion2 = awardProportion2;
+		this.createDate = createDate;
+		this.updateDate = updateDate;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
+	public Date getTime() {
+		return time;
+	}
+
+	public void setTime(Date time) {
+		this.time = time;
+	}
+
+	public String getAwardProportion1() {
+		return awardProportion1;
+	}
+
+	public void setAwardProportion1(String awardProportion1) {
+		this.awardProportion1 = awardProportion1;
+	}
+
+	public String getAwardProportion2() {
+		return awardProportion2;
+	}
+
+	public void setAwardProportion2(String awardProportion2) {
+		this.awardProportion2 = awardProportion2;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+	
+	
+}

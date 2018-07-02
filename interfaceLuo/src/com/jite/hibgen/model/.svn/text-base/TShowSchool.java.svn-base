@@ -1,0 +1,54 @@
+package com.jite.hibgen.model;
+
+import java.util.Date;
+
+public class TShowSchool implements java.io.Serializable{
+	
+	private Long id;
+	private Long schoolId;
+	private Integer rank;
+	private Date createDate;
+	private Date updateDate;
+	
+	public TShowSchool() {
+	}
+
+	public TShowSchool(Long schoolId, Integer rank, Date createDate,
+			Date updateDate) {
+		this.schoolId = schoolId;
+		this.rank = rank;
+		this.createDate = createDate;
+		this.updateDate = updateDate;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public Long getSchoolId() {
+		return schoolId;
+	}
+	public void setSchoolId(Long schoolId) {
+		this.schoolId = schoolId;
+	}
+	public Integer getRank() {
+		return rank;
+	}
+	public void setRank(Integer rank) {
+		this.rank = rank;
+	}
+	public Date getCreateDate() {
+		return createDate;
+	}
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+	
+}

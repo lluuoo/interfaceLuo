@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-6-9 21:05:13 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TApproveLogs" table="t_approve_logs" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="companyId" type="java.lang.Long">
+            <column name="company_id" />
+        </property>
+        <property name="fieldFrom" type="string">
+            <column name="field_from" length="500" />
+        </property>
+        <property name="fieldTo" type="string">
+            <column name="field_to" length="500">
+                <comment>&#198;&#243;&#210;&#181;&#193;&#236;&#211;&#242;</comment>
+            </column>
+        </property>
+        <property name="type" type="java.lang.Integer">
+            <column name="type">
+                <comment>1000&#211;&#170;&#210;&#181;&#214;&#180;&#213;&#213;2000&#198;&#243;&#210;&#181;&#195;&#251;&#179;&#198;</comment>
+            </column>
+        </property>
+        <property name="status" type="java.lang.Integer">
+            <column name="status">
+                <comment>
+                0&#181;&#200;&#180;&#253;&#201;&#243;&#197;&#250;1&#201;&#243;&#197;&#250;&#205;&#168;&#185;&#253;2&#201;&#243;&#197;&#250;&#178;&#187;&#205;&#168;&#185;&#253;</comment>
+            </column>
+        </property>
+        <property name="statusDesc" type="string">
+            <column name="status_desc" length="500" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="creator" type="java.lang.Long">
+            <column name="creator" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+        <property name="updater" type="java.lang.Long">
+            <column name="updater" />
+        </property>
+    </class>
+</hibernate-mapping>

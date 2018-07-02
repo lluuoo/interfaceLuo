@@ -1,0 +1,148 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+import com.jite.struts.bean.UserInfo;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserLoginlog.
+ * @see com.jite.hibgen.model.TUserLoginlog
+ * @author Hibernate Tools
+ */
+public class TUserLoginlogDao extends BaseDao<TUserLoginlog>{
+
+	private static final Log log = LogFactory.getLog(TUserLoginlogDao.class);
+
+
+	public void persist(TUserLoginlog userLoginlog) {
+		log.debug("persisting TUserLoginlog instance");
+		try {
+			getHibernateTemplate().persist(userLoginlog);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserLoginlog instance) {
+		log.debug("attaching dirty TUserLoginlog instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserLoginlog instance) {
+		log.debug("attaching clean TUserLoginlog instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserLoginlog persistentInstance) {
+		log.debug("deleting TUserLoginlog instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserLoginlog merge(TUserLoginlog detachedInstance) {
+		log.debug("merging TUserLoginlog instance");
+		try {
+			TUserLoginlog result = (TUserLoginlog) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserLoginlog findById(java.lang.Long id) {
+		log.debug("getting TUserLoginlog instance with id: " + id);
+		try {
+			TUserLoginlog instance = (TUserLoginlog) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.TUserLoginlog", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserLoginlog> findByExample(TUserLoginlog instance) {
+		log.debug("finding TUserLoginlog instance by example");
+		try {
+			List<TUserLoginlog> results = (List<TUserLoginlog>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserLoginlog")
+					.add(create(instance)).addOrder(Order.desc("id")).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	//Print Login Success Log
+	public boolean addLoginLog(TUserLoginlog log)
+	{
+		String a = "";
+		try {
+			//List<TUserLoginlog> results = (List<TUserLoginlog>) 
+			getHibernateTemplate().saveOrUpdate(log);
+			/*.getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TUserLoginlog")
+					.add(create(log)).list();*/
+			
+			/*Session session = null;
+			session = (Session) getSessionFactory().getCurrentSession();
+			Transaction tr=session.beginTransaction();
+			tr.begin();
+			session.saveOrUpdate(log);
+			tr.commit();
+			
+			session.close();*/
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+
+}

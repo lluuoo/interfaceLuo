@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2015-6-18 23:23:37 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="com.jite.hibgen.model.TUserAccount" table="t_user_account" catalog="qch">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="account" type="string">
+            <column name="account" length="50" />
+        </property>
+        <property name="password" type="string">
+            <column name="password" length="100" />
+        </property>
+        <property name="type" type="java.lang.Integer">
+            <column name="type">
+                <comment>&#211;&#195;&#187;&#167;&#192;&#224;&#208;&#205;(1-&#199;&#243;&#214;&#176;&#213;&#223;,2-&#198;&#243;&#210;&#181;HR)</comment>
+            </column>
+        </property>
+        <property name="phone" type="string">
+            <column name="phone" length="20" />
+        </property>
+        <property name="email" type="string">
+            <column name="email" length="100" />
+        </property>
+        <property name="mailVerifyCode" type="string">
+            <column name="mail_verify_code" length="100" />
+        </property>
+        <property name="isMailVerified" type="java.lang.Integer">
+            <column name="is_mail_verified" />
+        </property>
+        <property name="phoneVerifyCode" type="string">
+            <column name="phone_verify_code" length="10" />
+        </property>
+        <property name="isPhoneVerified" type="java.lang.Integer">
+            <column name="is_phone_verified" />
+        </property>
+        <property name="status" type="java.lang.Integer">
+            <column name="status">
+                <comment>1-&#191;&#170;&#183;&#197; 2-&#178;&#187;&#191;&#170;&#183;&#197;</comment>
+            </column>
+        </property>
+        <property name="lastlogin" type="timestamp">
+            <column name="lastlogin" length="19" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="create_date" length="19" />
+        </property>
+        <property name="updateDate" type="timestamp">
+            <column name="update_date" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

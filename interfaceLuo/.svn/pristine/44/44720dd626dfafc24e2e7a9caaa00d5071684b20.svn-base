@@ -1,0 +1,541 @@
+package com.jite.struts.action;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.HrCompanyService;
+import com.jite.service.UserService;
+import com.jite.struts.bean.HrAccountInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.utils.FileAbsolutePathEnum;
+import com.jite.utils.FileOperateUtil;
+import com.jite.utils.SystemPropties;
+
+public class HrAccountAction extends BaseAction{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8416078943385619309L;
+
+	private HrCompanyService hrCompanyService;
+	private UserService userService;
+
+	private Long id;
+	private String username;
+	private String password;
+	private Long hrAccountId;
+	private String name;
+	private Integer sex;
+	private String title;
+	private String phone;
+	private String email;
+	private String headPic;
+	private Long companyId;
+	private Integer approveStatus;
+	private Integer isMain;
+	
+	private int pageNumber;
+	private int pageSize;
+	
+	public HrCompanyService getHrCompanyService() {
+		return hrCompanyService;
+	}
+
+	public void setHrCompanyService(HrCompanyService hrCompanyService) {
+		this.hrCompanyService = hrCompanyService;
+	}
+	
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+	
+	public boolean checkInputParas(){
+		boolean inputError=false;
+		StringBuffer err=new StringBuffer();
+
+	
+		if(inputError){
+			returnError(SystemPropties.getProperties("code.input_error"),err.toString());
+		}
+		
+		return !inputError;
+	}
+
+	
+	public void add(){
+		if(checkInputParas()){
+			returnJson=new JSONObject();
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			UserInfo userInfo=userService.addHrUserAccount(username, password, companyId);
+			if(null!=userInfo && null!=userInfo.getUserId()
+					&&!"".equals(userInfo.getUserId())){
+				if("-100".equals(userInfo.getUserId())){
+					returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+					if(userInfo.getType()!=null&&"1".equals(userInfo.getType())){
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists")+","+SystemPropties.getProperties("txt.user_type")+":"+SystemPropties.getProperties("txt.user_type_one"));
+					}else if(userInfo.getType()!=null&&"2".equals(userInfo.getType())){
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists")+","+SystemPropties.getProperties("txt.user_type")+":"+SystemPropties.getProperties("txt.user_type_two"));
+					}else if(userInfo.getType()!=null&&"3".equals(userInfo.getType())){
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists")+","+SystemPropties.getProperties("txt.user_type")+":"+SystemPropties.getProperties("txt.user_type_three"));
+					}else{
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists"));
+					}
+
+					returnJson.put("userinfo", userInfo);
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.regist")+SystemPropties.getProperties("txt.success"));
+					returnJson.put("userinfo", userInfo);
+				}
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.regist")+SystemPropties.getProperties("txt.fail"));
+				returnJson.put("userinfo", userInfo);			
+			}
+			returnJsonStr(returnJson.toString());
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void update(){
+		if(checkInputParas()){
+			returnJson=new JSONObject();
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			UserInfo userInfo=userService.updateHrUserAccount(username, password, companyId);
+			if(null!=userInfo && null!=userInfo.getUserId()
+					&&!"".equals(userInfo.getUserId())){
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.regist")+SystemPropties.getProperties("txt.success"));
+					returnJson.put("userinfo", userInfo);
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.changepwd")+SystemPropties.getProperties("txt.fail"));
+				returnJson.put("userinfo", userInfo);			
+			}
+			returnJsonStr(returnJson.toString());
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void save(){
+		returnJson=new JSONObject();
+		if(hrCompanyService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+		}
+		HrAccountInfo hrInfo=new HrAccountInfo();
+		hrInfo.setHrAccountId(hrAccountId);
+		hrInfo.setCompanyId(companyId);
+		hrInfo.setName(name);
+		hrInfo.setSex(sex);
+		hrInfo.setTitle(title);
+		hrInfo.setEmail(email);
+		hrInfo.setPhone(phone);
+		hrInfo.setHeadPic(headPic);
+		
+		hrInfo=hrCompanyService.saveHrInfo(hrInfo);
+		if(null!=hrInfo && null!=hrInfo.getId()&&0<hrInfo.getId()){
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.add")+SystemPropties.getProperties("txt.success"));
+			returnJson.put("hrInfo", hrInfo);
+			UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+			if(null!=userInfo){
+				userInfo.setHrInfo(hrInfo);
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.add")+SystemPropties.getProperties("txt.fail"));
+			returnJson.put("hrcompanyinfo", hrInfo);			
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void delete(){
+		if(checkInputParas()){
+			returnJson=new JSONObject();
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			UserInfo userInfo=userService.deleteHrUserAccount(username, companyId);
+			if(null!=userInfo && null!=userInfo.getUserId()
+					&&!"".equals(userInfo.getUserId())){
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.regist")+SystemPropties.getProperties("txt.success"));
+					returnJson.put("userinfo", userInfo);
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.regist")+SystemPropties.getProperties("txt.fail"));
+				returnJson.put("userinfo", userInfo);			
+			}
+			returnJsonStr(returnJson.toString());
+		}
+		returnJsonStr(returnJson.toString());
+	}	
+	public void query(){
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}
+		List<UserInfo> allHrs=userService.listCompanyAllHrUsers(companyId);
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("allHrs", allHrs);
+		returnJsonStr(returnJson.toString());
+	}
+	public void querySearchTotal(){
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("totalCount", userService.listSearchTotal(companyId,hrAccountId));
+		returnJsonStr(returnJson.toString());
+	}	
+	
+	//搜索简历，查看简历数
+	public void queryCheckoneTotal(){
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("totalCount", userService.listCheckoneTotal(hrAccountId));
+		returnJsonStr(returnJson.toString());
+	}
+	
+	//应聘简历数
+	public void queryChecktwoTotal(){
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("totalCount", userService.listChecktwoTotal(hrAccountId));
+		returnJsonStr(returnJson.toString());
+	}
+	
+	
+	public void queryById(){
+		returnJson=new JSONObject();
+		if(hrCompanyService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			hrCompanyService=(HrCompanyService)ac.getBean("hrCompanyService");
+		}
+		HrAccountInfo theCompany=null;//hrCompanyService.queryCompanyById(companyId);
+		if(theCompany!=null){
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			returnJson.put("companyInfo", theCompany);
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.fail"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void headerImage() throws Exception {
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+
+		if(null==userInfo){
+			return;
+		}
+
+		long file_size_max = Integer.parseInt(SystemPropties.getProperties("cfg.com_upload_file_size")) * 1024;// 多少k
+		InputStream is = null;
+		try {
+			long file_size = file.length(); 
+			if (file_size < file_size_max) {
+				FileInputStream inStream = new FileInputStream(file);
+				String filename =userInfo.getUserId() + fileFileName.substring(fileFileName.lastIndexOf("."));;
+				String iconRelativePath = FileOperateUtil.saveFile(inStream,
+						FileAbsolutePathEnum.UPLOADFILE_PATH,FileAbsolutePathEnum.HEAD_IMAGE,
+						filename);
+				f_url = iconRelativePath;
+				f_url = iconRelativePath;
+				HrAccountInfo theHrInfo=userInfo.getHrInfo();
+				if(theHrInfo==null){
+					theHrInfo=new HrAccountInfo();
+				}
+				theHrInfo.setHeadPic(f_url);
+				userInfo.setHrInfo(theHrInfo);
+				getRequest().setAttribute("flag", "success");
+				getRequest().setAttribute("f_url", f_url.replace("\\", "/"));
+				getRequest().setAttribute("submitType", submitType);
+				getRequest().setAttribute("file", fileFileName);
+				getRequest().setAttribute("f_border", f_border);
+				getRequest().setAttribute("f_align", f_align);
+				getRequest().setAttribute("f_vert", f_vert);
+				getRequest().setAttribute("f_horiz", f_horiz);
+			} else {
+				f_url = "error: ";
+				userInfo.setSessionSavedMessage(SystemPropties.getProperties("txt.upload_file_large_than_limit"));
+			}
+			//getResponse().reset();
+			getResponse().setContentType("text/html;charset=utf-8");
+			getResponse().getWriter().print(f_url);
+		} catch (FileNotFoundException e) {
+			getRequest().setAttribute("flag", "missing");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (is != null) {
+					is.close();
+					is = null;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+
+
+	public Long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
+	}
+	
+	
+	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Long getHrAccountId() {
+		return hrAccountId;
+	}
+
+	public void setHrAccountId(Long hrAccountId) {
+		this.hrAccountId = hrAccountId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getHeadPic() {
+		return headPic;
+	}
+
+	public void setHeadPic(String headPic) {
+		this.headPic = headPic;
+	}
+
+	public Integer getApproveStatus() {
+		return approveStatus;
+	}
+
+	public void setApproveStatus(Integer approveStatus) {
+		this.approveStatus = approveStatus;
+	}
+
+	public Integer getIsMain() {
+		return isMain;
+	}
+
+	public void setIsMain(Integer isMain) {
+		this.isMain = isMain;
+	}
+
+
+
+
+	//图片上传需要的属性值 start
+	private String f_url;
+	private String f_alt;
+	private String f_border;
+	private String f_align;
+	private String f_vert;
+	private String f_horiz;
+	private File file;
+	private String fileFileName;
+	private String fileContentType;
+	private String submitType;	
+	public String getF_url() {
+		return f_url;
+	}
+
+	public void setF_url(String f_url) {
+		this.f_url = f_url;
+	}
+
+	public String getF_alt() {
+		return f_alt;
+	}
+
+	public void setF_alt(String f_alt) {
+		this.f_alt = f_alt;
+	}
+
+	public String getF_border() {
+		return f_border;
+	}
+
+	public void setF_border(String f_border) {
+		this.f_border = f_border;
+	}
+
+	public String getF_align() {
+		return f_align;
+	}
+
+	public void setF_align(String f_align) {
+		this.f_align = f_align;
+	}
+
+	public String getF_vert() {
+		return f_vert;
+	}
+
+	public void setF_vert(String f_vert) {
+		this.f_vert = f_vert;
+	}
+
+	public String getF_horiz() {
+		return f_horiz;
+	}
+
+	public void setF_horiz(String f_horiz) {
+		this.f_horiz = f_horiz;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public String getFileFileName() {
+		return fileFileName;
+	}
+
+	public void setFileFileName(String fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	public String getSubmitType() {
+		return submitType;
+	}
+
+	public void setSubmitType(String submitType) {
+		this.submitType = submitType;
+	}
+	//图片上传需要的属性值end
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	
+	
+}

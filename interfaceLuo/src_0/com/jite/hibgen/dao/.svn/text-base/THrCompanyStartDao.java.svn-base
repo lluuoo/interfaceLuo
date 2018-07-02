@@ -1,0 +1,169 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class THrCompanyStart.
+ * @see com.jite.hibgen.dao.THrCompanyStart
+ * @author Hibernate Tools
+ */
+public class THrCompanyStartDao extends BaseDao<THrCompanyStart>{
+
+	private static final Log log = LogFactory.getLog(THrCompanyStartDao.class);
+
+	public void persist(THrCompanyStart transientInstance) {
+		log.debug("persisting THrCompanyStart instance");
+		try {
+			getHibernateTemplate().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(THrCompanyStart instance) {
+		log.debug("attaching dirty THrCompanyStart instance");
+		try {
+			getHibernateTemplate().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(THrCompanyStart instance) {
+		log.debug("attaching clean THrCompanyStart instance");
+		try {
+			getHibernateTemplate().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(THrCompanyStart persistentInstance) {
+		log.debug("deleting THrCompanyStart instance");
+		try {
+			getHibernateTemplate().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public THrCompanyStart merge(THrCompanyStart detachedInstance) {
+		log.debug("merging THrCompanyStart instance");
+		try {
+			THrCompanyStart result = (THrCompanyStart) getHibernateTemplate()
+					.merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public THrCompanyStart findById(java.lang.Long id) {
+		log.debug("getting THrCompanyStart instance with id: " + id);
+		try {
+			THrCompanyStart instance = (THrCompanyStart) getHibernateTemplate()
+					.get("com.jite.hibgen.model.THrCompanyStart",
+							id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<THrCompanyStart> findByExample(THrCompanyStart instance) {
+		log.debug("finding THrCompanyStart instance by example");
+		try {
+			List<THrCompanyStart> results = (List<THrCompanyStart>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.THrCompanyStart")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public List<THrCompanyStart> searchByCriteria(int pageNo, int pageSize,THrCompanyStart search){
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(THrCompanyStart.class);
+			
+			if(search.getCompanyId()!=null){
+				criteria.add(Restrictions.gt("companyId", search.getCompanyId()));//TODO,查询未删除的数据	
+			}
+			//setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<THrCompanyStart>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+	public int searchByCriteriaTotal(THrCompanyStart search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(THrCompanyStart.class);
+		
+		//setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+
+	public THrCompanyStart findByCompanyId(Long companyId) {
+		log.debug("finding TUserBizcard instance by example");
+		try {
+			@SuppressWarnings("unchecked")
+			List<THrCompanyStart> results = (List<THrCompanyStart>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.THrCompanyStart")
+					.add(Restrictions.eq("companyId", companyId)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results.size()>0?results.get(0):new THrCompanyStart();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}

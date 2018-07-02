@@ -1,0 +1,240 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+import com.jite.struts.bean.JobSearch;
+import com.jite.struts.bean.ProfileSearch;
+
+import java.math.BigInteger;
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class THrCompanyAreas.
+ * @see com.jite.hibgen.dao.THrCompanyAreas
+ * @author Hibernate Tools
+ */
+public class THrCompanyAreasDao extends BaseDao<THrCompanyAreas>{
+
+	private static final Log log = LogFactory.getLog(THrCompanyAreasDao.class);
+
+//	private final SessionFactory sessionFactory = getSessionFactory();
+//
+//	protected SessionFactory getSessionFactory() {
+//		try {
+//			return (SessionFactory) new InitialContext()
+//					.lookup("SessionFactory");
+//		} catch (Exception e) {
+//			log.error("Could not locate SessionFactory in JNDI", e);
+//			throw new IllegalStateException(
+//					"Could not locate SessionFactory in JNDI");
+//		}
+//	}
+
+	public void persist(THrCompanyAreas transientInstance) {
+		log.debug("persisting THrCompanyAreas instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(THrCompanyAreas instance) {
+		log.debug("attaching dirty THrCompanyAreas instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(THrCompanyAreas instance) {
+		log.debug("attaching clean THrCompanyAreas instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(THrCompanyAreas persistentInstance) {
+		log.debug("deleting THrCompanyAreas instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public THrCompanyAreas merge(THrCompanyAreas detachedInstance) {
+		log.debug("merging THrCompanyAreas instance");
+		try {
+			THrCompanyAreas result = (THrCompanyAreas) getHibernateTemplate().
+					getSessionFactory().getCurrentSession().
+					merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public THrCompanyAreas findById(java.lang.Long id) {
+		log.debug("getting THrCompanyAreas instance with id: " + id);
+		try {
+			THrCompanyAreas instance = (THrCompanyAreas) getHibernateTemplate().
+					getSessionFactory().getCurrentSession().get(
+							"com.jite.hibgen.dao.THrCompanyAreas", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<THrCompanyAreas> findByExample(THrCompanyAreas instance) {
+		log.debug("finding THrCompanyAreas instance by example");
+		try {
+			List<THrCompanyAreas> results = (List<THrCompanyAreas>) getHibernateTemplate().
+					getSessionFactory().getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.THrCompanyAreas")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public void deleteByCompanyId(Long theCompanyId) {
+		log.debug("delete THrCompanyAreas by companyId");
+		try {
+			String hql = "delete THrCompanyAreas as tupi where tupi.companyId=?";
+			Query query = getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().createQuery(hql);
+			query.setLong(0, theCompanyId);
+			query.executeUpdate();
+		} catch (Exception re) {
+			log.error("Delete failed", re);
+		}		
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List queryAllAreasRoot(int pageNo,int pageSize){
+		final String hqlString="select distinct tus.areaNameRoot from THrCompanyAreas tus order by updateDate ";
+		
+		Query query=getHibernateTemplate().getSessionFactory()
+		.getCurrentSession().createQuery(hqlString);
+
+		return  query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize).list();
+	}
+
+	public int queryAllAreasRootTotal() {
+		final String hqlString="select distinct tus.areaNameRoot from THrCompanyAreas tus";
+		
+		Query query=getHibernateTemplate().getSessionFactory()
+		.getCurrentSession().createQuery(hqlString);
+		
+		return query.list().size();
+	}
+	
+	public int searchBySQLTotal(String area,String location,String keyword){
+		String sql = getSQLFromSearch(area,location,keyword);
+		 
+		SQLQuery query = getHibernateTemplate().getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql); 
+		 
+		return query.list().size();		
+	}
+	private String appendLimit(String sql, int pageNo,int pageSize) {
+		
+		return sql+" limit "+(pageNo-1)*pageSize+","+pageSize;
+	}	
+	private String getSQLFromSearch(String area,String location,String keyword){
+		StringBuffer sql=new StringBuffer("select thc.id  from  t_hr_company thc "
+				  +"left join t_hr_company_areas tca on thc.id=tca.company_id "
+				  +"where thc.status=1 ");
+		if(area!=null&&!"".equals(area)){
+			sql.append(" and (tca.area_name_root like '%"+area+"%' ) ");
+		}
+		if(location!=null&&!"".equals(location)&&!"市辖区".equals(location)){
+			sql.append(" and (thc.province like '%"+location+"%' ) ");
+		}
+		if(keyword!=null&&!"".equals(keyword)){
+			sql.append(" and (thc.name like '%"+keyword+"%' or thc.short_name like '%"+keyword+"%' or thc.description like '%"+keyword+"%' ) ");
+		}
+
+		sql.append(" order by tca.rank_root asc,tca.update_date desc ");
+		
+		return sql.toString();		
+	}
+	@SuppressWarnings("unchecked")
+	public List<BigInteger> searchBySQL(String area,String location,String keyword,int pageNumber,int pageSize) {
+		String sql=getSQLFromSearch(area,location,keyword);
+		sql=appendLimit(sql,pageNumber,pageSize);
+		SQLQuery query = getHibernateTemplate().getSessionFactory()
+				.getCurrentSession().createSQLQuery(sql); 
+		 
+		return query.list();		
+	}
+
+	public List<THrCompanyAreas> searchRecommends(int pageNo, int pageSize, String[] areaTags) {
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(THrCompanyAreas.class);
+			Disjunction dis=Restrictions.disjunction();
+			if(areaTags!=null&&areaTags.length>0){
+				for(String oneTag:areaTags){
+					dis.add(Restrictions.like("areaNameRoot", oneTag,MatchMode.ANYWHERE));
+				}
+			}
+		
+			criteria.add(dis);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.asc("rankRoot"));
+			criteria.addOrder(Order.desc("updateDate"));
+			criteria.addOrder(Order.desc("createDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize); 
+	        
+	        return (List<THrCompanyAreas>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<!-- 设置Struts2默认的ObjectFactory为spring -->
+<!-- 	<constant name="struts.objectFactory" value="spring"></constant> -->
+	
+	<!-- 是否显示详细错误信息 -->
+	<constant name="struts.devMode" value="true" />
+	<!-- 编码 -->
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	<!-- 后缀 -->
+	<constant name="struts.action.extension" value="do" />
+	<constant name="struts.enable.DynamicMethodInvocation" value="true" />
+	<constant name="struts.configuration.xml.reload" value="true" />
+	<constant name="struts.multipart.maxSize" value="1048577600" />
+
+	<!-- <package name="basic-funtion" extends="struts-default" namespace="/"> -->
+	<package name="default" extends="struts-default" namespace="/">
+		<!-- 下面用了两个Action映射配置，为了分别区分两人写的代码，注意：配置1）一定要写在2）的前面 -->
+	
+		<!-- 1）用于映射com.luo.struts.action包中的Action，url应写为：xxx_xxx_luo.do,这里是用下划线连接符 -->
+		<action name="*_*_*" class="com.{3}.struts.action.{1}Action"  method="{2}" /> 
+		
+		<!-- 2）用于映射com.jite.struts.action包中的Action，url应写为：xxx-xxx.do，这里是用减号连接符 -->
+<!-- 		<action name="*-*" class="com.jite.struts.action.{1}Action"  method="{2}" />  -->
+		<action name="*-*" class="com.luo.struts.action.{1}Action"  method="{2}" />
+	</package>
+	
+<!-- 	<package name="randomImage"  extends="struts-default" namespace="/"> -->
+<!-- 	    <action name="*-*" class="com.jite.struts.action.{1}Action222" method="{2}"> -->
+<!-- 		    <result type="stream"> -->
+<!-- 		               <param name="contentType">image/jpeg</param> -->
+<!-- 		               <param name="inputName">inputStream</param> -->
+<!-- 		   </result> -->
+<!-- 	    </action> -->
+<!-- 	</package> -->
+		
+	 	
+	
+<!-- 这段本来就没有 -->
+<!-- 	<package name="my-funtion" extends="struts-default" namespace="/"> -->
+<!-- 	<package name="my-funtion" extends="struts-default" namespace="/"> -->
+<!-- 		<action name="mybiz" class="com.jite.struts.action.BizAction"  method="preservation"> -->
+<!-- 			<result name="success" type="dispatcher">moo.jsp</result> -->
+<!-- 		</action> -->
+<!-- 	</package>  -->
+
+</struts>

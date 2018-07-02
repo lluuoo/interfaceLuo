@@ -1,0 +1,129 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+import javax.naming.InitialContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TSystemEmployeeDepartment.
+ * @see com.jite.hibgen.dao.TSystemEmployeeDepartment
+ * @author Hibernate Tools
+ */
+public class TSystemEmployeeDepartmentDao {
+
+	private static final Log log = LogFactory
+			.getLog(TSystemEmployeeDepartmentDao.class);
+
+	private final SessionFactory sessionFactory = getSessionFactory();
+
+	protected SessionFactory getSessionFactory() {
+		try {
+			return (SessionFactory) new InitialContext()
+					.lookup("SessionFactory");
+		} catch (Exception e) {
+			log.error("Could not locate SessionFactory in JNDI", e);
+			throw new IllegalStateException(
+					"Could not locate SessionFactory in JNDI");
+		}
+	}
+
+	public void persist(TSystemEmployeeDepartment transientInstance) {
+		log.debug("persisting TSystemEmployeeDepartment instance");
+		try {
+			sessionFactory.getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TSystemEmployeeDepartment instance) {
+		log.debug("attaching dirty TSystemEmployeeDepartment instance");
+		try {
+			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TSystemEmployeeDepartment instance) {
+		log.debug("attaching clean TSystemEmployeeDepartment instance");
+		try {
+			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TSystemEmployeeDepartment persistentInstance) {
+		log.debug("deleting TSystemEmployeeDepartment instance");
+		try {
+			sessionFactory.getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TSystemEmployeeDepartment merge(
+			TSystemEmployeeDepartment detachedInstance) {
+		log.debug("merging TSystemEmployeeDepartment instance");
+		try {
+			TSystemEmployeeDepartment result = (TSystemEmployeeDepartment) sessionFactory
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TSystemEmployeeDepartment findById(java.lang.Long id) {
+		log.debug("getting TSystemEmployeeDepartment instance with id: " + id);
+		try {
+			TSystemEmployeeDepartment instance = (TSystemEmployeeDepartment) sessionFactory
+					.getCurrentSession()
+					.get("com.jite.hibgen.dao.TSystemEmployeeDepartment", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TSystemEmployeeDepartment> findByExample(
+			TSystemEmployeeDepartment instance) {
+		log.debug("finding TSystemEmployeeDepartment instance by example");
+		try {
+			List<TSystemEmployeeDepartment> results = (List<TSystemEmployeeDepartment>) sessionFactory
+					.getCurrentSession()
+					.createCriteria(
+							"com.jite.hibgen.dao.TSystemEmployeeDepartment")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}

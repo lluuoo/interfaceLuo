@@ -1,0 +1,63 @@
+package com.jite.struts.bean;
+
+import java.util.Date;
+import java.util.List;
+
+public class ShowSchoolInfo {
+	private String id;
+	private String schoolId;
+	private String rank;
+	private Date createDate;
+	private Date updateDate;
+	
+	private UserSchoolInfo userschool;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getSchoolId() {
+		return schoolId;
+	}
+
+	public void setSchoolId(String schoolId) {
+		this.schoolId = schoolId;
+	}
+
+	public String getRank() {
+		return rank;
+	}
+
+	public void setRank(String rank) {
+		this.rank = rank;
+	}
+
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public UserSchoolInfo getUserschool() {
+		return userschool;
+	}
+
+	public void setUserschool(UserSchoolInfo userschool) {
+		this.userschool = userschool;
+	}
+	
+}

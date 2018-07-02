@@ -1,0 +1,158 @@
+package com.jite.struts.action;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.WestplanService;
+import com.jite.struts.bean.WestplanInfo;
+import com.jite.utils.SystemPropties;
+
+public class WestplanAction extends BaseAction{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4768083376835578317L;
+
+	@Resource
+	@Autowired
+	WestplanService westplanService;
+
+
+	
+	
+
+	public WestplanService getWestplanService() {
+		return westplanService;
+	}
+
+	public void setWestplanService(WestplanService westplanService) {
+		this.westplanService = westplanService;
+	}
+
+	public void query() {
+		returnJson=new JSONObject();
+		if(westplanService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			westplanService=(WestplanService)ac.getBean("westplanService");
+		}
+		
+		List<WestplanInfo> aList=westplanService.queryPublishedActivities(pageNumber,pageSize);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("westplanList", aList);
+		returnJson.put("totalCount",westplanService.queryPublishedActivitiesTotal());
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void queryWithJionList() {
+		returnJson=new JSONObject();
+		if(westplanService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			westplanService=(WestplanService)ac.getBean("westplanService");
+		}
+		
+		List<WestplanInfo> aList=westplanService.queryPublishedActivitiesWithJionList(pageNumber,pageSize);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("westplanList", aList);
+		returnJson.put("totalCount",westplanService.queryPublishedActivitiesTotal());
+
+		returnJsonStr(returnJson.toString());
+	}	
+	public void queryById() {
+		returnJson=new JSONObject();
+		if(westplanService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			westplanService=(WestplanService)ac.getBean("westplanService");
+		}
+		
+		WestplanInfo aList=westplanService.queryById(westplanId,userId);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("westplan", aList);
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void greatById() {
+		returnJson=new JSONObject();
+		if(westplanService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			westplanService=(WestplanService)ac.getBean("westplanService");
+		}
+		
+		WestplanInfo aList=westplanService.greatById(westplanId);
+
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("westplan", aList);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+
+		
+		
+	private String userId;
+	private String westplanId;
+	private String status;
+	private int pageNumber;
+	private int pageSize;
+	
+	
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+
+	public String getWestplanId() {
+		return westplanId;
+	}
+
+	public void setWestplanId(String westplanId) {
+		this.westplanId = westplanId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	
+
+}

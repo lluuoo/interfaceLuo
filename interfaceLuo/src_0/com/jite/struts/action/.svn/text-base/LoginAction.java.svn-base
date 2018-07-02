@@ -1,0 +1,840 @@
+package com.jite.struts.action;
+
+import java.util.Date;
+import java.util.Random;
+
+import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import net.sf.json.JSONObject;
+
+import com.jite.service.UserService;
+import com.jite.struts.bean.MailInfo;
+import com.jite.struts.bean.ProfileInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.utils.MailSenderFactory;
+import com.jite.utils.MailSimpleSender;
+import com.jite.utils.SendCloudSmtp;
+import com.jite.utils.SystemPropties;
+import com.jite.utils.ValidateTool;
+import com.jite.utils.VerificationCodeUtil;
+
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+public class LoginAction extends BaseAction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7548491842791520104L;
+	@Resource
+	@Autowired
+	private UserService userService;
+
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public boolean checkInputParas(){
+		boolean inputError=false;
+		StringBuffer err=new StringBuffer();
+		if(null==username||"".equals(username.trim())){
+			inputError=true;
+			err.append("username ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+		}
+		if(null==password||"".equals(password.trim())){
+			inputError=true;
+			err.append("password ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+		}
+		if(operater!=null&&operater>10){
+			//不是网站不用验证码
+		}else{
+			if(null==verifycode||"".equals(verifycode.trim())){
+				inputError=true;
+				err.append("verifycode ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+			}
+		}
+		if(null==usertype||"".equals(usertype.trim())){
+			inputError=true;
+			err.append("usertype ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+		}else{
+			try{
+				Integer.parseInt(usertype);
+			}catch(Exception e){
+				inputError=true;
+				err.append("usertype ").append(SystemPropties.getProperties("txt.should_be_int")).append("!");
+			}
+		}		
+		if(inputError){
+			returnError(SystemPropties.getProperties("code.input_error"),err.toString());
+		}
+		
+		return !inputError;
+	}
+	
+	public void getVerifyCode(){
+		VerificationCodeUtil vcu = VerificationCodeUtil.Instance();
+		String theVerifyCode=vcu.getVerificationCodeValue();
+		
+		request.getSession().setAttribute(SystemPropties.getProperties("cfg.the_login_verify_code").toString(),theVerifyCode);
+		//System.out.println(request.getSession().getId()+"----verifycode----"+request.getSession().getAttribute(SystemPropties.getProperties("cfg.the_login_verify_code").toString()));
+		returnJson=new JSONObject();
+		returnJson.put("theVerifyCode", theVerifyCode);
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void regist() {
+		if(checkInputParas()){
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			
+			String[] checkInviteCodeResults=new String[2];
+			if(Boolean.valueOf(SystemPropties.getProperties("cfg.user_reg_invite_code"))){
+				//如果开启注册需要邀请码
+				if(usertype!=null&&("1".equals(usertype)||"2".equals(usertype))){
+					if(null==invitecode||"".equals(invitecode.trim())){
+						returnError(SystemPropties.getProperties("code.input_error"),"邀请码"+SystemPropties.getProperties("txt.can_not_be_empty")+"!");
+						return;
+					}else{
+						
+						checkInviteCodeResults=userService.checkInviteCode(invitecode);
+						if(!checkInviteCodeResults[0].equals("200")){
+							returnError(SystemPropties.getProperties("code.not_match"),"无此邀请码或邀请码已停用!");
+							return;
+						}
+					}
+				}
+			}
+			
+			if(operater!=null&&operater>10){
+				//不是网站不用验证码
+			}else{
+				String sessionVerifyCode=(String)request.getSession().getAttribute(SystemPropties.getProperties("cfg.the_login_verify_code").toString());
+				if (!verifycode.equals(sessionVerifyCode)) {
+					returnError(SystemPropties.getProperties("code.input_error"),
+							SystemPropties.getProperties("txt.verifycode")
+									+ SystemPropties.getProperties("txt.not_match"));
+					return;
+				}
+				operater=10;//表示网站注册
+			}
+			returnJson=new JSONObject();
+
+			UserInfo userInfo=userService.addUserAccount(username, password, Integer.parseInt(usertype),checkInviteCodeResults[1],invitecode,operater);
+			if(null!=userInfo && null!=userInfo.getUserId()
+					&&!"".equals(userInfo.getUserId())){
+				if("-100".equals(userInfo.getUserId())){
+					returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+					if(userInfo.getType()!=null&&"1".equals(userInfo.getType())){
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists")+","+SystemPropties.getProperties("txt.user_type")+":"+SystemPropties.getProperties("txt.user_type_one"));
+					}else if(userInfo.getType()!=null&&"2".equals(userInfo.getType())){
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists")+","+SystemPropties.getProperties("txt.user_type")+":"+SystemPropties.getProperties("txt.user_type_two"));
+					}else if(userInfo.getType()!=null&&"3".equals(userInfo.getType())){
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists")+","+SystemPropties.getProperties("txt.user_type")+":"+SystemPropties.getProperties("txt.user_type_three"));
+					}else{
+						returnJson.put("info",username+SystemPropties.getProperties("txt.already_exists"));
+					}
+					returnJson.put("userinfo", userInfo);
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.regist")+SystemPropties.getProperties("txt.success"));
+					returnJson.put("userinfo", userInfo);
+					request.getSession().setAttribute( SystemPropties.getProperties("cfg.session_user"), userInfo);
+				}
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.unknown_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.regist")+SystemPropties.getProperties("txt.fail"));
+				returnJson.put("userinfo", userInfo);			
+			}
+			returnJsonStr(returnJson.toString());
+		}
+	}
+	
+	public void login() {
+		if(checkInputParas()){
+			if(operater!=null&&operater>10){
+				//不是网站不用验证码
+			}else{
+				String sessionVerifyCode=(String)request.getSession().getAttribute(SystemPropties.getProperties("cfg.the_login_verify_code").toString());
+				//System.out.println(request.getSession().getId()+"--inlogon-verifycode"+sessionVerifyCode);
+				if (!verifycode.equals(sessionVerifyCode)) {
+					returnError(SystemPropties.getProperties("code.input_error"),
+							SystemPropties.getProperties("txt.verifycode")
+									+ SystemPropties.getProperties("txt.not_match"));
+					return;
+				}
+			}
+			returnJson=new JSONObject();
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			UserInfo userInfo=userService.checkUserAccount(username, password, Integer.parseInt(usertype));
+			if(null!=userInfo && null!=userInfo.getUserId()
+					&&!"".equals(userInfo.getUserId())){
+					
+					try {
+						userService.addUserLoginlog(userInfo.getUserId());
+					} catch (Exception e) {
+					}
+					
+					
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.success"));
+					returnJson.put("userinfo", userInfo);
+					request.getSession().setAttribute( SystemPropties.getProperties("cfg.session_user"), userInfo);
+
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.fail")+"!"+SystemPropties.getProperties("txt.login_username_or_password_wrong"));
+				returnJson.put("userinfo", userInfo);
+			}
+			returnJsonStr(returnJson.toString());
+		}
+	}
+
+	public void sso() {
+			if (username==null||"".equals(username)) {
+				returnError(SystemPropties.getProperties("code.input_error"),"企业名不能为空!");
+				return;
+			}
+			
+			if (password==null||"".equals(password)) {
+				returnError(SystemPropties.getProperties("code.input_error"),"Key值不能为空!");
+				return;
+			}
+			String keys=SystemPropties.getProperties("cfg.sso_tokens");
+			if (keys.indexOf(","+password+",")<0) {
+				returnError(SystemPropties.getProperties("code.input_error"),"Key值不匹配!");
+				return;
+			}
+			
+			returnJson=new JSONObject();
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			UserInfo userInfo=userService.checkSSO(username);
+			if(null!=userInfo && null!=userInfo.getUserId()
+					&&!"".equals(userInfo.getUserId())){
+										
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.success"));
+					returnJson.put("userinfo", userInfo);
+					request.getSession().setAttribute( SystemPropties.getProperties("cfg.session_user"), userInfo);
+
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.fail")+"!"+"企业不存在或审批未通过或企业无主HR帐号!");
+				returnJson.put("userinfo", userInfo);
+			}
+			returnJsonStr(returnJson.toString());
+	}
+	
+	public void upTime(){
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession()
+							.getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		boolean result=userService.updateTime(accountId);
+		if(result){
+			returnJson.put("code",
+					SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+			userInfo.getBizInfo().setUpdateDate(new Date());
+		}else{
+			returnJson.put("code",
+					SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.fail"));			
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void logout() {
+		returnJson=new JSONObject();
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId())){
+			
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			userService.addUserLogoutlog(userInfo.getUserId());
+			//清空登录的session
+			request.getSession().setAttribute( SystemPropties.getProperties("cfg.session_user"), null);
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info", SystemPropties.getProperties("txt.success"));
+		}
+		returnJsonStr(returnJson.toString());		
+	}
+	public void check() {
+		returnJson=new JSONObject();
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId())){
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.success"));
+			returnJson.put("userinfo", userInfo);
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void changePwd() {
+		returnJson=new JSONObject();
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(username!=null||(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId()))){
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			String theCheckUsername=username;
+			int theCheckUsertype=1;
+			if(theCheckUsername==null){
+				theCheckUsername=userInfo.getUsername();
+				theCheckUsertype=Integer.parseInt(userInfo.getType());
+			}else{
+				try{
+					theCheckUsertype=Integer.parseInt(usertype);
+				}catch(Exception e){}
+			}
+			UserInfo checkUser=userService.checkUserAccount(theCheckUsername, password, theCheckUsertype);
+			if(null!=checkUser && null!=checkUser.getUserId()
+					&&!"".equals(checkUser.getUserId())){
+					
+					if(newpwd!=null&&!"".equals(newpwd)) {
+						userService.changePwd(checkUser.getUserId(), password, newpwd);
+						returnJson.put("code", SystemPropties.getProperties("code.success"));
+						returnJson.put("info",SystemPropties.getProperties("txt.changepwd")+SystemPropties.getProperties("txt.success"));
+						returnJson.put("userinfo", checkUser);
+					}else{
+						returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+						returnJson.put("info",SystemPropties.getProperties("txt.changepwd")+SystemPropties.getProperties("txt.fail")+"!"+SystemPropties.getProperties("txt.password")+SystemPropties.getProperties("txt.can_not_be_empty"));
+						returnJson.put("userinfo", checkUser);						
+					}
+
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+				returnJson.put("info",SystemPropties.getProperties("txt.changepwd")+SystemPropties.getProperties("txt.fail")+"!"+SystemPropties.getProperties("txt.login_username_or_password_wrong"));
+				returnJson.put("userinfo", userInfo);
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void sendMailVerifyCode() {
+		returnJson=new JSONObject();
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(accountId!=null||(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId()))){
+			if(userService==null){
+				ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+				userService=(UserService)ac.getBean("userService");
+			}
+			if(!userService.isEmailBeOccupied(accountId, username)){
+				VerificationCodeUtil vcu = VerificationCodeUtil.Instance();
+				String theSixCode=vcu.getSixCodeValue();
+
+				SendCloudSmtp sms = new SendCloudSmtp();
+				
+				
+				request.getSession().setAttribute( SystemPropties.getProperties("cfg.the_email_verify_code"),theSixCode);
+				try {
+					sms.send(username, theSixCode);
+				} catch (AddressException e) {
+					e.printStackTrace();
+					
+				} catch (MessagingException e) {
+					e.printStackTrace();
+				} catch(Exception e){
+					e.printStackTrace();
+				}
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.success"));				
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+				returnJson.put("info", "已经存在账号名为"+username+"或已有账号绑定邮箱"+username);				
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));
+		}
+		returnJsonStr(returnJson.toString());
+	}	
+
+	public void sendSMSVerifyCode() {
+		returnJson=new JSONObject();
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId())){
+			if(accountId.toString().equals(userInfo.getUserId())){
+				if(userService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					userService=(UserService)ac.getBean("userService");
+				}
+				
+				if(!userService.isPhoneBeOccupied(accountId, username)){
+				
+					VerificationCodeUtil vcu = VerificationCodeUtil.Instance();
+					String theSixCode=vcu.getSixCodeValue();
+					request.getSession().setAttribute( SystemPropties.getProperties("cfg.the_mobile_verify_code"),theSixCode);
+					
+					String cmd="send";
+					String format="json";
+					String eprId=SystemPropties.getProperties("cfg.sms_epr_id");
+					String sUserId=SystemPropties.getProperties("cfg.sms_user_id");
+					String sPwd=SystemPropties.getProperties("cfg.sms_password");
+					Long timeStamp=System.currentTimeMillis();
+					//TODO Session记录发送验证码时间,与当前超过60秒才可以发送
+					
+					String mobile=username;
+					String smsContent="尊敬的用户您好，欢迎使用易工作网，您的手机验证码是："+theSixCode+"。为保障账户安全，请勿泄漏验证码。";
+					if(userService==null){
+						ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+						userService=(UserService)ac.getBean("userService");
+					}
+					int smsId=userService.fetchMaxSmsRecordId();
+					
+					String url="http://client.sms10000.com/api/webservice";
+					String params="cmd="+cmd+"&eprId="+eprId+"&userId="+sUserId+"&key="+vcu.getMD5Str(eprId+sUserId+sPwd+timeStamp)
+							+"&timestamp="+timeStamp+"&format="+format+"&mobile="+mobile+"&msgId="+smsId+"&content="+smsContent;
+					
+					String smsResultStr="not send yet";
+					if("1".equals(SystemPropties.getProperties("cfg.sms_env").toString())){
+						smsResultStr=vcu.sendPost(url, params);
+					}		
+					userService.saveSmsRecords(accountId,mobile,smsContent,url+"?"+params,smsResultStr);
+					returnJson.put("code", SystemPropties.getProperties("code.success"));
+					returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.success"));
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+					returnJson.put("info", "已经存在账号名为"+username+"或已有账号绑定手机"+username);				
+				}
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+				returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));				
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));
+		}
+		returnJsonStr(returnJson.toString());
+	}	
+
+
+	public void sendSMSVerifyCodeForApp() {
+		returnJson=new JSONObject();
+
+		if(ValidateTool.isMobile(username)){
+			boolean noNeedCheckPhoneOrCheckPhonePass=true;
+			if(accountId!=null){
+				if(userService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					userService=(UserService)ac.getBean("userService");
+				}				
+				noNeedCheckPhoneOrCheckPhonePass=!userService.isPhoneBeOccupied(accountId, username);
+			}
+			if(noNeedCheckPhoneOrCheckPhonePass){
+				VerificationCodeUtil vcu = VerificationCodeUtil.Instance();
+				String theFourCode=vcu.getFourCodeValue();
+				
+				String cmd="send";
+				String format="json";
+				String eprId=SystemPropties.getProperties("cfg.sms_epr_id");
+				String sUserId=SystemPropties.getProperties("cfg.sms_user_id");
+				String sPwd=SystemPropties.getProperties("cfg.sms_password");
+				Long timeStamp=System.currentTimeMillis();
+				
+				
+				String mobile=username;
+				String smsContent="尊敬的用户您好，欢迎使用易工作网，您的手机验证码是："+theFourCode+"。为保障账户安全，请勿泄漏验证码。";
+				if(userService==null){
+					ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+					userService=(UserService)ac.getBean("userService");
+				}
+				int smsId=userService.fetchMaxSmsRecordId();
+				
+				String url="http://client.sms10000.com/api/webservice";
+				String params="cmd="+cmd+"&eprId="+eprId+"&userId="+sUserId+"&key="+vcu.getMD5Str(eprId+sUserId+sPwd+timeStamp)
+						+"&timestamp="+timeStamp+"&format="+format+"&mobile="+mobile+"&msgId="+smsId+"&content="+smsContent;
+				
+				String smsResultStr="not send yet";
+				if("1".equals(SystemPropties.getProperties("cfg.sms_env").toString())){
+					smsResultStr=vcu.sendPost(url, params);
+				}		
+				userService.saveSmsRecords(accountId,mobile,smsContent,url+"?"+params,smsResultStr);
+				
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info","验证码发送"+SystemPropties.getProperties("txt.success"));
+				returnJson.put("theVerifyCode", theFourCode);				
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+				returnJson.put("info", "已经存在账号名为"+username+"或已有账号绑定手机"+username);								
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", "请输入合法的手机号码！");				
+		}
+	
+		returnJsonStr(returnJson.toString());
+	}	
+		
+	public void forgetPwd() {
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}
+		UserInfo userInfo=userService.checkUserAccountAndEmail(username, email);
+		if(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId())){
+			if(Long.valueOf(userInfo.getUserId())>0){
+				String[] sendMails=SystemPropties.getProperties("cfg.admin_mail_address").split(",");
+				MailSimpleSender sms = MailSenderFactory.getSender(
+						sendMails[new Random().nextInt(sendMails.length)], SystemPropties.getProperties("cfg.admin_mail_pwd"));
+				MailInfo theMail=new MailInfo();
+				theMail.setSubject("易工作帐号密码,请惠存!");
+				theMail.setContent("您的密码为"+userInfo.getPhoneNumber());
+				try {
+					sms.send(email, theMail);
+				} catch (AddressException e) {
+					e.printStackTrace();
+					
+				} catch (MessagingException e) {
+
+				}
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.success"));
+			}else if(userInfo.getUserId().equals("-80")){
+				returnJson.put("code", SystemPropties.getProperties("code.not_match"));
+				returnJson.put("info", SystemPropties.getProperties("txt.not_match"));				
+			}else if(userInfo.getUserId().equals("-90")){
+				returnJson.put("code", SystemPropties.getProperties("code.not_set"));
+				returnJson.put("info", "code.not_set");				
+			}else if(userInfo.getUserId().equals("-100")){
+				returnJson.put("code", SystemPropties.getProperties("code.not_exists"));
+				returnJson.put("info", "code.not_exists");				
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));
+		}
+		returnJsonStr(returnJson.toString());
+	}	
+	
+	public void checkMailVerifyCode() {
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}
+		
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(accountId!=null||(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId()))){
+
+			if(	!userService.isEmailBeOccupied(accountId, username)){
+				String sentVerifyCode=(String)request.getSession().getAttribute( SystemPropties.getProperties("cfg.the_email_verify_code"));
+				if(verifycode!=null){
+					if(sentVerifyCode!=null){
+						if(verifycode.equals(sentVerifyCode)){
+
+							if(accountId!=null){
+								if(userInfo==null){
+									userInfo=new UserInfo();
+									userInfo.setUserId(accountId.toString());
+								}else{
+									userInfo.setUserId(accountId.toString());
+								}
+							}
+							userService.checkMailPass(userInfo,username);
+							userInfo.setIsMailVerified(1);
+							userInfo.setEmail(username);
+							if(userInfo.getBizInfo()!=null){
+								userInfo.getBizInfo().setEmailAddress(username);
+							}
+							returnJson.put("code", SystemPropties.getProperties("code.success"));
+							returnJson.put("info", SystemPropties.getProperties("txt.success"));
+						}else{
+							returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+							returnJson.put("info", SystemPropties.getProperties("txt.verifycode")+SystemPropties.getProperties("txt.not_match"));								
+						}
+					}else{
+						returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+						returnJson.put("info", SystemPropties.getProperties("txt.verifycode")+SystemPropties.getProperties("txt.expried"));
+					}
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+					returnJson.put("info", SystemPropties.getProperties("txt.verifycode")+SystemPropties.getProperties("txt.can_not_be_empty"));								
+				}
+				
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+				returnJson.put("info", "已经存在账号名为"+username+"或已有账号绑定邮箱"+username);								
+			}
+
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));
+		}
+		returnJsonStr(returnJson.toString());
+	}	
+	
+	public void checkSMSVerifyCode() {
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}		
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId())){
+			if(accountId.toString().equals(userInfo.getUserId())){
+
+				if(!userService.isPhoneBeOccupied(accountId, username)){//已被占用
+					String sentVerifyCode=(String)request.getSession().getAttribute( SystemPropties.getProperties("cfg.the_mobile_verify_code"));
+					if(verifycode!=null){
+						if(sentVerifyCode!=null){
+							if(verifycode.equals(sentVerifyCode)){
+								userService.checkMobilePass(userInfo,username);
+								userInfo.setIsMailVerified(1);
+								userInfo.setPhoneNumber(username);
+								if(userInfo.getBizInfo()!=null){
+									userInfo.getBizInfo().setPhoneNumber(username);
+								}
+								returnJson.put("code", SystemPropties.getProperties("code.success"));
+								returnJson.put("info", SystemPropties.getProperties("txt.success"));
+							}else{
+								returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+								returnJson.put("info", SystemPropties.getProperties("txt.verifycode")+SystemPropties.getProperties("txt.not_match"));								
+							}
+						}else{
+							returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+							returnJson.put("info", SystemPropties.getProperties("txt.verifycode")+SystemPropties.getProperties("txt.expried"));
+						}
+					}else{
+						returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+						returnJson.put("info", SystemPropties.getProperties("txt.verifycode")+SystemPropties.getProperties("txt.can_not_be_empty"));								
+					}
+					
+				}else{
+					returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+					returnJson.put("info", "已经存在账号名为"+username+"或已有账号绑定手机"+username);						
+				}
+				
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+				returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));								
+			}
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+			returnJson.put("info", SystemPropties.getProperties("txt.session_time_out_or_not_login"));
+		}
+		returnJsonStr(returnJson.toString());
+	}	
+
+	public void checkSMSVerifyCodeForApp() {
+		returnJson=new JSONObject();
+		if(userService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			userService=(UserService)ac.getBean("userService");
+		}
+		if(!userService.isPhoneBeOccupied(accountId, username)){
+			if(verifycode!=null&&!"".equals(verifycode)){
+
+				UserInfo userInfo=new UserInfo();
+				userInfo.setUserId(accountId.toString());
+				userService.checkMobilePass(userInfo,username);
+				returnJson.put("code", SystemPropties.getProperties("code.success"));
+				returnJson.put("info", SystemPropties.getProperties("txt.success"));
+
+			}else{
+				returnJson.put("code", SystemPropties.getProperties("code.input_error"));
+				returnJson.put("info", SystemPropties.getProperties("txt.verifycode")+SystemPropties.getProperties("txt.can_not_be_empty"));								
+			}
+			
+		}else{
+			returnJson.put("code", SystemPropties.getProperties("code.already_exists"));
+			returnJson.put("info", "已经存在账号名为"+username+"或已有账号绑定手机"+username);									
+		}
+
+		returnJsonStr(returnJson.toString());
+	}	
+	
+	
+	public void clearSessionMessage() {
+		returnJson=new JSONObject();
+		UserInfo userInfo=(UserInfo)request.getSession().getAttribute(SystemPropties.getProperties("cfg.session_user"));
+		if(null!=userInfo && null!=userInfo.getUserId()
+				&&!"".equals(userInfo.getUserId())){
+			userInfo.setSessionSavedMessage(null);
+			returnJson.put("code", SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.login")+SystemPropties.getProperties("txt.success"));
+			returnJson.put("userinfo", userInfo);
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void verificationState(){
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession()
+							.getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		boolean result=userService.verificationState(accountId);
+		if(result){
+			returnJson.put("code",
+					SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			
+		}else{
+			returnJson.put("code",
+					SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.fail"));			
+		}
+		returnJsonStr(returnJson.toString());
+		
+	}
+	
+	public void phoneVerificationState(){
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession()
+							.getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		boolean result=userService.phoneVerificationState(accountId);
+		if(result){
+			returnJson.put("code",
+					SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+			
+		}else{
+			returnJson.put("code",
+					SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.fail"));			
+		}
+		returnJsonStr(returnJson.toString());
+		
+	}
+	
+	public void changeEmail(){
+		returnJson = new JSONObject();
+		if (userService == null) {
+			ApplicationContext ac = WebApplicationContextUtils
+					.getWebApplicationContext(request.getSession()
+							.getServletContext());
+			userService = (UserService) ac.getBean("userService");
+		}
+		boolean result=userService.changeEmail(accountId,email);
+		if(result){
+			returnJson.put("code",
+					SystemPropties.getProperties("code.success"));
+			returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		}else{
+			returnJson.put("code",
+					SystemPropties.getProperties("code.unknown_error"));
+			returnJson.put("info",SystemPropties.getProperties("txt.fail"));			
+		}
+		returnJsonStr(returnJson.toString());
+	}
+	
+	private Long accountId;
+	
+	private String username;
+	private String password;
+	private String newpwd;
+	private String verifycode;
+	private String invitecode;
+	private String usertype;//用户类型(1-求职者,2-企业HR)
+	private String email;
+		
+	public Long getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Long accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getVerifycode() {
+		return verifycode;
+	}
+	public void setVerifycode(String verifycode) {
+		this.verifycode = verifycode;
+	}
+	public String getInvitecode() {
+		return invitecode;
+	}
+
+	public void setInvitecode(String invitecode) {
+		this.invitecode = invitecode;
+	}
+
+	public String getUsertype() {
+		return usertype;
+	}
+	public void setUsertype(String usertype) {
+		this.usertype = usertype;
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+	}
+
+	public String getNewpwd() {
+		return newpwd;
+	}
+
+	public void setNewpwd(String newpwd) {
+		this.newpwd = newpwd;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+}

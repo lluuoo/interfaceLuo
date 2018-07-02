@@ -1,0 +1,161 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+
+import javax.naming.InitialContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.LockMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TRedPkgPwd.
+ * @see com.jite.hibgen.dao.TRedPkgPwd
+ * @author Hibernate Tools
+ */
+public class TRedPkgPwdDao extends BaseDao<TRedPkgPwd>{
+
+	private static final Log log = LogFactory.getLog(TRedPkgPwdDao.class);
+
+	public TRedPkgPwdDao(){
+	    super(TRedPkgPwd.class);
+	}
+	public TRedPkgPwdDao(TRedPkgPwd poClass){
+	    super(poClass.getClass());
+	}
+
+	public void persist(TRedPkgPwd transientInstance) {
+		log.debug("persisting TRedPkgPwd instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TRedPkgPwd instance) {
+		log.debug("attaching dirty TRedPkgPwd instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TRedPkgPwd instance) {
+		log.debug("attaching clean TRedPkgPwd instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TRedPkgPwd persistentInstance) {
+		log.debug("deleting TRedPkgPwd instance");
+		try {
+			getHibernateTemplate().getSessionFactory().getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TRedPkgPwd merge(TRedPkgPwd detachedInstance) {
+		log.debug("merging TRedPkgPwd instance");
+		try {
+			TRedPkgPwd result = (TRedPkgPwd) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TRedPkgPwd findById(java.lang.Long id) {
+		log.debug("getting TRedPkgPwd instance with id: " + id);
+		try {
+			TRedPkgPwd instance = (TRedPkgPwd) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession().get(
+							"com.jite.hibgen.model.TRedPkgPwd", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TRedPkgPwd> findByExample(TRedPkgPwd instance) {
+		log.debug("finding TRedPkgPwd instance by example");
+		try {
+			List<TRedPkgPwd> results = (List<TRedPkgPwd>) getHibernateTemplate().getSessionFactory()
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.model.TRedPkgPwd")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+	
+	public List<TRedPkgPwd> searchByCriteria(int pageNo, int pageSize,TRedPkgPwd search){
+		log.debug("search THrJobBase instance by criteria");
+		try {
+			Criteria criteria=getHibernateTemplate()
+					.getSessionFactory().getCurrentSession()
+					.createCriteria(TRedPkgPwd.class);
+			
+			setCritieaByAdvanceSearch(criteria,search);
+			
+			criteria.setProjection(null);
+			criteria.addOrder(Order.desc("createDate"));
+			criteria.setFirstResult((pageNo - 1) * pageSize);  
+	        criteria.setMaxResults(pageSize);  
+	        
+			return (List<TRedPkgPwd>)criteria.list();
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}		
+	}
+	
+	public int searchByCriteriaTotal(TRedPkgPwd search){
+		Criteria criteria=getHibernateTemplate()
+				.getSessionFactory().getCurrentSession()
+				.createCriteria(TRedPkgPwd.class);
+		
+		setCritieaByAdvanceSearch(criteria,search);
+		
+		return  Integer.valueOf(criteria.setProjection(Projections.rowCount()).uniqueResult().toString());		
+	}
+	private void setCritieaByAdvanceSearch(Criteria criteria, TRedPkgPwd search) {
+		criteria.add(Restrictions.eq("type", search.getType()));		
+		criteria.add(Restrictions.eq("status", search.getStatus()));		
+	}
+
+}

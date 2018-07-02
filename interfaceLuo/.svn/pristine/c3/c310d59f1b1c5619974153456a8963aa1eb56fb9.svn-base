@@ -1,0 +1,52 @@
+package com.jite.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.jite.hibgen.dao.TApproveLogsDao;
+import com.jite.hibgen.dao.TOrgActiveDao;
+import com.jite.hibgen.dao.TOrgActiveUserDao;
+import com.jite.hibgen.dao.TUserBizcardDao;
+import com.jite.hibgen.model.TApproveLogs;
+import com.jite.hibgen.model.TOrgActive;
+import com.jite.hibgen.model.TOrgActiveUser;
+import com.jite.hibgen.model.TUserBizcard;
+import com.jite.struts.bean.ActivityInfo;
+import com.jite.struts.bean.ApproveLogInfo;
+import com.jite.struts.bean.UserInfo;
+import com.jite.utils.BeanTrans;
+import com.jite.utils.SystemPropties;
+
+public class ApproveLogService {
+	@Resource
+	private TApproveLogsDao approveDao;
+
+	public TApproveLogsDao getApproveDao() {
+		return approveDao;
+	}
+
+	public void setApproveDao(TApproveLogsDao approveDao) {
+		this.approveDao = approveDao;
+	}
+
+	public List<ApproveLogInfo> queryApproveLog(long companyId, int type) {
+		List<ApproveLogInfo> result=new ArrayList<ApproveLogInfo>();
+		TApproveLogs search=new TApproveLogs();
+		search.setCompanyId(companyId);
+		search.setType(type);
+		List<TApproveLogs> theLogs=approveDao.searchByCriteria(1, 10, search);
+		for(TApproveLogs one:theLogs){
+			result.add(BeanTrans.getApproveInfoFromT(one));
+		}
+		return result;
+	}
+	
+
+
+
+
+
+}

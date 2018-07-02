@@ -1,0 +1,161 @@
+package com.jite.struts.action;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.CommonService;
+import com.jite.service.SchoolService;
+import com.jite.struts.bean.CommonItem;
+import com.jite.utils.SystemPropties;
+
+public class CommonAction extends BaseAction {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7548491842791520106L;
+	@Resource
+	@Autowired
+	private CommonService commonService;
+	private String configName;
+	
+	public String getConfigName() {
+		return configName;
+	}
+	public void setConfigName(String configName) {
+		this.configName = configName;
+	}
+	public CommonService getCommonService() {
+		return commonService;
+	}
+	public void setCommonService(CommonService commonService) {
+		this.commonService = commonService;
+	}
+	
+	@Override
+	public void validate() {
+		boolean inputError=false;
+		StringBuffer err=new StringBuffer();
+		if(null==configName||"".equals(configName.trim())){
+			inputError=true;
+			err.append("configName ").append(SystemPropties.getProperties("txt.can_not_be_empty")).append("!");
+		}
+		if(inputError){
+			returnError(SystemPropties.getProperties("code.input_error"),err.toString());
+		}
+	}
+	
+	public void query() {
+		returnJson=new JSONObject();
+		if(commonService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			commonService=(CommonService)ac.getBean("commonService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.query")+SystemPropties.getProperties("txt.success"));
+		returnJson.put("commonInfo", commonService.queryConfig(configName));
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryRoot() {
+		returnJson=new JSONObject();
+		if(commonService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			commonService=(CommonService)ac.getBean("commonService");
+		}
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.query")+SystemPropties.getProperties("txt.success"));
+		returnJson.put("commonInfo", commonService.queryConfigRoot(configName));
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void queryAllCities(){
+		returnJson=new JSONObject();
+		if(commonService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			commonService=(CommonService)ac.getBean("commonService");
+		}
+		List<CommonItem> proCities=commonService.queryAllCities();
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("proCities", proCities);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryHomeAreas(){
+		returnJson=new JSONObject();
+		if(commonService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			commonService=(CommonService)ac.getBean("commonService");
+		}
+		List<CommonItem> homeAreas=commonService.queryHomeAreas();
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("homeAreas", homeAreas);
+
+		returnJsonStr(returnJson.toString());
+	}
+
+	public void queryMqAreas(){
+		returnJson=new JSONObject();
+		if(commonService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			commonService=(CommonService)ac.getBean("commonService");
+		}
+		List<CommonItem> mqAreas=commonService.queryMqAreas(pageNumber,pageSize);
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("mqAreas", mqAreas);
+		returnJson.put("totalCount", commonService.queryMqAreasTotal());
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void queryHomeWorkTypes(){
+		returnJson=new JSONObject();
+		if(commonService==null){
+			ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext( request.getSession().getServletContext());
+			commonService=(CommonService)ac.getBean("commonService");
+		}
+		List<CommonItem> homeWorktypes=commonService.queryHomeWorkTypes();
+		returnJson.put("code", SystemPropties.getProperties("code.success"));
+		returnJson.put("info",SystemPropties.getProperties("txt.success"));
+		returnJson.put("homeWorkTypes", homeWorktypes);
+
+		returnJsonStr(returnJson.toString());
+	}
+	
+	public void getServerTime(){
+		returnJson=new JSONObject();
+		returnJson.put("serverTime", new Date());
+		returnJsonStr(returnJson.toString());
+	}
+	private int pageNumber;
+	private int pageSize;
+	public int getPageNumber() {
+		return pageNumber;
+	}
+
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	
+}

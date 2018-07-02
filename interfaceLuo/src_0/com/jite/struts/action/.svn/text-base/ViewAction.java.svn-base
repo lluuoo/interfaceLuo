@@ -1,0 +1,71 @@
+package com.jite.struts.action;
+
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.jite.service.ViewService;
+import com.jite.utils.SystemPropties;
+
+import net.sf.json.JSONObject;
+
+// Referenced classes of package com.jite.struts.action:
+//            BaseAction
+
+public class ViewAction extends BaseAction
+{
+
+    public ViewAction()
+    {
+    }
+
+    public ViewService getViewService()
+    {
+        return viewService;
+    }
+
+    public void setViewService(ViewService viewService)
+    {
+        this.viewService = viewService;
+    }
+
+    public void viewLogs()
+    {
+        returnJson = new JSONObject();
+        if(viewService == null)
+        {
+            ApplicationContext ac = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
+            viewService = (ViewService)ac.getBean("viewService");
+        }
+        java.util.List viewLogs = viewService.getList(userId, companyId);
+        returnJson.put("code", SystemPropties.getProperties("code.success"));
+        returnJson.put("info", SystemPropties.getProperties("txt.success"));
+        returnJson.put("viewLogs", viewLogs);
+        returnJsonStr(returnJson.toString());
+    }
+
+    public String getUserId()
+    {
+        return userId;
+    }
+
+    public void setUserId(String userId)
+    {
+        this.userId = userId;
+    }
+
+    public String getCompanyId()
+    {
+        return companyId;
+    }
+
+    public void setCompanyId(String companyId)
+    {
+        this.companyId = companyId;
+    }
+
+    private static final long serialVersionUID = 0x6a8350f85166a23cL;
+    private ViewService viewService;
+    private String userId;
+    private String companyId;
+}

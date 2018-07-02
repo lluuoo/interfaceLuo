@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<beans xmlns="http://www.springframework.org/schema/beans"    
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"   
+    xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:aop="http://www.springframework.org/schema/aop"   
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:jee="http://www.springframework.org/schema/jee"  
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xsi:schemaLocation="    
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd"
+        default-autowire="byName" >    
+	<context:component-scan base-package="com.jite"   />
+	<context:annotation-config />
+	
+	<bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="password" value="sdlfo234234jo" />
+	</bean>
+  
+	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+		<property name="config" ref="environmentVariablesConfiguration" />
+	</bean>
+      
+	<bean id="propertyConfigurer"
+		class="org.jasypt.spring.properties.EncryptablePropertyPlaceholderConfigurer">
+		<constructor-arg ref="configurationEncryptor" />
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/classes/configs/hibernate.properties</value>
+				<value>/WEB-INF/classes/configs/c3p0.properties</value>
+			</list>
+		</property>
+	</bean> 
+
+	<!-- 数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="${driverClass}" />
+		<property name="jdbcUrl" value="${jdbcUrl}" />
+		<property name="user" value="${user}" />
+		<property name="password" value="${password}" />
+		<!-- c3g0配置 -->
+		<property name="minPoolSize" value="${c3p0.minPoolSize}" />
+		<property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+		<property name="initialPoolSize" value="${c3p0.initialPoolSize}" />
+		<property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+		<property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+		<property name="maxStatements" value="${c3p0.maxStatements}" />
+		<property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}" />
+		<property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}" />
+		<property name="breakAfterAcquireFailure" value="${c3p0.breakAfterAcquireFailure}" />
+		<property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}" />
+		<property name="autoCommitOnClose" value="${c3p0.autoCommitOnClose}" />
+		<property name="checkoutTimeout" value="${c3p0.checkoutTimeout}" />
+		<property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}" />
+	</bean>
+	  
+ 
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="mappingLocations">
+			<list>
+				<value>classpath*:/com/jite/hibgen/model/*.hbm.xml</value>
+			</list>
+		</property>  
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+				<prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments}</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
+				<prop key="hibernate.max_fetch_depth">${hibernate.max_fetch_depth}</prop>
+				<prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+				<prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+				<prop key="hibernate.cache.provider_class">${hibernate.cache.provider_class}</prop>
+			</props>
+		</property>
+	</bean>
+	 
+ 
+  	<!-- 配置事务管理器bean,使用HibernateTransactionManager事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+			<!-- 为事务管理器注入sessionFactory" -->
+			<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 使用annotation定义事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	
+	<context:component-scan base-package="com.jite" />
+	<context:annotation-config/>
+	
+	<!-- 配置事务拦截器Bean -->
+	<bean id="transactionInterceptor"
+		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<!-- 为事务拦截器bean注入一个事务管理器 -->
+		<property name="transactionManager" ref="transactionManager"></property>
+		<property name="transactionAttributes">
+		<!-- 定义事务传播属性 -->
+			<props>
+				<prop key="insert*">PROPAGATION_REQUIRED</prop>
+				<prop key="update*">PROPAGATION_REQUIRED</prop>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="add*">PROPAGATION_REQUIRED</prop>
+				<prop key="remove*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="get*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="find*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="load*">PROPAGATION_SUPPORTS,readOnly</prop>
+				<prop key="change*">PROPAGATION_REQUIRED</prop>
+				<prop key="batch*">PROPAGATION_REQUIRED</prop> 
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+    <!-- 加载构建bean -->
+    <bean id="baseDao" class="com.jite.hibgen.dao.BaseDao">
+		<property name="sessionFactory">
+			<ref bean="sessionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="userBizcardDao" class="com.jite.hibgen.dao.TUserBizcardDao" parent="baseDao"/>
+	<bean id="userAccountDao" class="com.jite.hibgen.dao.TUserAccountDao" parent="baseDao" />
+	
+	<bean id="userProfileBasicDao" class="com.jite.hibgen.dao.TUserProfileBasicDao" parent="baseDao" />
+	<bean id="userProfileEducationDao" class="com.jite.hibgen.dao.TUserProfileEducationDao" parent="baseDao" />
+	<bean id="userProfileExperienceDao" class="com.jite.hibgen.dao.TUserProfileExperienceDao" parent="baseDao" />
+	<bean id ="userProfileAwardDao" class="com.jite.hibgen.dao.TUserProfileAwardDao" parent="baseDao" />
+	<bean id="userProfileLanguagesDao" class="com.jite.hibgen.dao.TUserProfileLanguagesDao" parent="baseDao" />
+	<bean id="userProfileCertificateDao" class="com.jite.hibgen.dao.TUserProfileCertificateDao" parent="baseDao" />
+	<bean id="userProfileSkillDao" class="com.jite.hibgen.dao.TUserProfileSkillDao" parent="baseDao" />
+	
+	<bean id="hrCompanyDao" class="com.jite.hibgen.dao.THrCompanyDao" parent="baseDao" />
+	<bean id="hrCompanyMediasDao" class="com.jite.hibgen.dao.THrCompanyMediasDao" parent="baseDao" />
+    <bean id="userLoginlogDao" class="com.jite.hibgen.dao.TUserLoginlogDao" parent="baseDao"/>
+    <bean id="intentDao" class="com.jite.hibgen.dao.TUserProfileIntendsDao" parent="baseDao"/>
+	<bean id="commonDao" class="com.jite.hibgen.dao.TCommonDictionaryDao" parent="baseDao"/>
+    <bean id="hrDao" class="com.jite.hibgen.dao.THrAccountDao" parent="baseDao"/>
+    <bean id="jobBaseDao" class="com.jite.hibgen.dao.THrJobBaseDao" parent="baseDao"/>
+    <bean id="jobReqDao" class="com.jite.hibgen.dao.THrJobRequireDao" parent="baseDao"/>
+	<bean id="hrCompanyAreasDao" class="com.jite.hibgen.dao.THrCompanyAreasDao" parent="baseDao"/>
+    <bean id="hrResumesDao" class="com.jite.hibgen.dao.THrResumesDao" parent="baseDao"/>
+    <bean id="favoriteDao" class="com.jite.hibgen.dao.TUserFavoriteJobDao" parent="baseDao"/>
+    <bean id="messageDao" class="com.jite.hibgen.dao.TUserMessagesDao" parent="baseDao"/>
+    <bean id="activityDao" class="com.jite.hibgen.dao.TOrgActiveDao" parent="baseDao"/>
+    <bean id="activeUserDao" class="com.jite.hibgen.dao.TOrgActiveUserDao" parent="baseDao"/>
+    <bean id="mentorBaseDao" class="com.jite.hibgen.dao.TMentorBaseDao" parent="baseDao"/>
+    <bean id="showMentorDao" class="com.jite.hibgen.dao.TShowMentorDao" parent="baseDao"/>
+   	<bean id="schoolDao" class="com.jite.hibgen.dao.TUserSchoolDao" parent="baseDao"/>
+   	<bean id="showSchoolDao" class="com.jite.hibgen.dao.TShowSchoolDao" parent="baseDao"/>
+   	<bean id="majorDao" class="com.jite.hibgen.dao.TUserMajorDao" parent="baseDao"/>
+    <bean id="proCityDao" class="com.jite.hibgen.dao.TProCityDao" parent="baseDao"/>
+    <bean id="showFamousDao" class="com.jite.hibgen.dao.TShowCompanyFamousDao" parent="baseDao"/>
+    <bean id="showStartDao" class="com.jite.hibgen.dao.TShowCompanyStartDao" parent="baseDao"/>
+    <bean id="approveDao" class="com.jite.hibgen.dao.TApproveLogsDao" parent="baseDao"/>
+    <bean id="startDao" class="com.jite.hibgen.dao.THrCompanyStartDao" parent="baseDao"/>
+    <bean id="hrSearchDao" class="com.jite.hibgen.dao.THrSearchlogDao" parent="baseDao"/>
+    <bean id="hrViewDao" class="com.jite.hibgen.dao.THrViewuserlogDao" parent="baseDao"/>
+    <bean id="userViewlogDao" class="com.jite.hibgen.dao.TUserViewlogDao" parent="baseDao"/>
+    <bean id="userSearchlogDao" class="com.jite.hibgen.dao.TUserSearchlogDao" parent="baseDao"/>
+    
+    <bean id="showCooperativeUnitDao" class="com.jite.hibgen.dao.TShowCooperativeUnitDao" parent="baseDao" />
+
+    <bean id="templateDao" class="com.jite.hibgen.dao.TUserMessageTemplateDao" parent="baseDao"/>
+
+ 
+    <bean id="bannerHomeDao" class="com.jite.hibgen.dao.TShowHomebannerDao" parent="baseDao"/>
+    <bean id="bannerStartDao" class="com.jite.hibgen.dao.TShowStartbannerDao" parent="baseDao"/>
+    <bean id="bannerActivesDao" class="com.jite.hibgen.dao.TShowActivesBannerDao" parent="baseDao"/>
+    <bean id="homeAreasDao" class="com.jite.hibgen.dao.TShowHomeareasDao" parent="baseDao"/>
+    <bean id="homeWorkTypesDao" class="com.jite.hibgen.dao.TShowHomeworktypesDao" parent="baseDao"/>
+    <bean id="smsDao" class="com.jite.hibgen.dao.TSystemSmslogDao" parent="baseDao"/>
+    <bean id="versionDao" class="com.jite.hibgen.dao.TVersionDao" parent="baseDao"/>
+
+    <bean id="westplanDao" class="com.jite.hibgen.dao.TOrgWestplanDao" parent="baseDao"/>
+    <bean id="bannerAppDao" class="com.jite.hibgen.dao.TShowAppbannerDao" parent="baseDao"/>
+    
+    <bean id="agentAccountDao" class="com.jite.hibgen.dao.TAgentAccountDao" parent="baseDao"/>
+    <bean id="agentAccountUserDao" class="com.jite.hibgen.dao.TAgentAccountUserDao" parent="baseDao"/>
+    <bean id="redPkgPwdDao" class="com.jite.hibgen.dao.TRedPkgPwdDao" parent="baseDao"/>
+    
+    <bean id="resumesDao" class="com.jite.hibgen.dao.THrResumesDao" parent="baseDao"/>
+    
+
+    <bean id="infoDao" class="com.jite.hibgen.dao.TOrgInfoDao" parent="baseDao"/>
+
+	<bean id="userService" class="com.jite.service.UserService">
+	
+	
+		<property name="showCooperativeUnitDao">
+			<ref bean="showCooperativeUnitDao"/>
+		</property>
+		
+		<property name="resumesDao">
+			<ref bean="resumesDao"/>
+		</property>
+	
+		<property name="userBizcardDao">
+			<ref bean="userBizcardDao"/>
+		</property>
+		<property name="userProfileBasicDao">
+			<ref bean="userProfileBasicDao"/>
+		</property>
+		<property name="userProfileEducationDao">
+			<ref bean="userProfileEducationDao"/>
+		</property>
+		<property name="redPkgPwdDao">
+			<ref bean="redPkgPwdDao"/>
+		</property>		
+		<property name="userProfileExperienceDao">
+			<ref bean="userProfileExperienceDao"/>
+		</property> 
+		
+		<property name="userProfileAwardDao">
+			<ref bean="userProfileAwardDao"/>
+		</property> 
+		
+		<property name="userProfileCertificateDao">
+			<ref bean="userProfileCertificateDao"/>
+		</property> 
+		
+		<property name="userProfileLanguagesDao">
+			<ref bean="userProfileLanguagesDao"/>
+		</property> 
+		
+		<property name="userProfileSkillDao">
+			<ref bean="userProfileSkillDao"/>
+		</property> 
+		<property name="userAccountDao">
+			<ref bean="userAccountDao"/>
+		</property>
+		<property name="agentAccountDao">
+			<ref bean="agentAccountDao"/>
+		</property>		
+		<property name="agentAccountUserDao">
+			<ref bean="agentAccountUserDao"/>
+		</property>		
+		<property name="userLoginlogDao">
+			<ref bean="userLoginlogDao"/>
+		</property>
+		<property name="intentDao">
+			<ref bean="intentDao"/>
+		</property>
+		<property name="hrDao">
+			<ref bean="hrDao"/>
+		</property>
+		<property name="hrSearchDao">
+			<ref bean="hrSearchDao"/>
+		</property>
+		<property name="hrViewDao">
+			<ref bean="hrViewDao"/>
+		</property>
+		<property name="hrCompanyDao">
+			<ref bean="hrCompanyDao"/>
+		</property>
+		<property name="mediasDao">
+			<ref bean="hrCompanyMediasDao"/>
+		</property>
+		<property name="areasDao">
+		<ref bean="hrCompanyAreasDao"></ref>
+		</property>			
+		<property name="smsDao">
+		<ref bean="smsDao"></ref>
+		</property>			
+	</bean>
+	
+	<bean id="mentorService" class="com.jite.service.MentorService">
+		<property name="mentorBaseDao">
+		<ref bean="mentorBaseDao" />
+		</property>
+		<property name="showMentorDao">
+		<ref bean="showMentorDao" />
+		</property>
+		<property name="messageDao">
+			<ref bean="messageDao"/>
+		</property>	
+		<property name="userAccountDao">
+			<ref bean="userAccountDao"/>
+		</property>
+	</bean>
+	
+	<bean id="hrCompanyService" class="com.jite.service.HrCompanyService">
+		<property name="hrCompanyDao">
+			<ref bean="hrCompanyDao"/>
+		</property>
+		<property name="hrDao">
+			<ref bean="hrDao"/>
+		</property>
+		<property name="jobBaseDao">
+			<ref bean="jobBaseDao"/>
+		</property>
+		<property name="jobReqDao">
+			<ref bean="jobReqDao"/>
+		</property>
+		<property name="mediasDao">
+			<ref bean="hrCompanyMediasDao"/>
+		</property>		
+		<property name="areasDao">
+		<ref bean="hrCompanyAreasDao"></ref>
+		</property>
+		<property name="startDao">
+		<ref bean="startDao"></ref>
+		</property>
+		<property name="approveDao">
+		<ref bean="approveDao"></ref>
+		</property>
+		<property name="showFamousDao">
+		<ref bean="showFamousDao"></ref>
+		</property>
+		<property name="showStartDao">
+		<ref bean="showStartDao"></ref>
+		</property>
+		<property name="userViewlogDao">
+		<ref bean="userViewlogDao"></ref>
+		</property>		
+		<property name="userSearchlogDao">
+		<ref bean="userSearchlogDao"></ref>
+		</property>	
+		<property name="userAccountDao">
+			<ref bean="userAccountDao"/>
+		</property>			
+	</bean>
+	
+	<bean id="commonService" class="com.jite.service.CommonService">
+		<property name="commonDao">
+			<ref bean="commonDao"/>
+		</property>
+		<property name="proCityDao">
+			<ref bean="proCityDao"/>
+		</property>
+		<property name="homeAreasDao">
+			<ref bean="homeAreasDao"/>
+		</property>
+		<property name="homeWorkTypesDao">
+			<ref bean="homeWorkTypesDao"/>
+		</property>
+		
+	</bean>	
+
+	<bean id="schoolService" class="com.jite.service.SchoolService">
+		<property name="schoolDao">
+			<ref bean="schoolDao"/>
+		</property>
+		<property name="majorDao">
+			<ref bean="majorDao"/>
+		</property>
+		<property name="showSchoolDao">
+			<ref bean="showSchoolDao"/>
+		</property>
+	</bean>	
+	
+	<bean id="userJobService" class="com.jite.service.UserJobService">
+		<property name="hrResumesDao">
+			<ref bean="hrResumesDao"/>
+		</property>
+		<property name="userBizcardDao">
+			<ref bean="userBizcardDao"/>
+		</property>
+		<property name="jobBaseDao">
+			<ref bean="jobBaseDao"/>
+		</property>
+		<property name="jobReqDao">
+			<ref bean="jobReqDao"/>
+		</property>	
+		<property name="favoriteDao">
+			<ref bean="favoriteDao"/>
+		</property>
+		<property name="messageDao">
+			<ref bean="messageDao"/>
+		</property>	
+		<property name="hrDao">
+			<ref bean="hrDao"/>
+		</property>
+		<property name="userAccountDao">
+			<ref bean="userAccountDao"/>
+		</property>
+		<property name="intentDao">
+			<ref bean="intentDao"/>
+		</property>		
+		<property name="hrCompanyDao">
+			<ref bean="hrCompanyDao"/>
+		</property>
+		<property name="templateDao">
+			<ref bean="templateDao"/>
+		</property>
+		<property name="mentorBaseDao">
+		<ref bean="mentorBaseDao" />
+		</property>	
+		<property name="activityDao">
+			<ref bean="activityDao"/>
+		</property>
+		<property name="agentAccountUserDao">
+			<ref bean="agentAccountUserDao"/>
+		</property>					
+	</bean>
+	
+	<bean id="activityService" class="com.jite.service.ActivityService">
+		<property name="activityDao">
+			<ref bean="activityDao"/>
+		</property>
+		<property name="activeUserDao">
+			<ref bean="activeUserDao"/>
+		</property>
+		<property name="userBizcardDao">
+			<ref bean="userBizcardDao"/>
+		</property>
+		<property name="messageDao">
+			<ref bean="messageDao"/>
+		</property>					
+	</bean>
+	
+	<bean id="westplanService" class="com.jite.service.WestplanService">
+		<property name="westplanDao">
+			<ref bean="westplanDao"/>
+		</property>			
+	</bean>
+	
+	<bean id="approveService" class="com.jite.service.ApproveLogService">
+		<property name="approveDao">
+			<ref bean="approveDao"/>
+		</property>	
+	</bean>
+
+	<bean id="bannerService" class="com.jite.service.BannerService">
+		<property name="bannerHomeDao">
+			<ref bean="bannerHomeDao"/>
+		</property>
+		<property name="bannerStartDao">
+			<ref bean="bannerStartDao"/>
+		</property>
+		<property name="bannerAppDao">
+			<ref bean="bannerAppDao"/>
+		</property>
+		<property name="bannerActivesDao">
+			<ref bean="bannerActivesDao"/>
+		</property>
+	</bean>	
+
+	<bean id="versionService" class="com.jite.service.VersionService">
+		<property name="versionDao">
+			<ref bean="versionDao"/>
+		</property>
+	</bean>	
+
+	<bean id="agentService" class="com.jite.service.AgentService">
+		<property name="agentAccountDao">
+			<ref bean="agentAccountDao"/>
+		</property>				
+	</bean>
+
+	<bean id="infoService" class="com.jite.service.InfoService">
+		<property name="infoDao">
+			<ref bean="infoDao"/>
+		</property>
+
+		<property name="intentDao">
+			<ref bean="intentDao"/>
+		</property>
+		
+		<property name="areasDao">
+			<ref bean="hrCompanyAreasDao"></ref>
+		</property>					
+
+		<property name="jobBaseDao">
+			<ref bean="jobBaseDao"/>
+		</property>
+		
+		<property name="hrCompanyDao">
+			<ref bean="hrCompanyDao"/>
+		</property>
+		
+	</bean>
+
+	<bean id="viewService" class="com.jite.service.ViewService">
+		<property name="hrViewDao">
+			<ref bean="hrViewDao"/>
+		</property>				
+	</bean>
+					
+	<!-- 定义BeanNameAutoProxyCreator -->
+	<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<!-- 指定满足哪些bean自动生成业务代理 -->
+		<property name="beanNames">
+		<!-- 需要自动创建事务代理的bean -->
+			<list>
+				<value>userService</value>
+				<value>hrCompanyService</value>
+				<value>mentorService</value>
+				<value>commonService</value>
+				<value>userJobService</value>
+				<value>activityService</value>
+				<value>schoolService</value>
+				<value>approveService</value>
+				<value>bannerService</value>
+				<value>versionService</value>
+				<value>westplanService</value>
+				<value>agentService</value>
+				<value>infoService</value>
+				<value>viewService</value>
+			</list>
+			<!-- 其它需要自动创建事务代理的bean -->
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>transactionInterceptor</value>
+				<!-- 可增加其它的interceptor -->
+			</list>
+		</property>
+	</bean>      
+  
+  	<bean id="baseAction" class="com.jite.struts.action.BaseAction" />
+	<bean id="hrCompanyAction" class="com.jite.struts.action.HrCompanyAction" parent="baseAction">
+		<property name="hrCompanyService">
+			<ref bean="hrCompanyService"/>
+		</property>
+	</bean>
+	<bean id="mentorAction" class="com.jite.struts.action.MentorAction" parent="baseAction">
+		<property name="mentorService">
+			<ref bean="mentorService"/>
+		</property>
+	</bean>
+	<bean id="loginAction" class="com.jite.struts.action.LoginAction" parent="baseAction" scope="prototype">
+		<property name="userService">
+			<ref bean="userService"/>
+		</property>
+	</bean>
+	<bean id="schoolAction" class="com.jite.struts.action.SchoolAction" parent="baseAction" scope="prototype">
+		<property name="schoolService">
+			<ref bean="schoolService" />
+		</property>
+	</bean>  
+  </beans>

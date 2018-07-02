@@ -1,0 +1,125 @@
+package com.jite.hibgen.dao;
+
+import com.jite.hibgen.model.*;
+
+import java.util.List;
+import javax.naming.InitialContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.LockMode;
+import org.hibernate.SessionFactory;
+import static org.hibernate.criterion.Example.create;
+
+/**
+ * Home object for domain model class TUserRemendJobs.
+ * @see com.jite.hibgen.dao.TUserRemendJobs
+ * @author Hibernate Tools
+ */
+public class TUserRemendJobsDao {
+
+	private static final Log log = LogFactory.getLog(TUserRemendJobsDao.class);
+
+	private final SessionFactory sessionFactory = getSessionFactory();
+
+	protected SessionFactory getSessionFactory() {
+		try {
+			return (SessionFactory) new InitialContext()
+					.lookup("SessionFactory");
+		} catch (Exception e) {
+			log.error("Could not locate SessionFactory in JNDI", e);
+			throw new IllegalStateException(
+					"Could not locate SessionFactory in JNDI");
+		}
+	}
+
+	public void persist(TUserRemendJobs transientInstance) {
+		log.debug("persisting TUserRemendJobs instance");
+		try {
+			sessionFactory.getCurrentSession().persist(transientInstance);
+			log.debug("persist successful");
+		} catch (RuntimeException re) {
+			log.error("persist failed", re);
+			throw re;
+		}
+	}
+
+	public void attachDirty(TUserRemendJobs instance) {
+		log.debug("attaching dirty TUserRemendJobs instance");
+		try {
+			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void attachClean(TUserRemendJobs instance) {
+		log.debug("attaching clean TUserRemendJobs instance");
+		try {
+			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			log.debug("attach successful");
+		} catch (RuntimeException re) {
+			log.error("attach failed", re);
+			throw re;
+		}
+	}
+
+	public void delete(TUserRemendJobs persistentInstance) {
+		log.debug("deleting TUserRemendJobs instance");
+		try {
+			sessionFactory.getCurrentSession().delete(persistentInstance);
+			log.debug("delete successful");
+		} catch (RuntimeException re) {
+			log.error("delete failed", re);
+			throw re;
+		}
+	}
+
+	public TUserRemendJobs merge(TUserRemendJobs detachedInstance) {
+		log.debug("merging TUserRemendJobs instance");
+		try {
+			TUserRemendJobs result = (TUserRemendJobs) sessionFactory
+					.getCurrentSession().merge(detachedInstance);
+			log.debug("merge successful");
+			return result;
+		} catch (RuntimeException re) {
+			log.error("merge failed", re);
+			throw re;
+		}
+	}
+
+	public TUserRemendJobs findById(java.lang.Long id) {
+		log.debug("getting TUserRemendJobs instance with id: " + id);
+		try {
+			TUserRemendJobs instance = (TUserRemendJobs) sessionFactory
+					.getCurrentSession().get(
+							"com.jite.hibgen.dao.TUserRemendJobs", id);
+			if (instance == null) {
+				log.debug("get successful, no instance found");
+			} else {
+				log.debug("get successful, instance found");
+			}
+			return instance;
+		} catch (RuntimeException re) {
+			log.error("get failed", re);
+			throw re;
+		}
+	}
+
+	public List<TUserRemendJobs> findByExample(TUserRemendJobs instance) {
+		log.debug("finding TUserRemendJobs instance by example");
+		try {
+			List<TUserRemendJobs> results = (List<TUserRemendJobs>) sessionFactory
+					.getCurrentSession()
+					.createCriteria("com.jite.hibgen.dao.TUserRemendJobs")
+					.add(create(instance)).list();
+			log.debug("find by example successful, result size: "
+					+ results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+}
